@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f172a;--navy-light:#1e293b;--blue:#2563eb;--blue-soft:#eff6ff;
+  --green:#16a34a;--green-soft:#f0fdf4;--red:#dc2626;--red-soft:#fef2f2;
+  --amber:#d97706;--amber-soft:#fffbeb;--border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
+
+/* ===== HEADER ===== */
+.app-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(15,23,42,.04);}
+.app-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+.app-brand{font-weight:800;color:var(--navy);font-size:1.15rem;}
+.nav-link-app{font-weight:500;color:var(--muted)!important;border-radius:8px;padding:.5rem .9rem!important;}
+.nav-link-app:hover{background:var(--bg);color:var(--navy)!important;}
+.nav-link-app.active{background:var(--blue-soft);color:var(--blue)!important;font-weight:600;}
+.user-chip{display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;border-radius:10px;background:var(--bg);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;}
+
+/* ===== HERO ===== */
+.hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:2.25rem 0;border-radius:0 0 24px 24px;}
+.hero-heading{color:#fff;font-weight:800;font-size:clamp(1.5rem,3.5vw,2rem);margin-bottom:.3rem;}
+.hero-subtitle{color:rgba(255,255,255,.75);font-size:.9rem;margin:0;}
+
+.page-container{max-width:1300px;margin:0 auto;padding:0 1rem 3rem;}
+
+/* ===== STAT CARDS ===== */
+.stats-row{margin-top:1.5rem;}
+.stat-card{
+  background:#fff;border-radius:16px;border:1px solid var(--border);
+  box-shadow:0 4px 14px rgba(15,23,42,.05);padding:1.25rem;height:100%;
+  display:flex;align-items:center;gap:1rem;transition:transform .15s ease, box-shadow .15s ease;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1);}
+.stat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.stat-icon.blue{background:var(--blue-soft);color:var(--blue);}
+.stat-icon.green{background:var(--green-soft);color:var(--green);}
+.stat-icon.navy{background:#e2e8f0;color:var(--navy);}
+.stat-icon.red{background:var(--red-soft);color:var(--red);}
+.stat-icon.amber{background:var(--amber-soft);color:var(--amber);}
+.stat-number{font-weight:800;font-size:1.6rem;color:var(--navy);line-height:1;}
+.stat-label{color:var(--muted);font-size:.82rem;margin-top:.15rem;}
+
+/* ===== QUICK LINKS ===== */
+.section-title{font-weight:700;color:var(--navy);margin:2rem 0 1rem;font-size:1.1rem;}
+.quick-link-card{
+  background:#fff;border-radius:16px;border:1px solid var(--border);
+  box-shadow:0 4px 14px rgba(15,23,42,.05);padding:1.25rem;height:100%;
+  display:flex;flex-direction:column;gap:.6rem;text-decoration:none;color:inherit;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.quick-link-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.1);border-color:var(--blue);color:inherit;}
+.ql-icon{width:44px;height:44px;border-radius:12px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:1.15rem;}
+.ql-title{font-weight:700;color:var(--navy);font-size:.95rem;}
+.ql-desc{color:var(--muted);font-size:.8rem;margin:0;}
+.ql-arrow{margin-top:auto;color:var(--blue);font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:.3rem;}
+
+@media (max-width:576px){
+  .hero-section{padding:1.75rem 0;border-radius:0 0 18px 18px;}
+}
+</style>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f172a;--navy-light:#1e293b;--blue:#2563eb;--blue-soft:#eff6ff;
+  --green:#16a34a;--green-soft:#f0fdf4;--red:#dc2626;--red-soft:#fef2f2;
+  --amber:#d97706;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;
+  --teal:#0d9488;--teal-soft:#f0fdfa;
+  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  font-family:'Inter','Noto Sans Ethiopic',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#1e293b;
+  -webkit-tap-highlight-color:transparent;
+}
+[lang="am"], .am-text{ line-height:1.6; letter-spacing:0; }
+
+/* ===== HEADER ===== */
+.app-header{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);box-shadow:0 1px 3px rgba(15,23,42,.04);}
+.navbar{padding-top:.65rem;padding-bottom:.65rem;}
+.app-logo{
+  width:40px;height:40px;border-radius:11px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 3px 8px rgba(37,99,235,.25);
+  flex-shrink:0;
+}
+.app-logo i{font-size:1.15rem;}
+.app-brand{font-weight:800;color:var(--navy);font-size:1.2rem;letter-spacing:-.01em;}
+.app-brand-tag{font-size:.65rem;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;display:block;margin-top:-2px;}
+
+.navbar-toggler{border:1.5px solid var(--border);border-radius:10px;padding:.4rem .55rem;background:#fff;}
+.navbar-toggler:focus{box-shadow:0 0 0 .2rem rgba(37,99,235,.15);}
+.navbar-toggler-icon{width:1.2em;height:1.2em;}
+
+.nav-link-app{
+  font-weight:500;color:var(--muted)!important;border-radius:10px;
+  padding:.55rem 1rem!important;transition:.15s ease;display:flex;align-items:center;
+  white-space:nowrap;
+}
+.nav-link-app i{transition:transform .15s ease;}
+.nav-link-app:hover{background:var(--bg);color:var(--navy)!important;}
+.nav-link-app:hover i{transform:translateY(-1px);}
+.nav-link-app.active{background:var(--blue-soft);color:var(--blue)!important;font-weight:700;}
+
+.user-chip{display:flex;align-items:center;gap:.55rem;padding:.35rem .7rem .35rem .35rem;border-radius:50px;background:var(--bg);border:1px solid transparent;transition:.15s;}
+.user-chip:hover{border-color:var(--border);background:#fff;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0;}
+
+@media (max-width:991.98px){
+  .navbar-collapse{margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem;}
+  .nav-link-app{padding:.75rem 1rem!important;margin-bottom:.2rem;font-size:.95rem;}
+  .nav-link-app i{width:20px;text-align:center;}
+  .user-chip{width:100%;justify-content:flex-start;margin-top:.4rem;}
+}
+
+/* ===== HERO ===== */
+.hero-section{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse 500px 300px at 85% -10%, rgba(37,99,235,.35), transparent 60%),
+    radial-gradient(ellipse 400px 300px at 10% 110%, rgba(22,163,74,.18), transparent 60%),
+    linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 55%, #16213e 100%);
+  padding:clamp(2rem,5vw,3rem) 0;
+  border-radius:0 0 28px 28px;
+  box-shadow:0 14px 34px rgba(15,23,42,.22);
+}
+.hero-section::before{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+  background:rgba(255,255,255,.04);top:-120px;right:8%;
+}
+.hero-inner{position:relative;z-index:2;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.45rem;color:#93c5fd;
+  font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  background:rgba(147,197,253,.1);padding:.3rem .8rem;border-radius:50px;margin-bottom:.9rem;
+}
+.hero-eyebrow i{color:#4ade80;}
+.hero-heading{color:#fff;font-weight:800;font-size:clamp(1.4rem,3.6vw,2.1rem);margin-bottom:.4rem;letter-spacing:-.01em;line-height:1.35;}
+.hero-subtitle{color:rgba(255,255,255,.72);font-size:clamp(.85rem,1.6vw,.95rem);margin:0;max-width:520px;line-height:1.6;}
+
+.page-container{max-width:1300px;margin:0 auto;padding:0 1rem 3rem;}
+
+/* ===== STAT CARDS ===== */
+.stats-row{margin-top:clamp(1.25rem,3vw,1.75rem);}
+.stat-card{
+  background:#fff;border-radius:16px;border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(15,23,42,.04);padding:1.1rem 1.15rem;height:100%;
+  display:flex;align-items:center;gap:.9rem;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(15,23,42,.09);border-color:#dbe3ee;}
+.stat-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;transition:transform .18s ease;}
+.stat-card:hover .stat-icon{transform:scale(1.06);}
+.stat-icon.blue{background:var(--blue-soft);color:var(--blue);}
+.stat-icon.green{background:var(--green-soft);color:var(--green);}
+.stat-icon.navy{background:#eef1f6;color:var(--navy);}
+.stat-icon.red{background:var(--red-soft);color:var(--red);}
+.stat-icon.amber{background:var(--amber-soft);color:var(--amber);}
+.stat-text{min-width:0;}
+.stat-number{font-weight:800;font-size:clamp(1.35rem,3vw,1.65rem);color:var(--navy);line-height:1.1;}
+.stat-label{color:var(--muted);font-size:.78rem;font-weight:600;margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ===== QUICK LINKS ===== */
+.section-title{font-weight:800;color:var(--navy);margin:clamp(1.75rem,4vw,2.25rem) 0 1rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;}
+.section-title i{color:var(--blue);font-size:1rem;}
+
+.quick-link-card{
+  position:relative;background:#fff;border-radius:16px;border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(15,23,42,.04);padding:1.1rem;height:100%;
+  display:flex;flex-direction:column;gap:.55rem;text-decoration:none;color:inherit;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  overflow:hidden;
+}
+.quick-link-card::after{
+  content:"";position:absolute;inset:0;border-radius:16px;
+  box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .18s ease;
+}
+.quick-link-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(15,23,42,.1);color:inherit;}
+.quick-link-card:active{transform:translateY(-1px) scale(.99);}
+
+.ql-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;transition:transform .18s ease;flex-shrink:0;}
+.quick-link-card:hover .ql-icon{transform:scale(1.08) rotate(-3deg);}
+
+.ql-icon.c-blue{background:var(--blue-soft);color:var(--blue);}
+.ql-icon.c-navy{background:#eef1f6;color:var(--navy);}
+.ql-icon.c-green{background:var(--green-soft);color:var(--green);}
+.ql-icon.c-purple{background:var(--purple-soft);color:var(--purple);}
+.ql-icon.c-teal{background:var(--teal-soft);color:var(--teal);}
+.ql-icon.c-amber{background:var(--amber-soft);color:var(--amber);}
+
+.ql-title{font-weight:700;color:var(--navy);font-size:.9rem;line-height:1.3;}
+.ql-desc{color:var(--muted);font-size:.75rem;margin:0;line-height:1.5;flex-grow:1;}
+.ql-arrow{margin-top:.2rem;color:var(--blue);font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:.3rem;}
+.ql-arrow i{transition:transform .18s ease;}
+.quick-link-card:hover .ql-arrow i{transform:translateX(4px);}
+
+.quick-link-card.qc-blue:hover{border-color:#bfdbfe;}
+.quick-link-card.qc-navy:hover{border-color:#cbd5e1;}
+.quick-link-card.qc-green:hover{border-color:#bbf7d0;}
+.quick-link-card.qc-purple:hover{border-color:#ddd6fe;}
+.quick-link-card.qc-teal:hover{border-color:#99f6e4;}
+.quick-link-card.qc-amber:hover{border-color:#fde68a;}
+
+/* ===== MOBILE: 3 QUICK-ACTION CARDS PER ROW ===== */
+@media (max-width:575.98px){
+  .stats-row .col-6{flex:0 0 50%;max-width:50%;}
+  .quick-actions-row .col-6{flex:0 0 33.3333%;max-width:33.3333%;}
+  .quick-link-card{padding:.75rem .6rem;gap:.4rem;border-radius:13px;}
+  .ql-icon{width:38px;height:38px;border-radius:10px;font-size:1rem;}
+  .ql-title{font-size:.74rem;line-height:1.25;}
+  .ql-desc{font-size:.63rem;line-height:1.4;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+  .ql-arrow{font-size:.65rem;gap:.15rem;}
+  .ql-arrow span{display:none;}
+  .stat-card{padding:.85rem .8rem;gap:.6rem;}
+  .stat-icon{width:40px;height:40px;font-size:1rem;border-radius:11px;}
+  .stat-number{font-size:1.2rem;}
+  .stat-label{font-size:.68rem;white-space:normal;line-height:1.25;}
+}
+
+@media (max-width:400px){
+  .quick-actions-row .col-6{flex:0 0 33.3333%;max-width:33.3333%;}
+  .quick-link-card{padding:.6rem .45rem;}
+  .ql-title{font-size:.68rem;}
+  .ql-desc{font-size:.6rem;-webkit-line-clamp:2;}
+}
+
+/* ===== FOCUS / ACCESSIBILITY ===== */
+a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:8px;}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header sticky-top">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid page-container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('dashboard') }}">
+        <span class="app-logo"><i class="bi bi-boxes"></i></span>
+        <span>
+          <span class="app-brand d-block">CargoTrack</span>
+          <span class="app-brand-tag">Logistics Suite</span>
+        </span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link nav-link-app active" href="{{ url_for('new_post') }}"><i class="bi bi-plus-circle me-2"></i>አዲስ ዕቃ ላክ</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('posts') }}"><i class="bi bi-file-earmark-text me-2"></i>ያልተቀበሉት</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('post_history_list') }}"><i class="bi bi-clock-history me-2"></i>የተቀበሉት ዕቃዎች</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('final_detail') }}"><i class="bi bi-archive-fill me-2"></i>የመጨረሻ ውሳኔ ያገኙ</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('registration') }}"><i class="bi bi-clipboard-plus me-2"></i>ምዝገባ</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2 ms-lg-3">
+          <div class="dropdown">
+            <button class="btn user-chip border-0" data-bs-toggle="dropdown">
+              <span class="user-avatar">{{ current_user.name[0]|upper if current_user.is_authenticated else "U" }}</span>
+              <span class="fw-semibold small d-none d-md-inline">{{ current_user.name if current_user.is_authenticated else "User" }}</span>
+              <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+  <div class="page-container hero-inner">
+    <span class="hero-eyebrow"><i class="bi bi-lightning-charge-fill"></i>CargoTrack Dashboard</span>
+    <h1 class="hero-heading mb-0">እንኳን ደህና መጡ፣ {{ current_user.name if current_user.is_authenticated else "User" }}</h1>
+    <p class="hero-subtitle">የእቃ መላኪያ፣ መቀበያ እና አስተዳደር አጠቃላይ እይታ።</p>
+  </div>
+</section>
+
+<div class="page-container">
+
+  <!-- ===== STATS ===== -->
+  <div class="row g-3 stats-row">
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-file-earmark-text-fill"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_posts }}</div><div class="stat-label">ያልተቀበሉት</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon navy"><i class="bi bi-box-seam-fill"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_products }}</div><div class="stat-label">Products</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon navy"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_importers }}</div><div class="stat-label">Importers</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-clipboard-check-fill"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_final_posts }}</div><div class="stat-label">የመጨረሻ ውሳኔ ያገኙ</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon amber"><i class="bi bi-hourglass-split"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_pending_receiving }}</div><div class="stat-label">በመቀበል ላይ</div></div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="bi bi-flag-fill"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_flagged }}</div><div class="stat-label">Flagged Importers</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== QUICK LINKS ===== -->
+  <h5 class="section-title"><i class="bi bi-grid-1x2-fill"></i>ፈጣን አማራጮች</h5>
+  <div class="row g-3 quick-actions-row">
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('new_post') }}" class="quick-link-card qc-blue">
+        <div class="ql-icon c-blue"><i class="bi bi-plus-circle-fill"></i></div>
+        <div class="ql-title">አዲስ ዕቃ ላክ</div>
+        <p class="ql-desc">አዲስ ዕቃ ለመላክ እና አዲስ ፖስት ለመፍጠር።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('posts') }}" class="quick-link-card qc-navy">
+        <div class="ql-icon c-navy"><i class="bi bi-file-earmark-text-fill"></i></div>
+        <div class="ql-title">ያልተቀበሉት</div>
+        <p class="ql-desc">ገና ያልተቀበሉትን ዕቃዎች ይመልከቱ እና ያስተዳድሩ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('post_history_list') }}" class="quick-link-card qc-green">
+        <div class="ql-icon c-green"><i class="bi bi-clock-history"></i></div>
+        <div class="ql-title">የተቀበሉት ዕቃዎች</div>
+        <p class="ql-desc">ቀደም ሲል የተቀበሉትን ዕቃዎች እና የመቀበያ መረጃዎችን ይመልከቱ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('final_detail') }}" class="quick-link-card qc-purple">
+        <div class="ql-icon c-purple"><i class="bi bi-archive-fill"></i></div>
+        <div class="ql-title">የመጨረሻ ውሳኔ ያገኙ</div>
+        <p class="ql-desc">አስተዳደሩ የመጨረሻ ውሳኔ የሰጣቸውን መዝገቦች ይመልከቱ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('registration') }}" class="quick-link-card qc-teal">
+        <div class="ql-icon c-teal"><i class="bi bi-clipboard-plus-fill"></i></div>
+        <div class="ql-title">አዲስ ዕቃ ወይም አስመጪ ምዝገባ</div>
+        <p class="ql-desc">አዲስ ዕቃዎችን ወይም አስመጪዎችን በቀላሉ ይመዝግቡ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('final_posts') }}" class="quick-link-card qc-amber">
+        <div class="ql-icon c-amber"><i class="bi bi-clock-history"></i></div>
+        <div class="ql-title">ውሳኔ አሳሪፍ</div>
+        <p class="ql-desc">የተቀበሉትን ዕቃዎች ይመልከቱ፣ ያረጋግጡ እና ተገቢውን የመጨረሻ ውሳኔ ይስጡ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+      <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{url_for('user_management')}}" class="quick-link-card qc-navy">
+        <div class="ql-icon c-navy"><i class="bi bi-file-earmark-text-fill"></i></div>
+        <div class="ql-title">ተጠቃሚዎች</div>
+        <p class="ql-desc">የስርዓቱን ተጠቃሚዎች ያስተዳድሩ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

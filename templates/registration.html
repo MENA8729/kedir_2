@@ -1,0 +1,1637 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products & Importers | Registration</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#0f172a;
+  --navy-light:#1e293b;
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+  --border:#e2e8f0;
+  --muted:#64748b;
+  --bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
+
+.app-header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 4px rgba(15,23,42,.05);
+}
+
+.app-logo{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:700;
+  flex-shrink:0;
+}
+
+.app-brand{
+  font-weight:800;
+  color:var(--navy);
+  font-size:1.15rem;
+}
+
+.nav-link-app{
+  font-weight:600;
+  color:var(--muted)!important;
+  border-radius:9px;
+  padding:.5rem .75rem!important;
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  white-space:nowrap;
+  transition:.15s;
+}
+
+.nav-link-app:hover{
+  background:var(--bg);
+  color:var(--navy)!important;
+}
+
+.nav-link-app.active{
+  background:var(--blue-soft);
+  color:var(--blue)!important;
+  font-weight:700;
+}
+
+.nav-logout{
+  color:var(--red)!important;
+}
+
+.nav-logout:hover{
+  background:var(--red-soft);
+  color:var(--red)!important;
+}
+
+
+/* =========================================================
+   BEAUTIFUL HERO HEADER
+   ========================================================= */
+
+.hero-section{
+  position:relative;
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(15,23,42,.96),
+      rgba(15,23,42,.82),
+      rgba(30,41,59,.72)
+    ),
+    url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2000&q=85")
+    center/cover no-repeat;
+
+  padding:3rem 0;
+
+  border-radius:0 0 30px 30px;
+
+  box-shadow:0 10px 30px rgba(15,23,42,.18);
+}
+
+.hero-section::before{
+  content:"";
+  position:absolute;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  background:rgba(37,99,235,.18);
+  filter:blur(70px);
+  top:-150px;
+  right:-80px;
+}
+
+.hero-section::after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:rgba(22,163,74,.10);
+  filter:blur(70px);
+  bottom:-150px;
+  left:-80px;
+}
+
+.hero-section .page-container{
+  position:relative;
+  z-index:2;
+}
+
+.hero-eyebrow{
+  color:#93c5fd;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  margin-bottom:.4rem;
+}
+
+.hero-heading{
+  color:#fff;
+  font-weight:800;
+  font-size:clamp(1.6rem,3.5vw,2.2rem);
+  margin-bottom:.4rem;
+}
+
+.hero-subtitle{
+  color:rgba(255,255,255,.75);
+  font-size:.95rem;
+  max-width:480px;
+}
+
+.hero-icon-box{
+  width:68px;
+  height:68px;
+  border-radius:18px;
+  background:rgba(255,255,255,.11);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(10px);
+  box-shadow:0 8px 25px rgba(0,0,0,.15);
+  flex-shrink:0;
+}
+
+.hero-icon-box i{
+  font-size:1.7rem;
+}
+
+.stat-card{
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.17);
+  border-radius:16px;
+  padding:1rem 1.25rem;
+  backdrop-filter:blur(10px);
+  box-shadow:0 8px 25px rgba(0,0,0,.10);
+  transition:transform .2s ease,background .2s ease;
+}
+
+.stat-card:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.13);
+}
+
+.stat-number{
+  color:#fff;
+  font-weight:800;
+  font-size:1.6rem;
+  line-height:1;
+}
+
+.stat-label{
+  color:rgba(255,255,255,.7);
+  font-size:.8rem;
+  margin-top:.25rem;
+}
+
+
+.page-container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 1rem 3rem;
+}
+
+.form-toggle-bar{
+  display:flex;
+  gap:1rem;
+  margin-bottom:1.5rem;
+}
+
+.btn-form-toggle{
+  flex:1;
+  border:2px solid var(--border);
+  background:#fff;
+  border-radius:14px;
+  padding:1rem;
+  font-weight:700;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.6rem;
+  transition:.2s;
+}
+
+.btn-form-toggle.active-importer{
+  border-color:var(--blue);
+  background:var(--blue-soft);
+  color:var(--blue);
+}
+
+.btn-form-toggle.active-product{
+  border-color:var(--green);
+  background:var(--green-soft);
+  color:var(--green);
+}
+
+.reg-card{
+  background:#fff;
+  border-radius:18px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(15,23,42,.05);
+  overflow:hidden;
+}
+
+.reg-card-header{
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  background:#fafbfc;
+}
+
+.reg-card-header i{
+  font-size:1.2rem;
+}
+
+.reg-card-header.importer-head i{
+  color:var(--blue);
+}
+
+.reg-card-header.product-head i{
+  color:var(--green);
+}
+
+.reg-card-title{
+  font-weight:700;
+  font-size:1.05rem;
+  color:var(--navy);
+  margin:0;
+}
+
+.reg-card-body{
+  padding:1.5rem;
+}
+
+.entry-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.1rem;
+  margin-bottom:1rem;
+  position:relative;
+}
+
+.entry-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:.9rem;
+}
+
+.entry-badge{
+  font-weight:700;
+  color:var(--navy);
+  font-size:.9rem;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+
+.entry-badge .num{
+  background:var(--navy);
+  color:#fff;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+}
+
+.btn-remove-entry{
+  border:none;
+  background:transparent;
+  color:var(--red);
+  font-size:1rem;
+  padding:.2rem .4rem;
+  border-radius:6px;
+}
+
+.btn-remove-entry:hover{
+  background:var(--red-soft);
+}
+
+.form-label{
+  font-weight:600;
+  font-size:.85rem;
+  color:var(--navy);
+  margin-bottom:.35rem;
+}
+
+.form-control{
+  border-radius:9px;
+  border:1.5px solid var(--border);
+  padding:.6rem .8rem;
+  font-size:.95rem;
+}
+
+.form-control:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 .18rem rgba(37,99,235,.13);
+}
+
+.btn-add-entry{
+  width:100%;
+  border:2px dashed;
+  border-radius:12px;
+  padding:.75rem;
+  font-weight:600;
+  background:#fff;
+  transition:.15s;
+}
+
+.btn-add-entry.importer-add{
+  border-color:var(--blue);
+  color:var(--blue);
+}
+
+.btn-add-entry.importer-add:hover{
+  background:var(--blue-soft);
+}
+
+.btn-add-entry.product-add{
+  border-color:var(--green);
+  color:var(--green);
+}
+
+.btn-add-entry.product-add:hover{
+  background:var(--green-soft);
+}
+
+.submit-bar{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:1.25rem 1.5rem;
+  margin-top:1.5rem;
+  display:flex;
+  justify-content:flex-end;
+  box-shadow:0 4px 16px rgba(15,23,42,.05);
+}
+
+.btn-save-all{
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  border:none;
+  border-radius:12px;
+  padding:.8rem 2.2rem;
+  font-weight:700;
+  color:#fff;
+}
+
+.data-section{
+  background:#fff;
+  border-radius:18px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(15,23,42,.05);
+  margin-top:1.75rem;
+  overflow:hidden;
+}
+
+.data-section-header{
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.75rem;
+}
+
+.data-section-title{
+  font-weight:700;
+  color:var(--navy);
+  margin:0;
+  font-size:1.05rem;
+}
+
+table.app-table{
+  margin:0;
+}
+
+table.app-table thead th{
+  background:#fafbfc;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--muted);
+  font-weight:700;
+  border-bottom:1px solid var(--border);
+  padding:.85rem 1.25rem;
+  white-space:nowrap;
+}
+
+table.app-table tbody td{
+  padding:.85rem 1.25rem;
+  vertical-align:middle;
+  font-size:.9rem;
+  border-bottom:1px solid var(--border);
+}
+
+.status-badge{
+  font-size:.75rem;
+  font-weight:600;
+  padding:.3rem .7rem;
+  border-radius:50px;
+}
+
+.status-active{
+  background:var(--green-soft);
+  color:var(--green);
+}
+
+.status-flagged{
+  background:var(--red-soft);
+  color:var(--red);
+}
+
+.empty-state{
+  text-align:center;
+  padding:2.5rem 1rem;
+}
+
+.empty-state i{
+  font-size:2.5rem;
+  color:#cbd5e1;
+  margin-bottom:.75rem;
+  display:block;
+}
+
+.empty-state h6{
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:.3rem;
+}
+
+.empty-state p{
+  color:var(--muted);
+  font-size:.88rem;
+  margin-bottom:1rem;
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
+
+@media (max-width:991px){
+
+  .app-header .navbar-nav{
+    margin-top:.75rem;
+    padding-top:.5rem;
+    border-top:1px solid var(--border);
+  }
+
+  .nav-link-app{
+    padding:.65rem .75rem!important;
+  }
+
+}
+
+@media (max-width:576px){
+
+  .hero-section{
+    padding:2.2rem 0;
+    border-radius:0 0 24px 24px;
+  }
+
+  .hero-icon-box{
+    width:54px;
+    height:54px;
+    border-radius:14px;
+  }
+
+  .hero-icon-box i{
+    font-size:1.4rem;
+  }
+
+  .hero-heading{
+    font-size:1.5rem;
+  }
+
+  .hero-subtitle{
+    font-size:.82rem;
+  }
+
+  .stat-card{
+    padding:.85rem .6rem;
+  }
+
+  .stat-number{
+    font-size:1.35rem;
+  }
+
+  .stat-label{
+    font-size:.7rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVIGATION HEADER
+     ========================================================= -->
+
+<header class="app-header sticky-top">
+
+  <nav class="navbar navbar-expand-lg py-2">
+
+    <div class="container-fluid page-container">
+
+      <a class="navbar-brand d-flex align-items-center gap-2"
+         href="{{ url_for('dashboard') }}">
+
+        <span class="app-logo">
+          <i class="bi bi-boxes"></i>
+        </span>
+
+        <span class="app-brand">
+          CargoTrack
+        </span>
+
+      </a>
+
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mainNavigation"
+        aria-controls="mainNavigation"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+      <div
+        class="collapse navbar-collapse"
+        id="mainNavigation"
+      >
+
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
+          <!-- DASHBOARD -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link nav-link-app"
+              href="{{ url_for('dashboard') }}"
+            >
+
+              <i class="bi bi-speedometer2"></i>
+
+              Dashboard
+
+            </a>
+
+          </li>
+
+
+          <!-- POSTS -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link nav-link-app"
+              href="{{ url_for('posts') }}"
+            >
+
+              <i class="bi bi-file-earmark-text"></i>
+
+              Posts
+
+            </a>
+
+          </li>
+
+
+          <!-- NEW POST -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link nav-link-app"
+              href="{{ url_for('new_post') }}"
+            >
+
+              <i class="bi bi-plus-circle"></i>
+
+              New Post
+
+            </a>
+
+          </li>
+
+
+          <!-- IMPORTERS -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link nav-link-app"
+              href="{{ url_for('registration') }}"
+            >
+
+              <i class="bi bi-people"></i>
+
+              Importers
+
+            </a>
+
+          </li>
+
+
+          <!-- REGISTRATION - ACTIVE -->
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link nav-link-app active"
+              href="{{ url_for('registration') }}"
+            >
+
+              <i class="bi bi-person-plus"></i>
+
+              Registration
+
+            </a>
+
+          </li>
+
+
+          <!-- LOGOUT -->
+
+          <li class="nav-item ms-lg-1">
+
+            <a
+              class="nav-link nav-link-app nav-logout"
+              href="#"
+            >
+
+              <i class="bi bi-box-arrow-right"></i>
+
+              Logout
+
+            </a>
+
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+<!-- =========================================================
+     BEAUTIFUL HERO HEADER
+     ========================================================= -->
+
+<section class="hero-section">
+
+  <div class="page-container">
+
+    <div class="row align-items-center g-4">
+
+      <div class="col-lg-7">
+
+        <div class="d-flex align-items-center gap-3 mb-2">
+
+          <div class="hero-icon-box">
+
+            <i class="bi bi-boxes text-white"></i>
+
+          </div>
+
+          <div>
+
+            <div class="hero-eyebrow">
+              BUSINESS MANAGEMENT
+            </div>
+
+            <h1 class="hero-heading mb-0">
+              Products & Importers
+            </h1>
+
+          </div>
+
+        </div>
+
+        <div class="hero-subtitle mt-3">
+          Manage your registered importers and products in one organized place.
+        </div>
+
+      </div>
+
+
+      <div class="col-lg-5">
+
+        <div class="row g-3">
+
+          <div class="col-6">
+
+            <div class="stat-card text-center">
+
+              <div class="stat-number">
+                {{ total_products }}
+              </div>
+
+              <div class="stat-label">
+                Total Products
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-6">
+
+            <div class="stat-card text-center">
+
+              <div class="stat-number">
+                {{ total_importers }}
+              </div>
+
+              <div class="stat-label">
+                Total Importers
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<div class="page-container mt-4">
+
+  <!-- TOGGLE BUTTONS -->
+
+  <div class="form-toggle-bar">
+
+    <button
+      type="button"
+      class="btn-form-toggle active-importer"
+      id="toggleImporterBtn"
+    >
+
+      <i class="bi bi-people-fill fs-5"></i>
+
+      Importer Registration
+
+    </button>
+
+
+    <button
+      type="button"
+      class="btn-form-toggle"
+      id="toggleProductBtn"
+    >
+
+      <i class="bi bi-box-seam-fill fs-5"></i>
+
+      Product Registration
+
+    </button>
+
+  </div>
+
+
+  <!-- REGISTRATION FORM -->
+
+  <form method="POST" id="registrationForm" novalidate>
+
+    {{ form.hidden_tag() }}
+
+    <input
+      type="hidden"
+      name="active_tab"
+      id="activeTabInput"
+      value="importer"
+    >
+
+
+    <!-- IMPORTER SECTION -->
+
+    <div id="importerSectionWrapper">
+
+      <div class="reg-card">
+
+        <div class="reg-card-header importer-head">
+
+          <i class="bi bi-people-fill"></i>
+
+          <h5 class="reg-card-title">
+            Importer Details
+          </h5>
+
+        </div>
+
+        <div class="reg-card-body">
+
+          <div id="importersContainer">
+
+            {% for importer_form in form.importers %}
+
+            <div
+              class="entry-card importer-entry"
+              data-index="{{ loop.index0 }}"
+            >
+
+              <div class="entry-card-header">
+
+                <span class="entry-badge">
+
+                  <span class="num">
+                    {{ loop.index }}
+                  </span>
+
+                  Importer {{ '%02d'|format(loop.index) }}
+
+                </span>
+
+                <button
+                  type="button"
+                  class="btn-remove-entry remove-importer-btn {{ 'd-none' if loop.first and form.importers|length == 1 }}"
+                >
+
+                  <i class="bi bi-trash3"></i>
+
+                </button>
+
+              </div>
+
+
+              <div class="mb-3">
+
+                <label class="form-label">
+                  Importer Name
+                </label>
+
+                {{
+                  importer_form.form.name(
+                    class="form-control",
+                    placeholder="Enter importer name"
+                  )
+                }}
+
+              </div>
+
+
+              <div class="mb-0">
+
+                <label class="form-label">
+                  Phone Number
+                </label>
+
+                {{
+                  importer_form.form.phone(
+                    class="form-control",
+                    placeholder="Enter phone number"
+                  )
+                }}
+
+              </div>
+
+            </div>
+
+            {% endfor %}
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn btn-add-entry importer-add"
+            id="addImporterBtn"
+          >
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Add Additional Importer
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT SECTION -->
+
+    <div
+      id="productSectionWrapper"
+      class="d-none"
+    >
+
+      <div class="reg-card">
+
+        <div class="reg-card-header product-head">
+
+          <i class="bi bi-box-seam-fill"></i>
+
+          <h5 class="reg-card-title">
+            Product Details
+          </h5>
+
+        </div>
+
+        <div class="reg-card-body">
+
+          <div id="productsContainer">
+
+            {% for product_form in form.products %}
+
+            <div
+              class="entry-card product-entry"
+              data-index="{{ loop.index0 }}"
+            >
+
+              <div class="entry-card-header">
+
+                <span class="entry-badge">
+
+                  <span class="num">
+                    {{ loop.index }}
+                  </span>
+
+                  Product {{ '%02d'|format(loop.index) }}
+
+                </span>
+
+                <button
+                  type="button"
+                  class="btn-remove-entry remove-product-btn {{ 'd-none' if loop.first and form.products|length == 1 }}"
+                >
+
+                  <i class="bi bi-trash3"></i>
+
+                </button>
+
+              </div>
+
+
+              <div class="mb-0">
+
+                <label class="form-label">
+                  Product Name
+                </label>
+
+                {{
+                  product_form.form.name(
+                    class="form-control",
+                    placeholder="Enter product name"
+                  )
+                }}
+
+              </div>
+
+            </div>
+
+            {% endfor %}
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn btn-add-entry product-add"
+            id="addProductBtn"
+          >
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Add Additional Product
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="submit-bar">
+
+      <button
+        type="submit"
+        class="btn btn-save-all"
+        id="saveAllBtn"
+      >
+
+        <i class="bi bi-check2-circle me-2"></i>
+
+        Save Records
+
+      </button>
+
+    </div>
+
+  </form>
+
+
+  <!-- TABLES -->
+
+  <div
+    class="data-section"
+    id="importerTableSection"
+  >
+
+    <div class="data-section-header">
+
+      <h5 class="data-section-title">
+
+        <i class="bi bi-people me-2 text-primary"></i>
+
+        Recent Importers
+
+      </h5>
+
+    </div>
+
+
+    {% if recent_importers %}
+
+    <div class="table-responsive">
+
+      <table class="table app-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Importer</th>
+
+            <th>Phone</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          {% for imp in recent_importers %}
+
+          <tr>
+
+            <td class="fw-semibold">
+              {{ imp.name }}
+            </td>
+
+            <td>
+              {{ imp.phone }}
+            </td>
+
+            <td>
+
+              <span class="status-badge status-active">
+                Active
+              </span>
+
+            </td>
+
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+      <i class="bi bi-people"></i>
+
+      <h6>
+        No importers registered yet
+      </h6>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+
+  <div
+    class="data-section mb-4 d-none"
+    id="productTableSection"
+  >
+
+    <div class="data-section-header">
+
+      <h5 class="data-section-title">
+
+        <i class="bi bi-box-seam me-2 text-success"></i>
+
+        Recent Products
+
+      </h5>
+
+    </div>
+
+
+    {% if recent_products %}
+
+    <div class="table-responsive">
+
+      <table class="table app-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Product Name</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          {% for prod in recent_products %}
+
+          <tr>
+
+            <td class="fw-semibold">
+              {{ prod.name }}
+            </td>
+
+            <td>
+
+              <span class="status-badge status-active">
+                Active
+              </span>
+
+            </td>
+
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+      <i class="bi bi-box-seam"></i>
+
+      <h6>
+        No products registered yet
+      </h6>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  const toggleImporterBtn =
+    document.getElementById('toggleImporterBtn');
+
+  const toggleProductBtn =
+    document.getElementById('toggleProductBtn');
+
+  const importerWrapper =
+    document.getElementById('importerSectionWrapper');
+
+  const productWrapper =
+    document.getElementById('productSectionWrapper');
+
+  const importerTableSection =
+    document.getElementById('importerTableSection');
+
+  const productTableSection =
+    document.getElementById('productTableSection');
+
+  const activeTabInput =
+    document.getElementById('activeTabInput');
+
+
+  toggleImporterBtn.addEventListener('click', function() {
+
+    toggleImporterBtn.classList.add('active-importer');
+
+    toggleProductBtn.classList.remove('active-product');
+
+    importerWrapper.classList.remove('d-none');
+
+    productWrapper.classList.add('d-none');
+
+    importerTableSection.classList.remove('d-none');
+
+    productTableSection.classList.add('d-none');
+
+    activeTabInput.value = 'importer';
+
+  });
+
+
+  toggleProductBtn.addEventListener('click', function() {
+
+    toggleProductBtn.classList.add('active-product');
+
+    toggleImporterBtn.classList.remove('active-importer');
+
+    productWrapper.classList.remove('d-none');
+
+    importerWrapper.classList.add('d-none');
+
+    productTableSection.classList.remove('d-none');
+
+    importerTableSection.classList.add('d-none');
+
+    activeTabInput.value = 'product';
+
+  });
+
+
+  const importersContainer =
+    document.getElementById('importersContainer');
+
+  const productsContainer =
+    document.getElementById('productsContainer');
+
+  const addImporterBtn =
+    document.getElementById('addImporterBtn');
+
+  const addProductBtn =
+    document.getElementById('addProductBtn');
+
+
+  let importerIndex =
+    importersContainer.querySelectorAll('.importer-entry').length;
+
+  let productIndex =
+    productsContainer.querySelectorAll('.product-entry').length;
+
+
+  function buildImporterEntry(index) {
+
+    const wrapper =
+      document.createElement('div');
+
+    wrapper.className =
+      'entry-card importer-entry';
+
+    wrapper.dataset.index = index;
+
+    wrapper.innerHTML = `
+
+      <div class="entry-card-header">
+
+        <span class="entry-badge">
+
+          <span class="num">
+            ${index + 1}
+          </span>
+
+          Importer ${String(index + 1).padStart(2, '0')}
+
+        </span>
+
+        <button
+          type="button"
+          class="btn-remove-entry remove-importer-btn"
+        >
+
+          <i class="bi bi-trash3"></i>
+
+        </button>
+
+      </div>
+
+
+      <div class="mb-3">
+
+        <label class="form-label">
+          Importer Name
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          name="importers-${index}-name"
+          placeholder="Enter importer name"
+        >
+
+      </div>
+
+
+      <div class="mb-0">
+
+        <label class="form-label">
+          Phone Number
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          name="importers-${index}-phone"
+          placeholder="Enter phone number"
+        >
+
+      </div>
+
+    `;
+
+    return wrapper;
+
+  }
+
+
+  function buildProductEntry(index) {
+
+    const wrapper =
+      document.createElement('div');
+
+    wrapper.className =
+      'entry-card product-entry';
+
+    wrapper.dataset.index = index;
+
+    wrapper.innerHTML = `
+
+      <div class="entry-card-header">
+
+        <span class="entry-badge">
+
+          <span class="num">
+            ${index + 1}
+          </span>
+
+          Product ${String(index + 1).padStart(2, '0')}
+
+        </span>
+
+        <button
+          type="button"
+          class="btn-remove-entry remove-product-btn"
+        >
+
+          <i class="bi bi-trash3"></i>
+
+        </button>
+
+      </div>
+
+
+      <div class="mb-0">
+
+        <label class="form-label">
+          Product Name
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          name="products-${index}-name"
+          placeholder="Enter product name"
+        >
+
+      </div>
+
+    `;
+
+    return wrapper;
+
+  }
+
+
+  function reindexEntries(
+    container,
+    selector,
+    badgeLabel
+  ) {
+
+    const entries =
+      container.querySelectorAll(selector);
+
+    entries.forEach((entry, idx) => {
+
+      entry.dataset.index = idx;
+
+      const badgeNum =
+        entry.querySelector('.num');
+
+      const badgeText =
+        entry.querySelector('.entry-badge');
+
+
+      if (badgeNum) {
+        badgeNum.textContent = idx + 1;
+      }
+
+
+      if (badgeText) {
+
+        badgeText.childNodes[
+          badgeText.childNodes.length - 1
+        ].textContent =
+          ` ${badgeLabel} ${String(idx + 1).padStart(2, '0')}`;
+
+      }
+
+
+      entry.querySelectorAll('input').forEach(field => {
+
+        const nameAttr =
+          field.getAttribute('name');
+
+        if (nameAttr) {
+
+          field.setAttribute(
+            'name',
+            nameAttr.replace(
+              /-(\d+)-/,
+              `-${idx}-`
+            )
+          );
+
+        }
+
+      });
+
+
+      const removeBtn =
+        entry.querySelector('.btn-remove-entry');
+
+      if (removeBtn) {
+
+        removeBtn.classList.toggle(
+          'd-none',
+          entries.length <= 1
+        );
+
+      }
+
+    });
+
+  }
+
+
+  function attachRemoveHandler(
+    entry,
+    container,
+    selector,
+    badgeLabel
+  ) {
+
+    entry
+      .querySelector('.btn-remove-entry')
+      .addEventListener('click', function() {
+
+        entry.remove();
+
+        reindexEntries(
+          container,
+          selector,
+          badgeLabel
+        );
+
+      });
+
+  }
+
+
+  addImporterBtn.addEventListener('click', function() {
+
+    const entry =
+      buildImporterEntry(importerIndex++);
+
+    importersContainer.appendChild(entry);
+
+    attachRemoveHandler(
+      entry,
+      importersContainer,
+      '.importer-entry',
+      'Importer'
+    );
+
+    reindexEntries(
+      importersContainer,
+      '.importer-entry',
+      'Importer'
+    );
+
+  });
+
+
+  addProductBtn.addEventListener('click', function() {
+
+    const entry =
+      buildProductEntry(productIndex++);
+
+    productsContainer.appendChild(entry);
+
+    attachRemoveHandler(
+      entry,
+      productsContainer,
+      '.product-entry',
+      'Product'
+    );
+
+    reindexEntries(
+      productsContainer,
+      '.product-entry',
+      'Product'
+    );
+
+  });
+
+
+  importersContainer
+    .querySelectorAll('.importer-entry')
+    .forEach(e =>
+      attachRemoveHandler(
+        e,
+        importersContainer,
+        '.importer-entry',
+        'Importer'
+      )
+    );
+
+
+  productsContainer
+    .querySelectorAll('.product-entry')
+    .forEach(e =>
+      attachRemoveHandler(
+        e,
+        productsContainer,
+        '.product-entry',
+        'Product'
+      )
+    );
+
+});
+</script>
+
+</body>
+</html>
+

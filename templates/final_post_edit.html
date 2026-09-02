@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Final Post</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f172a;--navy-light:#1e293b;--green:#16a34a;--green-light:#22c55e;--green-soft:#f0fdf4;--border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;}
+*{box-sizing:border-box;}
+body{background:var(--bg);font-family:'Poppins',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
+.page-header{background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:2rem 1rem;border-radius:0 0 24px 24px;margin-bottom:-1.5rem;}
+.page-header h2{color:#fff;font-weight:800;margin:0;}
+.page-header p{color:rgba(255,255,255,.7);margin:.25rem 0 0;font-size:.85rem;}
+.main-container{max-width:760px;margin:0 auto;padding:0 1rem 3rem;position:relative;z-index:2;}
+.form-card{background:#fff;border-radius:18px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(15,23,42,.08);padding:1.5rem;margin-top:1.5rem;}
+.section-label{font-weight:600;color:var(--navy);font-size:.9rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+.section-label i{color:var(--green);}
+.form-control{padding:.65rem .85rem;border-radius:10px;border:1.5px solid var(--border);font-size:.95rem;}
+.form-control:focus{border-color:var(--green-light);box-shadow:0 0 0 .18rem rgba(34,197,94,.15);}
+.product-edit-card{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1rem;}
+.product-edit-title{font-weight:700;color:var(--navy);margin-bottom:.7rem;display:flex;justify-content:space-between;align-items:center;}
+.expected-badge{background:#e2e8f0;color:var(--navy);font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:6px;}
+.btn-save-edit{background:linear-gradient(135deg,var(--navy),var(--navy-light));border:none;border-radius:14px;padding:.9rem;font-weight:700;font-size:1.05rem;color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="main-container">
+    <h2><i class="bi bi-pencil-square me-2"></i>Edit Final Post</h2>
+    <p>Update importer, arrival details, wage, and receiving amounts.</p>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="form-card">
+    <form method="POST" id="editFinalPostForm" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-person-fill"></i>አስመጪ</label>
+        {{ form.importer_name(class="form-control" + (" is-invalid" if form.importer_name.errors else "")) }}
+        {% for error in form.importer_name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-telephone-fill"></i>ስልክ</label>
+        {{ form.importer_phone(class="form-control") }}
+      </div>
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-geo-alt-fill"></i>አድራሻ</label>
+        {{ form.location(class="form-control") }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-calendar-event-fill"></i>የመድረሻ ቀን</label>
+          {{ form.date(class="form-control" + (" is-invalid" if form.date.errors else "")) }}
+          {% for error in form.date.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-clock-fill"></i>የመድረሻ ሰዓት</label>
+          {{ form.time(class="form-control") }}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="section-label"><i class="bi bi-cash-coin"></i>በኋላ የተከፈለ ደመወዝ (ETB)</label>
+        {{ form.actual_wage_paid(class="form-control" + (" is-invalid" if form.actual_wage_paid.errors else "")) }}
+        {% for error in form.actual_wage_paid.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        <div class="form-text">Original wage: {{ "%.2f"|format(history.original_wage) }} ETB</div>
+      </div>
+
+      <h6 class="fw-bold mb-3" style="color:var(--navy);">Products</h6>
+      {% for item in receiver.items %}
+      <div class="product-edit-card">
+        <div class="product-edit-title">
+          <span>{{ item.post_history_item.product_name }}</span>
+          <span class="expected-badge">Expected: {{ item.post_history_item.expected_quantity|int if item.post_history_item.expected_quantity == item.post_history_item.expected_quantity|int else item.post_history_item.expected_quantity }}</span>
+        </div>
+        <div class="row g-2">
+          <div class="col-4">
+            <label class="form-label small fw-semibold">Received</label>
+            <input type="number" step="0.01" class="form-control" name="item-{{ item.id }}-received" value="{{ item.received_quantity if item.received_quantity is not none else '' }}">
+          </div>
+          <div class="col-4">
+            <label class="form-label small fw-semibold">Taxed</label>
+            <input type="number" step="0.01" class="form-control" name="item-{{ item.id }}-taxed" value="{{ item.taxed_quantity if item.taxed_quantity is not none else '' }}">
+          </div>
+          <div class="col-4">
+            <label class="form-label small fw-semibold">Tax (ETB)</label>
+            <input type="number" step="0.01" class="form-control" name="item-{{ item.id }}-tax" value="{{ item.tax_amount if item.tax_amount is not none else '' }}">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-save-edit w-100 mt-3">
+        <i class="bi bi-check2-circle me-2"></i>Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

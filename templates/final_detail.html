@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Detail — Full History</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f172a;--navy-light:#1e293b;--blue:#2563eb;--blue-soft:#eff6ff;
+  --red:#dc2626;--red-soft:#fef2f2;--amber:#d97706;--amber-soft:#fffbeb;
+  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
+
+/* ===== HEADER ===== */
+.app-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(15,23,42,.04);}
+.app-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+.app-brand{font-weight:800;color:var(--navy);font-size:1.15rem;}
+.nav-link-app{font-weight:500;color:var(--muted)!important;border-radius:8px;padding:.5rem .9rem!important;}
+.nav-link-app:hover{background:var(--bg);color:var(--navy)!important;}
+.nav-link-app.active{background:var(--blue-soft);color:var(--blue)!important;font-weight:600;}
+.user-chip{display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;border-radius:10px;background:var(--bg);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;}
+
+/* ===== HERO ===== */
+.hero-section{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:1.75rem 0;border-radius:0 0 20px 20px;}
+.hero-heading{color:#fff;font-weight:800;font-size:clamp(1.4rem,3vw,1.9rem);margin-bottom:.25rem;}
+.hero-subtitle{color:rgba(255,255,255,.75);font-size:.9rem;margin:0;}
+
+.page-container{max-width:1300px;margin:0 auto;padding:0 1rem 3rem;}
+
+/* ===== SEARCH ===== */
+.search-wrap{margin:1.5rem 0;}
+.search-box .input-group-text{background:#fff;border-right:none;border-radius:12px 0 0 12px;border:1.5px solid var(--border);}
+.search-box .form-control{border-left:none;border-radius:0 12px 12px 0;border:1.5px solid var(--border);padding:.7rem .9rem;}
+.search-box .form-control:focus{box-shadow:0 0 0 .18rem rgba(37,99,235,.13);border-color:var(--blue);}
+
+/* ===== CARD (same design language as final_posts.html) ===== */
+.fp-card{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(15,23,42,.06);overflow:hidden;height:100%;display:flex;flex-direction:column;}
+.fp-card.flagged{border-color:var(--red);box-shadow:0 4px 14px rgba(220,38,38,.15);}
+.fp-header{background:var(--navy);color:#fff;padding:.9rem 1rem;position:relative;}
+.fp-header .name{font-weight:700;font-size:.95rem;margin:0;}
+.fp-header .phone{font-size:.78rem;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:.35rem;margin-top:.15rem;}
+.flag-pill{position:absolute;top:.7rem;right:.7rem;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;display:flex;align-items:center;gap:.25rem;}
+.reset-pill{position:absolute;top:.7rem;left:.7rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:.62rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;}
+
+.fp-body{padding:.9rem 1rem;flex-grow:1;font-size:.82rem;}
+.fp-row{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid #f1f5f9;}
+.fp-row:last-child{border-bottom:none;}
+.fp-label{color:var(--muted);font-weight:600;}
+.fp-value{font-weight:600;text-align:right;}
+
+.fp-products{max-height:150px;overflow-y:auto;margin:.7rem 0;padding-right:.25rem;}
+.fp-products::-webkit-scrollbar{width:4px;}
+.fp-products::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px;}
+.fp-product-item{background:var(--bg);border-radius:9px;padding:.5rem .65rem;margin-bottom:.4rem;font-size:.74rem;border:1px solid var(--border);}
+.fp-product-item .pname{font-weight:700;color:var(--navy);margin-bottom:.25rem;}
+.fp-product-item .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:.15rem .5rem;color:var(--muted);}
+
+.fp-tax-total{background:var(--amber-soft);color:var(--amber);font-weight:700;font-size:.8rem;padding:.5rem .6rem;border-radius:9px;text-align:center;margin-top:.5rem;border:1px solid #fde68a;}
+
+/* ===== ACTIONS — only EDIT + FLAG here, no reset ===== */
+.fp-actions{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.85rem 1rem;border-top:1px solid var(--border);background:#fafbfc;}
+.fp-actions form{margin:0;}
+.btn-fp{width:100%;border-radius:9px;font-size:.75rem;font-weight:700;padding:.5rem .3rem;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;gap:.2rem;transition:.15s;line-height:1.1;}
+.btn-fp i{font-size:1rem;}
+.btn-fp-edit{background:#fff;border-color:var(--border);color:var(--navy);}
+.btn-fp-edit:hover{background:var(--bg);color:var(--navy);}
+.btn-fp-flag{background:#fff;border-color:var(--red);color:var(--red);}
+.btn-fp-flag:hover{background:var(--red-soft);color:var(--red);}
+.btn-fp-flag.is-flagged{background:var(--red);border-color:var(--red);color:#fff;}
+.btn-fp-flag.is-flagged:hover{background:#b91c1c;color:#fff;}
+
+.empty-state{text-align:center;padding:4rem 1rem;background:#fff;border-radius:18px;border:1px solid var(--border);}
+.empty-state i{font-size:3rem;color:#cbd5e1;margin-bottom:1rem;display:block;}
+.empty-state h5{font-weight:700;color:var(--navy);margin-bottom:.4rem;}
+
+@media (max-width:576px){
+  .hero-section{padding:1.4rem 0;border-radius:0 0 16px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header sticky-top">
+  <nav class="navbar navbar-expand-lg py-2">
+    <div class="container-fluid page-container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <span class="app-logo"><i class="bi bi-boxes"></i></span>
+        <span class="app-brand">CargoTrack</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('posts') }}"><i class="bi bi-file-earmark-text me-1"></i>Posts</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="#"><i class="bi bi-box-seam me-1"></i>Products</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="#"><i class="bi bi-people me-1"></i>Importers</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('registration') }}"><i class="bi bi-clipboard-plus me-1"></i>Registration</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app active" href="#"><i class="bi bi-archive-fill me-1"></i>Final Posts</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2 ms-lg-3">
+          <div class="dropdown">
+            <button class="btn user-chip border-0" data-bs-toggle="dropdown">
+              <span class="user-avatar">{{ current_user.name[0]|upper if current_user.is_authenticated else "U" }}</span>
+              <span class="fw-semibold small d-none d-md-inline">{{ current_user.name if current_user.is_authenticated else "User" }}</span>
+              <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+  <div class="page-container">
+    <h1 class="hero-heading mb-0">Final Detail — Full History</h1>
+    <p class="hero-subtitle">Complete record of all final posts, including ones removed from the active view.</p>
+  </div>
+</section>
+
+<div class="page-container">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- ===== SEARCH ===== -->
+  <div class="search-wrap">
+    <div class="search-box input-group" style="max-width:360px;">
+      <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" class="form-control" id="historySearchInput" placeholder="Search by name or phone...">
+    </div>
+  </div>
+
+  {% if final_posts %}
+  <div class="row g-3" id="historyGrid">
+    {% for fp in final_posts %}
+    {% set r = fp.receiver %}
+    {% set h = r.post_history %}
+    {% set importer = h.importer %}
+    <div class="col-6 col-md-4 col-lg-3 history-grid-item"
+         data-name="{{ h.importer_name|lower }}"
+         data-phone="{{ h.importer_phone|lower if h.importer_phone else '' }}">
+      <div class="fp-card {{ 'flagged' if importer and importer.is_red_flagged }}">
+
+        <div class="fp-header">
+          {% if fp.is_reset %}<span class="reset-pill"></span>{% endif %}
+          {% if importer and importer.is_red_flagged %}
+          <span class="flag-pill"><i class="bi bi-flag-fill"></i>FLAGGED</span>
+          {% endif %}
+          <p class="name">{{ h.importer_name }}</p>
+          <div class="phone"><i class="bi bi-telephone-fill"></i>{{ h.importer_phone or "—" }}</div>
+        </div>
+
+        <div class="fp-body">
+          <div class="fp-row"><span class="fp-label">አድራሻ</span><span class="fp-value">{{ h.location or "—" }}</span></div>
+          <div class="fp-row"><span class="fp-label">ዋና ደመወዝ</span><span class="fp-value">{{ "%.2f"|format(h.original_wage) }} ETB</span></div>
+          <div class="fp-row"><span class="fp-label">በኋላ የተከፈለ</span><span class="fp-value">{{ "%.2f"|format(r.actual_wage_paid) if r.actual_wage_paid is not none else "—" }} ETB</span></div>
+          <div class="fp-row"><span class="fp-label">ተጨማሪ ደመወዝ</span><span class="fp-value">{{ "%.2f"|format(r.additional_wage) if r.additional_wage is not none else "—" }} ETB</span></div>
+
+          <div class="fp-products">
+            {% for ri in r.items %}
+            <div class="fp-product-item">
+              <div class="pname">{{ ri.post_history_item.product_name }}</div>
+              <div class="pgrid">
+                <span>የተላከው: {{ ri.post_history_item.expected_quantity|int if ri.post_history_item.expected_quantity == ri.post_history_item.expected_quantity|int else ri.post_history_item.expected_quantity }}</span>
+                <span>የተቀበለው: {{ ri.received_quantity if ri.received_quantity is not none else "—" }}</span>
+                <span>የጠፋው: {{ ri.lost_quantity }}</span>
+                <span>ታክስ ብዛት: {{ ri.taxed_quantity if ri.taxed_quantity is not none else "—" }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="fp-tax-total">ጠቅላላ ታክስ: {{ "%.2f"|format(r.total_tax_amount) }} ETB</div>
+        </div>
+
+        <!-- ===== ACTIONS — EDIT + FLAG/UNFLAG only, no reset here ===== -->
+        <div class="fp-actions">
+          <a href="{{ url_for('edit_final_post', final_post_id=fp.id) }}" class="btn-fp btn-fp-edit">
+            <i class="bi bi-pencil-square"></i>EDIT
+          </a>
+          <form method="POST" action="{{ url_for('toggle_red_flag', final_post_id=fp.id) }}">
+            <button type="submit" class="btn-fp btn-fp-flag {{ 'is-flagged' if importer and importer.is_red_flagged }}">
+              <i class="bi bi-flag-fill"></i>{{ "UNFLAG" if importer and importer.is_red_flagged else "FLAG" }}
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="bi bi-archive"></i>
+    <h5>No history yet</h5>
+    <p class="text-muted mb-0">Final posts will appear here once created.</p>
+  </div>
+  {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('historySearchInput');
+  const gridItems = document.querySelectorAll('.history-grid-item');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      gridItems.forEach(item => {
+        const name = item.dataset.name || '';
+        const phone = item.dataset.phone || '';
+        item.style.display = (name.includes(query) || phone.includes(query)) ? '' : 'none';
+      });
+    });
+  }
+});
+</script>
+
+</body>
+</html>

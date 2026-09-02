@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Post</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#0f172a;--navy-light:#1e293b;--green:#16a34a;--green-light:#22c55e;--green-soft:#f0fdf4;
+  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);font-family:'Poppins',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
+
+.page-header{background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:2rem 1rem;border-radius:0 0 24px 24px;margin-bottom:-1.5rem;}
+.page-header h2{color:#fff;font-weight:800;margin:0;}
+.page-header p{color:rgba(255,255,255,.75);margin:.25rem 0 0;font-size:.9rem;}
+
+.main-container{max-width:720px;margin:0 auto;padding:0 1rem 3rem;position:relative;z-index:2;}
+
+.form-card{background:#fff;border-radius:18px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(15,23,42,.08);padding:1.5rem;margin-top:1.5rem;}
+
+.section-label{font-weight:600;color:var(--navy);font-size:.95rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.45rem;}
+.section-label i{color:var(--green);}
+.form-control,.form-select{padding:.7rem .9rem;border-radius:10px;border:1.5px solid var(--border);font-size:1rem;}
+.form-control:focus{border-color:var(--green-light);box-shadow:0 0 0 .2rem rgba(34,197,94,.15);}
+.invalid-feedback{display:block;}
+
+.current-img-preview{max-height:140px;border-radius:10px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,.1);}
+
+.product-card-box{background:#f8fafc;border-radius:14px;border:1px solid var(--border);padding:1.1rem;}
+.product-item{cursor:pointer;border:1.5px solid var(--border);border-radius:10px;padding:.75rem .9rem;transition:.15s;background:#fff;}
+.product-item:hover{border-color:#94a3b8;}
+.product-item.selected{background:var(--green-soft);border-color:var(--green-light);}
+.selection-indicator{font-size:1.1rem;width:22px;text-align:center;}
+.product-amount-input{width:80px;}
+
+.btn-save-edit{background:linear-gradient(135deg,var(--navy),var(--navy-light));border:none;border-radius:14px;padding:.9rem;font-weight:700;font-size:1.05rem;color:#fff;}
+.btn-save-edit:disabled{opacity:.75;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="main-container">
+    <h2><i class="bi bi-pencil-square me-2"></i>Edit Post</h2>
+    <p>Update importer, arrival details, and product amounts for this post.</p>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="form-card">
+    <form method="POST" enctype="multipart/form-data" id="editPostForm" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-person-fill"></i>የአስመጪው ስም</label>
+        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+        {% for error in form.name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-telephone-fill"></i>ስልክ ቁጥር</label>
+        {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else "")) }}
+        {% for error in form.phone.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-geo-alt-fill"></i>የአስመጪው አድራሻ</label>
+        {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else "")) }}
+        {% for error in form.location.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-camera-fill"></i>የምርቱ ፎቶ</label>
+        {% if post_group.img %}
+        <div class="mb-2">
+          <img src="{{ url_for('static', filename='uploads/' ~ post_group.img) }}" class="current-img-preview" alt="Current photo">
+          <div class="form-text">Current photo — upload a new one below only if you want to replace it.</div>
+        </div>
+        {% endif %}
+        {{ form.img(class="form-control") }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-calendar-event-fill"></i>የሚደርስበት ቀን</label>
+          {{ form.date(class="form-control" + (" is-invalid" if form.date.errors else "")) }}
+          {% for error in form.date.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-clock-fill"></i>የሚደርስበት ሰዓት <span class="text-muted fw-normal">(አማራጭ)</span></label>
+          {{ form.time(class="form-control") }}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="section-label"><i class="bi bi-cash-coin"></i>የማምጫ ዋጋ (ETB)</label>
+        <div class="input-group">
+          {{ form.wage(class="form-control" + (" is-invalid" if form.wage.errors else "")) }}
+          <span class="input-group-text">ETB</span>
+        </div>
+        {% for error in form.wage.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+      </div>
+
+      <!-- Products — pre-populated with existing amounts -->
+      <div class="product-card-box">
+        <label class="section-label mb-2"><i class="bi bi-bag-fill"></i>የምርት ዝርዝር <span class="text-muted fw-normal">(አማራጭ)</span></label>
+        <div class="input-group mb-3">
+          <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control" id="productSearchInput" placeholder="ምርት ፈልግ..." autocomplete="off">
+        </div>
+        <div class="d-flex flex-column gap-2 mb-3" id="productListContainer" style="max-height:260px;overflow-y:auto;">
+          {% for product in registered_products %}
+          {% set is_selected = product.id in selected_map %}
+          <div class="product-item d-flex align-items-center justify-content-between {{ 'selected' if is_selected }}"
+               data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+            <div class="d-flex align-items-center gap-2">
+              <span class="selection-indicator {{ 'text-success fw-bold' if is_selected else 'text-muted' }}">{{ '✓' if is_selected else '○' }}</span>
+              <span class="fw-medium">{{ product.name }}</span>
+            </div>
+            <div class="product-amount-wrapper d-flex align-items-center gap-2 {{ '' if is_selected else 'd-none' }}" onclick="event.stopPropagation();">
+              <span class="small text-muted">Total:</span>
+              <input type="number" min="1" value="{{ selected_map[product.id]|int if is_selected and selected_map[product.id] == selected_map[product.id]|int else (selected_map[product.id] if is_selected else 1) }}" class="form-control form-control-sm product-amount-input">
+              <input type="hidden" class="hidden-product-id-input" name="products-{{ product.id }}-id" value="{{ product.id if is_selected else '' }}">
+              <input type="hidden" class="hidden-product-amount-input" name="products-{{ product.id }}-amount" value="{{ selected_map[product.id] if is_selected else '' }}">
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-save-edit w-100 mt-4" id="saveEditBtn">
+        <span class="save-label"><i class="bi bi-check2-circle me-2"></i>Save Changes</span>
+        <span class="save-loading d-none"><span class="spinner-border spinner-border-sm me-2"></span>Saving...</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const productSearch = document.getElementById('productSearchInput');
+  const productItems = document.querySelectorAll('.product-item');
+  const form = document.getElementById('editPostForm');
+  const saveBtn = document.getElementById('saveEditBtn');
+
+  productSearch.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    productItems.forEach(item => {
+      const name = item.getAttribute('data-product-name').toLowerCase();
+      item.classList.toggle('d-none', !name.includes(query));
+    });
+  });
+
+  productItems.forEach(item => {
+    const indicator = item.querySelector('.selection-indicator');
+    const amountWrapper = item.querySelector('.product-amount-wrapper');
+    const amountInput = item.querySelector('.product-amount-input');
+    const hiddenIdInput = item.querySelector('.hidden-product-id-input');
+    const hiddenAmountInput = item.querySelector('.hidden-product-amount-input');
+    const productId = item.getAttribute('data-product-id');
+
+    item.addEventListener('click', function() {
+      const isSelected = item.classList.contains('selected');
+      if (!isSelected) {
+        item.classList.add('selected');
+        indicator.textContent = '✓';
+        indicator.className = 'selection-indicator text-success fw-bold';
+        amountWrapper.classList.remove('d-none');
+        hiddenIdInput.value = productId;
+        hiddenAmountInput.value = amountInput.value;
+      } else {
+        item.classList.remove('selected');
+        indicator.textContent = '○';
+        indicator.className = 'selection-indicator text-muted';
+        amountWrapper.classList.add('d-none');
+        hiddenIdInput.value = '';
+        hiddenAmountInput.value = '';
+      }
+    });
+
+    amountInput.addEventListener('input', function() {
+      hiddenAmountInput.value = this.value;
+    });
+  });
+
+  form.addEventListener('submit', function() {
+    saveBtn.disabled = true;
+    saveBtn.querySelector('.save-label').classList.add('d-none');
+    saveBtn.querySelector('.save-loading').classList.remove('d-none');
+  });
+});
+</script>
+
+</body>
+</html>

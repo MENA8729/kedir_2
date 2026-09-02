@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f172a;--navy-light:#1e293b;--blue:#2563eb;--blue-soft:#eff6ff;
+  --green:#16a34a;--green-soft:#f0fdf4;--red:#dc2626;--red-soft:#fef2f2;
+  --amber:#d97706;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;
+  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  font-family:'Inter','Noto Sans Ethiopic',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#1e293b;
+}
+
+/* ===== HEADER ===== */
+.app-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(15,23,42,.04);}
+.app-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+.app-brand{font-weight:800;color:var(--navy);font-size:1.15rem;}
+.nav-link-app{font-weight:500;color:var(--muted)!important;border-radius:8px;padding:.5rem .9rem!important;}
+.nav-link-app:hover{background:var(--bg);color:var(--navy)!important;}
+.nav-link-app.active{background:var(--blue-soft);color:var(--blue)!important;font-weight:600;}
+.user-chip{display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;border-radius:10px;background:var(--bg);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;}
+
+/* ===== HERO ===== */
+.hero-header{
+  position:relative;
+  min-height:200px;
+  display:flex;
+  align-items:center;
+  background:
+    linear-gradient(135deg, rgba(15,23,42,.9) 0%, rgba(30,58,95,.85) 60%, rgba(37,99,235,.75) 100%),
+    url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  padding:2.2rem 1rem;
+  border-radius:0 0 28px 28px;
+  box-shadow:0 12px 30px rgba(15,23,42,.25);
+}
+.hero-title{color:#fff;font-weight:800;font-size:clamp(1.4rem,3.5vw,2rem);margin-bottom:.35rem;text-shadow:0 2px 10px rgba(0,0,0,.25);}
+.hero-subtitle{color:rgba(255,255,255,.8);font-size:.88rem;margin:0;}
+
+.page-container{max-width:1300px;margin:0 auto;padding:0 1rem 3rem;}
+
+/* ===== USER TABLE / CARDS ===== */
+.users-wrap{margin-top:1.75rem;}
+.user-card{
+  background:#fff;border-radius:14px;border:1px solid var(--border);
+  box-shadow:0 3px 12px rgba(15,23,42,.05);padding:1.1rem 1.25rem;margin-bottom:1rem;
+}
+.user-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;flex-wrap:wrap;}
+.user-name{font-weight:700;color:var(--navy);font-size:.98rem;margin:0;}
+.user-email{color:var(--muted);font-size:.8rem;margin-top:.1rem;}
+
+.status-badge{font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:50px;white-space:nowrap;}
+.status-verified{background:var(--green-soft);color:var(--green);}
+.status-unverified{background:var(--amber-soft);color:var(--amber);}
+
+.role-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 .8rem;}
+.role-tag{font-size:.68rem;font-weight:700;padding:.2rem .55rem;border-radius:6px;}
+.role-tag.admin{background:var(--purple-soft);color:var(--purple);}
+.role-tag.sender{background:var(--blue-soft);color:var(--blue);}
+.role-tag.motorist{background:var(--amber-soft);color:var(--amber);}
+
+.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;}
+.action-row form{margin:0;}
+.btn-action{
+  width:100%;border-radius:8px;font-size:.72rem;font-weight:700;
+  padding:.5rem .3rem;border:1.5px solid var(--border);background:#fff;color:var(--navy);
+  transition:.15s;
+}
+.btn-action:hover{background:var(--bg);}
+.btn-action.active-verify{background:var(--green);border-color:var(--green);color:#fff;}
+.btn-action.active-admin{background:var(--purple);border-color:var(--purple);color:#fff;}
+.btn-action.active-sender{background:var(--blue);border-color:var(--blue);color:#fff;}
+.btn-action.active-motorist{background:var(--amber);border-color:var(--amber);color:#fff;}
+
+.empty-state{text-align:center;padding:3.5rem 1rem;background:#fff;border-radius:16px;border:1px solid var(--border);}
+.empty-state i{font-size:2.5rem;color:#cbd5e1;margin-bottom:.75rem;display:block;}
+
+@media (max-width:576px){
+  .action-row{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header sticky-top">
+  <nav class="navbar navbar-expand-lg py-2">
+    <div class="container-fluid page-container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('dashboard') }}">
+        <span class="app-logo"><i class="bi bi-boxes"></i></span>
+        <span class="app-brand">CargoTrack</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app active" href="{{ url_for('user_management') }}"><i class="bi bi-people-fill me-1"></i>ተጠቃሚዎች</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2 ms-lg-3">
+          <div class="dropdown">
+            <button class="btn user-chip border-0" data-bs-toggle="dropdown">
+              <span class="user-avatar">{{ current_user.name[0]|upper if current_user.is_authenticated else "U" }}</span>
+              <span class="fw-semibold small d-none d-md-inline">{{ current_user.name if current_user.is_authenticated else "User" }}</span>
+              <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<div class="hero-header">
+  <div class="page-container">
+    <h1 class="hero-title mb-0">የተጠቃሚዎች አስተዳደር</h1>
+    <p class="hero-subtitle">ተጠቃሚዎችን ያረጋግጡ እና ሚናዎችን (አስተዳዳሪ፣ ላኪ፣ ሹፌር) ያስተዳድሩ።</p>
+  </div>
+</div>
+
+<div class="page-container">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="users-wrap">
+    {% if users %}
+      {% for user in users %}
+      {% set is_admin = user.email in admin_emails %}
+      {% set is_sender = user.email in sender_emails %}
+      {% set is_motorist = user.email in motorist_emails %}
+      <div class="user-card">
+        <div class="user-top">
+          <div>
+            <p class="user-name">{{ user.name }}</p>
+            <div class="user-email">{{ user.email }}</div>
+          </div>
+          <span class="status-badge {{ 'status-verified' if user.is_verified else 'status-unverified' }}">
+            {{ "የተረጋገጠ" if user.is_verified else "ያልተረጋገጠ" }}
+          </span>
+        </div>
+
+        <div class="role-tags">
+          {% if is_admin %}<span class="role-tag admin"><i class="bi bi-shield-fill-check me-1"></i>አስተዳዳሪ</span>{% endif %}
+          {% if is_sender %}<span class="role-tag sender"><i class="bi bi-send-fill me-1"></i>ላኪ</span>{% endif %}
+          {% if is_motorist %}<span class="role-tag motorist"><i class="bi bi-truck me-1"></i>ሹፌር</span>{% endif %}
+        </div>
+
+        <div class="action-row">
+          <form method="POST" action="{{ url_for('toggle_verify_user', user_id=user.id) }}">
+            <button type="submit" class="btn-action {{ 'active-verify' if user.is_verified }}">
+              {{ "አላረጋግጥ" if user.is_verified else "አረጋግጥ" }}
+            </button>
+          </form>
+
+          <form method="POST" action="{{ url_for('toggle_admin_user', user_id=user.id) }}">
+            <button type="submit" class="btn-action {{ 'active-admin' if is_admin }}">
+              {{ "ከአስተዳዳሪ አስወግድ" if is_admin else "አድርገው አስተዳዳሪ" }}
+            </button>
+          </form>
+
+          <form method="POST" action="{{ url_for('toggle_sender_user', user_id=user.id) }}">
+            <button type="submit" class="btn-action {{ 'active-sender' if is_sender }}">
+              {{ "ከላኪ አስወግድ" if is_sender else "አድርገው ላኪ" }}
+            </button>
+          </form>
+
+          <form method="POST" action="{{ url_for('toggle_motorist_user', user_id=user.id) }}">
+            <button type="submit" class="btn-action {{ 'active-motorist' if is_motorist }}">
+              {{ "ከሹፌር አስወግድ" if is_motorist else "አድርገው ሹፌር" }}
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-people"></i>
+      <h5 class="fw-bold" style="color:var(--navy);">ምንም ተጠቃሚ አልተገኘም</h5>
+      <p class="text-muted mb-0">Users will appear here once registered.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

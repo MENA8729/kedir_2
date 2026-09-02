@@ -1,0 +1,673 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-success alert-dismissible fade show flash-message" role="alert">
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<style>
+    .flash-message {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.1px;
+        padding: 8px 12px;
+        margin: 10px auto;
+        max-width: 500px;
+        border-radius: 7px;
+    } </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>የአዲስ ጥቅል ማስመዝገቢያ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#0f172a;
+  --navy-light:#1e3a5f;
+  --blue:#2563eb;
+  --blue-soft:#eff6ff;
+  --green:#16a34a;
+  --green-light:#22c55e;
+  --green-soft:#f0fdf4;
+  --red:#dc2626;
+  --red-soft:#fef2f2;
+  --border:#e2e8f0;
+  --muted:#64748b;
+}
+*{box-sizing:border-box;}
+body{
+  background:#f4f6f9;
+  font-family:'Poppins',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#1e293b;
+}
+
+/* ===== HEADER (matching dashboard.html / posts.html) ===== */
+.app-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(15,23,42,.04);}
+.app-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+.app-brand{font-weight:800;color:var(--navy);font-size:1.15rem;}
+.nav-link-app{font-weight:500;color:var(--muted)!important;border-radius:8px;padding:.5rem .9rem!important;}
+.nav-link-app:hover{background:#f4f6f9;color:var(--navy)!important;}
+.nav-link-app.active{background:var(--blue-soft);color:var(--blue)!important;font-weight:600;}
+.user-chip{display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;border-radius:10px;background:#f4f6f9;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;}
+.header-page-container{max-width:1300px;margin:0 auto;padding:0 1rem;}
+
+/* ============ HERO ============ */
+.hero-header{
+  position:relative;
+  min-height:230px;
+  display:flex;
+  align-items:center;
+  background:
+    linear-gradient(135deg, rgba(15,23,42,.88) 0%, rgba(30,58,95,.82) 50%, rgba(22,101,52,.82) 100%),
+    url('https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  padding:2.4rem 1rem;
+  border-radius:0 0 32px 32px;
+  box-shadow:0 12px 30px rgba(15,23,42,.28);
+  overflow:hidden;
+}
+.hero-inner{position:relative;z-index:2;max-width:800px;margin:0 auto;text-align:center;width:100%;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+  color:#d1fae5;font-size:.75rem;font-weight:600;letter-spacing:.04em;
+  padding:.35rem .9rem;border-radius:50px;margin-bottom:.9rem;backdrop-filter:blur(6px);
+}
+.hero-badge i{color:#4ade80;}
+.hero-title{color:#fff;font-weight:800;font-size:clamp(1.5rem,4vw,2.3rem);margin-bottom:.5rem;line-height:1.3;text-shadow:0 2px 12px rgba(0,0,0,.3);}
+.hero-subtitle{color:rgba(255,255,255,.88);font-size:.95rem;max-width:520px;margin:0 auto;}
+@media (max-width:576px){
+  .hero-header{min-height:180px;padding:1.8rem 1rem;}
+}
+/* ============ END HERO ============ */
+
+.main-container{max-width:760px;margin:0 auto;padding:0 1rem 3rem;position:relative;z-index:3;margin-top:-2rem;}
+
+.post-card{
+  background:#fff;border-radius:18px;
+  box-shadow:0 8px 24px rgba(15,23,42,.08);
+  border:1px solid var(--border);
+  margin-bottom:1.75rem;overflow:hidden;
+  transition:border-color .2s, box-shadow .2s;
+}
+.post-card.is-flagged{border-color:var(--red);box-shadow:0 8px 24px rgba(220,38,38,.15);}
+.post-card-header{
+  background:linear-gradient(135deg,#f8fafc,#eef2f7);
+  padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.post-title{font-weight:700;color:var(--navy);margin:0;font-size:1.15rem;display:flex;align-items:center;gap:.5rem;}
+.post-title .num-badge{
+  background:var(--navy);color:#fff;width:30px;height:30px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;
+}
+.post-body{padding:1.5rem;}
+
+.section-label{
+  font-weight:600;color:var(--navy);font-size:.95rem;margin-bottom:.5rem;
+  display:flex;align-items:center;gap:.45rem;
+}
+.section-label i{color:var(--green);}
+
+.form-control, .form-select{
+  padding:.7rem .9rem;border-radius:10px;border:1.5px solid var(--border);font-size:1rem;
+}
+.form-control:focus, .form-select:focus{
+  border-color:var(--green-light);box-shadow:0 0 0 .2rem rgba(34,197,94,.15);
+}
+.input-group-text{background:#fff;border:1.5px solid var(--border);border-right:none;border-radius:10px 0 0 10px;}
+.input-group .form-control{border-left:none;border-radius:0 10px 10px 0;}
+
+.date-readable{font-size:.82rem;color:var(--muted);margin-top:.35rem;padding-left:.2rem;}
+
+/* Red flag warning */
+.red-flag-alert{
+  display:none;
+  align-items:flex-start;gap:.7rem;
+  background:var(--red-soft);border:1.5px solid var(--red);border-radius:12px;
+  padding:.9rem 1rem;margin-bottom:1rem;
+}
+.red-flag-alert.show{display:flex;}
+.red-flag-alert i{color:var(--red);font-size:1.4rem;flex-shrink:0;margin-top:.1rem;}
+.red-flag-alert .rf-title{font-weight:700;color:var(--red);font-size:.95rem;margin-bottom:.15rem;}
+.red-flag-alert .rf-reason{font-size:.85rem;color:#7f1d1d;margin:0;}
+
+/* Importer dropdown */
+.importer-dropdown{border-radius:10px;border:1px solid var(--border)!important;}
+.importer-option{padding:.55rem 1rem;font-size:.95rem;}
+.importer-option:hover{background:var(--green-soft);}
+.importer-add-new{
+  padding:.6rem 1rem;font-size:.9rem;color:var(--green);font-weight:600;
+  border-top:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:.4rem;
+}
+.importer-add-new:hover{background:var(--green-soft);}
+.importer-not-found{padding:.55rem 1rem;font-size:.85rem;}
+
+/* Upload dropzone */
+.upload-dropzone{
+  border:2px dashed #cbd5e1;border-radius:14px;background:#f8fafc;
+  text-align:center;padding:1.75rem 1rem;cursor:pointer;transition:.2s;
+}
+.upload-dropzone:hover{border-color:var(--green-light);background:var(--green-soft);}
+.preview-img{max-height:140px;border-radius:10px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,.1);}
+
+/* Product card */
+.product-card-box{background:#f8fafc;border-radius:14px;border:1px solid var(--border);padding:1.1rem;}
+.product-item{
+  cursor:pointer;border:1.5px solid var(--border);border-radius:10px;
+  padding:.75rem .9rem;transition:.15s;background:#fff;
+}
+.product-item:hover{border-color:#94a3b8;}
+.product-item.selected{background:var(--green-soft);border-color:var(--green-light);}
+.selection-indicator{font-size:1.1rem;width:22px;text-align:center;}
+.product-amount-input{width:80px;}
+
+.selected-products-summary{
+  background:#fff;border:1px dashed var(--border);border-radius:10px;padding:.6rem .9rem;font-size:.87rem;
+}
+
+/* Buttons */
+.btn-add-post{
+  border:2px dashed var(--green-light);color:var(--green);font-weight:600;border-radius:14px;padding:.9rem;
+  background:#fff;transition:.2s;
+}
+.btn-add-post:hover{background:var(--green-soft);color:var(--green);border-color:var(--green);}
+.btn-remove-post{border-radius:8px;}
+.btn-submit-all{
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  border:none;border-radius:16px;padding:1rem;font-weight:700;font-size:1.1rem;
+  box-shadow:0 8px 20px rgba(15,23,42,.25);transition:.2s;
+}
+.btn-submit-all:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(15,23,42,.32);}
+.btn-submit-all:disabled{opacity:.75;transform:none;}
+
+@media (max-width:576px){
+  .post-body{padding:1.1rem;}
+  .product-item{padding:.65rem .7rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header sticky-top">
+  <nav class="navbar navbar-expand-lg py-2">
+    <div class="container-fluid header-page-container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('dashboard') }}">
+        <span class="app-logo"><i class="bi bi-boxes"></i></span>
+        <span class="app-brand">CargoTrack</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link nav-link-app active" href="{{ url_for('new_post') }}"><i class="bi bi-plus-circle me-1"></i>አዲስ ዕቃ ላክ</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('posts') }}"><i class="bi bi-file-earmark-text me-1"></i>ያልተቀበሉት</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('post_history_list') }}"><i class="bi bi-clock-history me-1"></i>የተቀበሉት ዕቃዎች</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('final_detail') }}"><i class="bi bi-archive-fill me-1"></i>የመጨረሻ ውሳኔ ያገኙ</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-app" href="{{ url_for('registration') }}"><i class="bi bi-clipboard-plus me-1"></i>ምዝገባ</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2 ms-lg-3">
+          <div class="dropdown">
+            <button class="btn user-chip border-0" data-bs-toggle="dropdown">
+              <span class="user-avatar">{{ current_user.name[0]|upper if current_user.is_authenticated else "U" }}</span>
+              <span class="fw-semibold small d-none d-md-inline">{{ current_user.name if current_user.is_authenticated else "User" }}</span>
+              <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="hero-header">
+  <div class="hero-inner">
+    <span class="hero-badge"><i class="bi bi-box-seam-fill"></i> የጥቅል አስተዳደር ስርዓት</span>
+    <h2 class="hero-title">የአዲስ ጥቅል ማስመዝገቢያ</h2>
+    <p class="hero-subtitle">የሚመጡ ጥቅሎችን እና ምርቶችን ለመሰብሰብ በቀላሉ ያስመዝግቡ</p>
+  </div>
+</div>
+
+<div class="main-container">
+  <form method="POST" enctype="multipart/form-data" id="mainPostForm" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+    <div id="postsContainer"></div>
+
+    <button type="button" class="btn btn-add-post w-100 mb-4" id="addPostBtn">
+      <i class="bi bi-plus-lg me-2"></i> Add Another Post
+    </button>
+
+    <button type="submit" class="btn btn-submit-all btn-dark text-white w-100" id="submitAllBtn">
+      <span class="submit-label"><i class="bi bi-send-fill me-2"></i>POST ALL</span>
+      <span class="submit-loading d-none"><span class="spinner-border spinner-border-sm me-2"></span>Posting...</span>
+    </button>
+  </form>
+</div>
+
+<template id="postTemplate">
+  <div class="post-card" data-post-index="__INDEX__">
+    <div class="post-card-header">
+      <h4 class="post-title"><span class="num-badge">__NUM__</span> Post #__NUM__</h4>
+      <button type="button" class="btn btn-outline-danger btn-sm btn-remove-post remove-post-btn d-none">
+        <i class="bi bi-trash me-1"></i>Remove
+      </button>
+    </div>
+
+    <div class="post-body">
+      <!-- Red flag alert -->
+      <div class="red-flag-alert">
+        <i class="bi bi-exclamation-octagon-fill"></i>
+        <div>
+          <div class="rf-title">🚫 RED FLAGGED</div>
+          <p class="rf-reason">This sender requires administrator attention before processing.</p>
+        </div>
+      </div>
+
+      <!-- Importer -->
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-person-fill"></i>የአስመጪው ስም</label>
+        <div class="position-relative">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control importer-search-input" name="posts-__INDEX__-name" placeholder="የአስመጪ ስም ይፈልጉ..." autocomplete="off" required>
+          </div>
+          <input type="hidden" class="importer-id-hidden">
+          <div class="dropdown-menu w-100 shadow-sm importer-dropdown mt-1" style="max-height:220px;overflow-y:auto;">
+            {% for imp in registered_importers|default([]) %}
+            <a href="#" class="dropdown-item importer-option" data-name="{{ imp.name }}" data-id="{{ imp.id }}">{{ imp.name }}</a>
+            {% endfor %}
+            <div class="importer-not-found text-muted fst-italic d-none">አስመጪው አልተገኘም</div>
+            <div class="importer-add-new d-none"><i class="bi bi-plus-circle-fill"></i><span>Add "<span class="new-name"></span>" as a new importer</span></div>
+          </div>
+        </div>
+        <div class="invalid-feedback">እባክዎ የአስመጪውን ስም ያስገቡ።</div>
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-telephone-fill"></i>ስልክ ቁጥር</label>
+        <input type="text" name="posts-__INDEX__-phone" class="form-control phone-input" maxlength="20" placeholder="09..." required>
+        <div class="invalid-feedback">እባክዎ ትክክለኛ ስልክ ቁጥር ያስገቡ።</div>
+      </div>
+
+      <!-- Address -->
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-geo-alt-fill"></i>የአስመጪው አድራሻ</label>
+        <input type="text" name="posts-__INDEX__-location" class="form-control" maxlength="200" placeholder="ለምሳሌ፦ አራት ኪሎ" required>
+        <div class="invalid-feedback">እባክዎ አድራሻ ያስገቡ።</div>
+      </div>
+
+      <!-- Photo -->
+      <div class="mb-3">
+        <label class="section-label"><i class="bi bi-camera-fill"></i>የምርቱ ፎቶ</label>
+        <div class="upload-dropzone file-upload-area">
+          <div class="upload-prompt">
+            <i class="bi bi-cloud-arrow-up fs-2 text-muted"></i>
+            <p class="mb-0 text-muted small mt-1">ፎቶ ለመምረጥ እዚህ ይጫኑ</p>
+          </div>
+          <input type="file" name="posts-__INDEX__-img" class="form-control d-none file-input" accept="image/*" required>
+          <div class="preview-container d-none mt-2 text-center">
+            <img src="" alt="Preview" class="preview-img img-thumbnail">
+            <p class="file-name text-muted small mt-1 mb-0"></p>
+            <button type="button" class="btn btn-sm btn-link text-danger remove-file-btn p-0 mt-1">ፎቶውን ቀይር/አጥፋ</button>
+          </div>
+        </div>
+        <div class="invalid-feedback">እባክዎ የምርት ፎቶ ይምረጡ።</div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-calendar-event-fill"></i>የሚደርስበት ቀን</label>
+          <input type="date" name="posts-__INDEX__-date" class="form-control date-input" required>
+          <div class="date-readable"></div>
+          <div class="invalid-feedback">እባክዎ የመድረሻ ቀን ይምረጡ።</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="section-label"><i class="bi bi-clock-fill"></i>የሚደርስበት ሰዓት <span class="text-muted fw-normal">(አማራጭ)</span></label>
+          <input type="time" name="posts-__INDEX__-time" class="form-control">
+        </div>
+      </div>
+
+      <!-- Wage -->
+      <div class="mb-4">
+        <label class="section-label"><i class="bi bi-cash-coin"></i>የማምጫ ዋጋ (ETB)</label>
+        <div class="input-group">
+          <input type="number" step="0.01" name="posts-__INDEX__-wage" class="form-control" placeholder="0.00" required>
+          <span class="input-group-text">ETB</span>
+        </div>
+        <div class="invalid-feedback">እባክዎ ትክክለኛ ዋጋ ያስገቡ።</div>
+      </div>
+
+      <!-- Products -->
+      <div class="product-card-box">
+        <label class="section-label mb-2"><i class="bi bi-bag-fill"></i>የምርት ዝርዝር <span class="text-muted fw-normal">(አማራጭ)</span></label>
+        <div class="input-group mb-3">
+          <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control product-search-input" placeholder="ምርት ፈልግ..." autocomplete="off">
+        </div>
+        <div class="product-list-container d-flex flex-column gap-2 mb-3" style="max-height:230px;overflow-y:auto;">
+          {% for product in registered_products|default([]) %}
+          <div class="product-item d-flex align-items-center justify-content-between" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+            <div class="d-flex align-items-center gap-2">
+              <span class="selection-indicator text-muted">○</span>
+              <span class="fw-medium product-name-label">{{ product.name }}</span>
+            </div>
+            <div class="product-amount-wrapper d-none align-items-center gap-2" onclick="event.stopPropagation();">
+              <span class="small text-muted">Total:</span>
+              <input type="number" min="1" value="1" class="form-control form-control-sm product-amount-input">
+              <input type="hidden" class="hidden-product-id-input">
+              <input type="hidden" class="hidden-product-amount-input">
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="selected-products-summary text-muted fst-italic">ምንም ምርት አልተመረጠም።</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let postIndexCounter = 0;
+  const postsContainer = document.getElementById('postsContainer');
+  const postTemplate = document.getElementById('postTemplate');
+  const addPostBtn = document.getElementById('addPostBtn');
+  const mainForm = document.getElementById('mainPostForm');
+  const submitBtn = document.getElementById('submitAllBtn');
+  const RED_FLAG_URL = "{{ url_for('check_red_flag') }}";
+
+  addNewPost();
+  addPostBtn.addEventListener('click', addNewPost);
+
+  function addNewPost() {
+    const currentIndex = postIndexCounter++;
+    const rendered = postTemplate.innerHTML
+      .replaceAll('__INDEX__', currentIndex)
+      .replaceAll('__NUM__', currentIndex + 1);
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = rendered;
+    const postElement = wrapper.firstElementChild;
+
+    postsContainer.appendChild(postElement);
+    initPostModule(postElement, currentIndex);
+    updatePostUIState();
+    postElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updatePostUIState() {
+    const postCards = postsContainer.querySelectorAll('.post-card');
+    postCards.forEach((card, idx) => {
+      const numBadge = card.querySelector('.num-badge');
+      const titleText = card.querySelector('.post-title');
+      if (numBadge) numBadge.textContent = idx + 1;
+      if (titleText) {
+        titleText.childNodes[titleText.childNodes.length - 1].textContent = ` Post #${idx + 1}`;
+      }
+      const removeBtn = card.querySelector('.remove-post-btn');
+      if (removeBtn) removeBtn.classList.toggle('d-none', postCards.length <= 1);
+    });
+  }
+
+  function formatReadableDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function debounce(fn, delay) {
+    let timer = null;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  function initPostModule(postEl, index) {
+    // Remove post
+    postEl.querySelector('.remove-post-btn').addEventListener('click', function() {
+      postEl.remove();
+      updatePostUIState();
+    });
+
+    // Date readable display
+    const dateInput = postEl.querySelector('.date-input');
+    const dateReadable = postEl.querySelector('.date-readable');
+    dateInput.addEventListener('change', function() {
+      dateReadable.textContent = this.value ? '📅 ' + formatReadableDate(this.value) : '';
+    });
+
+    // File upload preview
+    const dropzone = postEl.querySelector('.file-upload-area');
+    const fileInput = postEl.querySelector('.file-input');
+    const promptEl = postEl.querySelector('.upload-prompt');
+    const previewContainer = postEl.querySelector('.preview-container');
+    const previewImg = postEl.querySelector('.preview-img');
+    const fileNameEl = postEl.querySelector('.file-name');
+    const removeFileBtn = postEl.querySelector('.remove-file-btn');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          fileNameEl.textContent = file.name;
+          promptEl.classList.add('d-none');
+          previewContainer.classList.remove('d-none');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    removeFileBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      fileInput.value = '';
+      previewImg.src = '';
+      fileNameEl.textContent = '';
+      previewContainer.classList.add('d-none');
+      promptEl.classList.remove('d-none');
+    });
+
+    // Importer search / select / add-new
+    const importerInput = postEl.querySelector('.importer-search-input');
+    const hiddenImporterId = postEl.querySelector('.importer-id-hidden');
+    const importerDropdown = postEl.querySelector('.importer-dropdown');
+    const importerOptions = postEl.querySelectorAll('.importer-option');
+    const importerNotFound = postEl.querySelector('.importer-not-found');
+    const addNewRow = postEl.querySelector('.importer-add-new');
+    const newNameSpan = postEl.querySelector('.new-name');
+
+    importerInput.addEventListener('focus', () => importerDropdown.classList.add('show'));
+
+    importerInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      hiddenImporterId.value = '';
+      let matchCount = 0;
+
+      importerOptions.forEach(opt => {
+        const match = opt.textContent.toLowerCase().includes(query);
+        opt.classList.toggle('d-none', !match);
+        if (match) matchCount++;
+      });
+
+      if (matchCount === 0 && query.length > 0) {
+        importerNotFound.classList.remove('d-none');
+        addNewRow.classList.remove('d-none');
+        newNameSpan.textContent = this.value;
+      } else {
+        importerNotFound.classList.add('d-none');
+        addNewRow.classList.add('d-none');
+      }
+      importerDropdown.classList.add('show');
+      runRedFlagCheck();
+    });
+
+    importerOptions.forEach(opt => {
+      opt.addEventListener('click', function(e) {
+        e.preventDefault();
+        const val = this.getAttribute('data-name');
+        importerInput.value = val;
+        hiddenImporterId.value = this.getAttribute('data-id');
+        importerDropdown.classList.remove('show');
+        runRedFlagCheck();
+      });
+    });
+
+    addNewRow.addEventListener('click', function() {
+      hiddenImporterId.value = '';
+      importerDropdown.classList.remove('show');
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!postEl.contains(e.target)) importerDropdown.classList.remove('show');
+    });
+
+    // Red flag check
+    const phoneInput = postEl.querySelector('.phone-input');
+    const redFlagAlert = postEl.querySelector('.red-flag-alert');
+    const redFlagReasonEl = postEl.querySelector('.rf-reason');
+
+    const runRedFlagCheck = debounce(function() {
+      const name = importerInput.value.trim();
+      const phone = phoneInput.value.trim();
+
+      if (!name && !phone) {
+        setRedFlagState(false);
+        return;
+      }
+
+      const params = new URLSearchParams({ name: name, phone: phone });
+      fetch(`${RED_FLAG_URL}?${params.toString()}`)
+        .then(res => res.json())
+        .then(data => {
+          setRedFlagState(!!data.red_flagged, data.reason);
+        })
+        .catch(() => {
+          // Fail silently on the frontend — backend re-checks at submit anyway
+        });
+    }, 500);
+
+    function setRedFlagState(isFlagged, reason) {
+      postEl.classList.toggle('is-flagged', isFlagged);
+      redFlagAlert.classList.toggle('show', isFlagged);
+      if (isFlagged) {
+        redFlagReasonEl.textContent = reason || 'This sender requires administrator attention before processing.';
+      }
+    }
+
+    importerInput.addEventListener('input', runRedFlagCheck);
+    phoneInput.addEventListener('input', runRedFlagCheck);
+
+    // Product search / select
+    const productSearch = postEl.querySelector('.product-search-input');
+    const productItems = postEl.querySelectorAll('.product-item');
+    const summaryContainer = postEl.querySelector('.selected-products-summary');
+
+    productSearch.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      productItems.forEach(item => {
+        const name = item.getAttribute('data-product-name').toLowerCase();
+        item.classList.toggle('d-none', !name.includes(query));
+      });
+    });
+
+    productItems.forEach(item => {
+      const indicator = item.querySelector('.selection-indicator');
+      const amountWrapper = item.querySelector('.product-amount-wrapper');
+      const amountInput = item.querySelector('.product-amount-input');
+      const hiddenIdInput = item.querySelector('.hidden-product-id-input');
+      const hiddenAmountInput = item.querySelector('.hidden-product-amount-input');
+      const productId = item.getAttribute('data-product-id');
+
+      hiddenIdInput.name = `posts-${index}-products-${productId}-id`;
+      hiddenAmountInput.name = `posts-${index}-products-${productId}-amount`;
+
+      item.addEventListener('click', function() {
+        const isSelected = item.classList.contains('selected');
+        if (!isSelected) {
+          item.classList.add('selected');
+          indicator.textContent = '✓';
+          indicator.className = 'selection-indicator text-success fw-bold';
+          amountWrapper.classList.remove('d-none');
+          amountWrapper.classList.add('d-flex');
+          hiddenIdInput.value = productId;
+          hiddenAmountInput.value = amountInput.value;
+        } else {
+          item.classList.remove('selected');
+          indicator.textContent = '○';
+          indicator.className = 'selection-indicator text-muted';
+          amountWrapper.classList.remove('d-flex');
+          amountWrapper.classList.add('d-none');
+          hiddenIdInput.value = '';
+          hiddenAmountInput.value = '';
+        }
+        updateSummary();
+      });
+
+      amountInput.addEventListener('input', function() {
+        hiddenAmountInput.value = this.value;
+        updateSummary();
+      });
+    });
+
+    function updateSummary() {
+      const selectedItems = postEl.querySelectorAll('.product-item.selected');
+      if (selectedItems.length === 0) {
+        summaryContainer.textContent = "ምንም ምርት አልተመረጠም።";
+        return;
+      }
+      const parts = [];
+      selectedItems.forEach(item => {
+        const name = item.getAttribute('data-product-name');
+        const qty = item.querySelector('.product-amount-input').value || 1;
+        parts.push(`${name} × ${qty}`);
+      });
+      summaryContainer.textContent = "Selected: " + parts.join(" • ");
+    }
+  }
+
+  // Validation + submit loading state
+  mainForm.addEventListener('submit', function(event) {
+    if (!mainForm.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+      const firstInvalid = mainForm.querySelector(':invalid');
+      if (firstInvalid) firstInvalid.closest('.post-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.querySelector('.submit-label').classList.add('d-none');
+      submitBtn.querySelector('.submit-loading').classList.remove('d-none');
+    }
+    mainForm.classList.add('was-validated');
+  }, false);
+});
+</script>
+
+</body>
+</html>

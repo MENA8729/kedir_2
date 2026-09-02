@@ -58,16 +58,8 @@ from datetime import date, timedelta, datetime
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', '8BYkEfBA6O6donzWlSihBXox7C0sKR6b')
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'shoppingwithkedir@gmail.com')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'nbpe uzrf zxjh dylc')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'shoppingwithkedir@gmail.com')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','8BYkEfBA6O6donzWlSihBXox7C0sKR6b')
 
-mail = Mail(app)
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -418,97 +410,36 @@ def confirm_email(token):
     return redirect(url_for('login'))
 
 
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    print("here")
+
     form = RegisterForm()
 
     if form.validate_on_submit():
-        print("ggg")
+
         name = form.username.data
         email = form.email.data.strip().lower()
+
+        # -----------------------------------------
+        # CHECK IF USER ALREADY EXISTS
+        # -----------------------------------------
 
         existing_user = db.session.execute(
             db.select(User).where(User.email == email)
         ).scalar()
 
-        # -----------------------------------------
-        # USER ALREADY EXISTS
-        # -----------------------------------------
-
         if existing_user:
-            print("registerd")
 
-            if existing_user.is_verified:
+            flash(
+                "You are already registered. Please login.",
+                "warning"
+            )
 
-                flash(
-                    "You are already registered. Please login.",
-                    "warning"
-                )
+            return redirect(url_for('login'))
 
-                return redirect(url_for('login'))
-
-            else:
-
-                # Existing account but not verified.
-                # Send another verification email.
-
-                token = s.dumps(
-                    existing_user.email,
-                    salt='email-confirm'
-                )
-
-                link = url_for(
-                    'confirm_email',
-                    token=token,
-                    _external=True
-                )
-
-                msg = Message(
-                    subject="Confirm your CargoTrack account",
-                    recipients=[existing_user.email]
-                )
-
-                msg.body = (
-                    f"Hello {existing_user.name},\n\n"
-                    f"Please verify your CargoTrack account by "
-                    f"clicking the link below:\n\n"
-                    f"{link}\n\n"
-                    f"This verification link is valid for 24 hours.\n\n"
-                    f"If you did not create this account, you can "
-                    f"safely ignore this email.\n\n"
-                    f"CargoTrack"
-                )
-
-                try:
-
-                    mail.send(msg)
-
-                    flash(
-                        "This account is registered but not verified. "
-                        "A new verification email has been sent.",
-                        "info"
-                    )
-
-                except Exception:
-
-                    app.logger.exception(
-                        "Failed to resend verification email to %s",
-                        existing_user.email
-                    )
-
-                    flash(
-                        "Your account exists but we could not send "
-                        "the verification email. Please try again.",
-                        "danger"
-                    )
-
-                return redirect(url_for('login'))
-
-        else:
-            print(form.errors)
-
-                # -----------------------------------------
+        # -----------------------------------------
         # CREATE NEW USER
         # -----------------------------------------
 
@@ -520,79 +451,29 @@ def register():
             email=email,
             password=hashed_password,
             name=name,
-            is_verified=False
+            is_verified=True
         )
-
 
         db.session.add(data)
         db.session.commit()
 
         # -----------------------------------------
-        # CREATE VERIFICATION TOKEN
+        # REGISTRATION SUCCESS
         # -----------------------------------------
 
-        token = s.dumps(
-            data.email,
-            salt='email-confirm'
+        flash(
+            "Registration successful! Please login.",
+            "success"
         )
-
-        link = url_for(
-            'confirm_email',
-            token=token,
-            _external=True
-        )
-
-        # -----------------------------------------
-        # SEND VERIFICATION EMAIL
-        # -----------------------------------------
-
-        msg = Message(
-            subject="Confirm your CargoTrack account",
-            recipients=[data.email]
-        )
-
-        msg.body = (
-            f"Hello {data.name},\n\n"
-            f"Thank you for registering with CargoTrack.\n\n"
-            f"Please verify your email address by clicking "
-            f"the link below:\n\n"
-            f"{link}\n\n"
-            f"This verification link is valid for 24 hours.\n\n"
-            f"If you did not create this account, you can "
-            f"safely ignore this email.\n\n"
-            f"CargoTrack"
-        )
-
-        try:
-
-            mail.send(msg)
-
-            flash(
-                "Registration successful! "
-                "Please check your email to verify your account.",
-                "success"
-            )
-
-        except Exception:
-
-            app.logger.exception(
-                "Failed to send verification email to %s",
-                data.email
-            )
-
-            flash(
-                "Your account was created, but we could not send "
-                "the verification email. Please use Resend Verification.",
-                "warning"
-            )
 
         return redirect(url_for('login'))
-
 
     return render_template(
         'register.html',
         form=form
     )
+
+
 
 
 # =========================================================

@@ -455,6 +455,25 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
   font-size:1.05rem;
 }
 
+.table-search-wrap{
+  padding:1rem 1.5rem 0;
+}
+
+.table-search-wrap input{
+  border-radius:10px;
+  border:1.5px solid var(--border);
+  padding:.6rem .9rem;
+  font-size:.9rem;
+  width:100%;
+  max-width:320px;
+}
+
+.table-search-wrap input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 .18rem rgba(37,99,235,.13);
+  outline:none;
+}
+
 table.app-table{
   margin:0;
 }
@@ -493,6 +512,31 @@ table.app-table tbody td{
 .status-flagged{
   background:var(--red-soft);
   color:var(--red);
+}
+
+.action-badge{
+  font-size:.75rem;
+  font-weight:600;
+  padding:.3rem .7rem;
+  border-radius:50px;
+  border:none;
+  cursor:pointer;
+}
+
+.action-badge.btn-flag-on{
+  background:var(--red-soft);
+  color:var(--red);
+}
+
+.action-badge.btn-flag-off{
+  background:var(--bg);
+  color:var(--muted);
+  border:1px solid var(--border);
+}
+
+.action-badge form{
+  margin:0;
+  display:inline;
 }
 
 .empty-state{
@@ -628,8 +672,8 @@ table.app-table tbody td{
 
           <li class="nav-item">
 
-            <a
-              class="nav-link nav-link-app"
+
+             <a class="nav-link nav-link-app"
               href="{{ url_for('dashboard') }}"
             >
 
@@ -646,8 +690,8 @@ table.app-table tbody td{
 
           <li class="nav-item">
 
-            <a
-              class="nav-link nav-link-app"
+
+              <a  class="nav-link nav-link-app"
               href="{{ url_for('posts') }}"
             >
 
@@ -664,8 +708,8 @@ table.app-table tbody td{
 
           <li class="nav-item">
 
-            <a
-              class="nav-link nav-link-app"
+
+             <a  class="nav-link nav-link-app"
               href="{{ url_for('new_post') }}"
             >
 
@@ -682,8 +726,8 @@ table.app-table tbody td{
 
           <li class="nav-item">
 
-            <a
-              class="nav-link nav-link-app"
+
+             <a  class="nav-link nav-link-app"
               href="{{ url_for('registration') }}"
             >
 
@@ -700,8 +744,8 @@ table.app-table tbody td{
 
           <li class="nav-item">
 
-            <a
-              class="nav-link nav-link-app active"
+
+             <a  class="nav-link nav-link-app active"
               href="{{ url_for('registration') }}"
             >
 
@@ -718,8 +762,8 @@ table.app-table tbody td{
 
           <li class="nav-item ms-lg-1">
 
-            <a
-              class="nav-link nav-link-app nav-logout"
+
+           <a    class="nav-link nav-link-app nav-logout"
               href="{{url_for('logout')}}"
             >
 
@@ -1120,12 +1164,16 @@ table.app-table tbody td{
 
     </div>
 
+    <div class="table-search-wrap">
+      <input type="text" id="importerSearchInput" placeholder="Search importers by name or phone...">
+    </div>
+
 
     {% if recent_importers %}
 
     <div class="table-responsive">
 
-      <table class="table app-table">
+      <table class="table app-table" id="importerTable">
 
         <thead>
 
@@ -1136,6 +1184,8 @@ table.app-table tbody td{
             <th>Phone</th>
 
             <th>Status</th>
+              <th>edit-importer</th>
+              <th>Flag</th>
 
           </tr>
 
@@ -1157,11 +1207,27 @@ table.app-table tbody td{
 
             <td>
 
-              <span class="status-badge status-active">
-                Active
+              <span class="status-badge {{ 'status-flagged' if imp.is_red_flagged else 'status-active' }}">
+                {{ "የተከለከለ" if imp.is_red_flagged else "Active" }}
               </span>
 
             </td>
+
+              <td>
+              <a href="{{url_for('edit_importer',import_id=imp.id)}}"><span class="status-badge status-active">
+                Edit
+              </span></a>
+            </td>
+
+              <td>
+                <span class="action-badge {{ 'btn-flag-on' if imp.is_red_flagged else 'btn-flag-off' }}">
+                  <form method="POST" action="{{ url_for('toggle_red_flag_importer', import_id=imp.id) }}">
+                    <button type="submit" class="action-badge {{ 'btn-flag-on' if imp.is_red_flagged else 'btn-flag-off' }}">
+                      {{ "ከእገዳ አስወግድ" if imp.is_red_flagged else "እገዳ" }}
+                    </button>
+                  </form>
+                </span>
+              </td>
 
           </tr>
 
@@ -1207,12 +1273,16 @@ table.app-table tbody td{
 
     </div>
 
+    <div class="table-search-wrap">
+      <input type="text" id="productSearchInput" placeholder="Search products by name...">
+    </div>
+
 
     {% if recent_products %}
 
     <div class="table-responsive">
 
-      <table class="table app-table">
+      <table class="table app-table" id="productTable">
 
         <thead>
 
@@ -1221,6 +1291,8 @@ table.app-table tbody td{
             <th>Product Name</th>
 
             <th>Status</th>
+
+            <th>edit-product</th>
 
           </tr>
 
@@ -1242,6 +1314,12 @@ table.app-table tbody td{
                 Active
               </span>
 
+            </td>
+
+            <td>
+              <a href="{{url_for('edit_product',product_id=prod.id)}}"><span class="status-badge status-active">
+                Edit
+              </span></a>
             </td>
 
           </tr>
@@ -1655,9 +1733,62 @@ document.addEventListener('DOMContentLoaded', function() {
       )
     );
 
+
+  // =========================================================
+  // TABLE SEARCH (Importer + Product)
+  // =========================================================
+
+  const importerSearchInput =
+    document.getElementById('importerSearchInput');
+
+  const importerTable =
+    document.getElementById('importerTable');
+
+  if (importerSearchInput && importerTable) {
+
+    importerSearchInput.addEventListener('input', function() {
+
+      const val = this.value.toLowerCase().trim();
+
+      importerTable.querySelectorAll('tbody tr').forEach(row => {
+
+        const text = row.textContent.toLowerCase();
+
+        row.style.display = text.includes(val) ? '' : 'none';
+
+      });
+
+    });
+
+  }
+
+
+  const productSearchInput =
+    document.getElementById('productSearchInput');
+
+  const productTable =
+    document.getElementById('productTable');
+
+  if (productSearchInput && productTable) {
+
+    productSearchInput.addEventListener('input', function() {
+
+      const val = this.value.toLowerCase().trim();
+
+      productTable.querySelectorAll('tbody tr').forEach(row => {
+
+        const text = row.textContent.toLowerCase();
+
+        row.style.display = text.includes(val) ? '' : 'none';
+
+      });
+
+    });
+
+  }
+
 });
 </script>
 
 </body>
 </html>
-

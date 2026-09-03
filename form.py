@@ -106,3 +106,19 @@ class RegisterForm(FlaskForm):
         validators=[DataRequired(), EqualTo('password', message='Passwords must match')]
     )
     submit = SubmitField('Create Account')
+
+class ImporterEdit(FlaskForm):
+    class Meta:
+        csrf = False
+
+    name = StringField("Importer Name", validators=[DataRequired(), Length(max=150)])
+    phone = StringField("Phone Number", validators=[Optional(), Length(max=20)])
+    submit = SubmitField('save change')
+
+
+class ProductEdit(FlaskForm):
+    name = StringField(
+        "Product Name",
+        validators=[DataRequired(message="Product name is required.")]
+    )
+    submit = SubmitField("Save Changes")

@@ -48,7 +48,7 @@ from flask_ckeditor import CKEditor, CKEditorField
 from datetime import datetime
 from flask_login import login_user, logout_user, login_required
 from flask_login import LoginManager,UserMixin,current_user
-from form import (PostMainForm,RegistrationForm,PostEditForm,Post2Form,FinalPostEditForm,LoginForm,RegisterForm)
+from form import (PostMainForm,RegistrationForm,PostEditForm,Post2Form,FinalPostEditForm,LoginForm,RegisterForm,ImporterEdit,ProductEdit)
 from flask_mail import Mail, Message
 from datetime import date, timedelta, datetime
 
@@ -727,11 +727,12 @@ def check_red_flag():
 @motorist
 def registration():
     form = RegistrationForm()
-    active_tab = request.form.get("active_tab", "importer")
+    active_tab = request.form.get("active_tab", "importer") # importer here is defffault value if not active there
 
     if request.method == "POST":
         saved_importers = 0
         saved_products = 0
+        print("hi_product")
 
         if active_tab == "importer":
             for importer_entry in form.importers:
@@ -787,8 +788,9 @@ def registration():
 
     total_products = Product.query.count()
     total_importers = Importer.query.count()
-    recent_importers = Importer.query.order_by(Importer.id.desc()).limit(10).all()
-    recent_products = Product.query.order_by(Product.id.desc()).limit(10).all()
+    #recent_importers = Importer.query.order_by(Importer.id.desc()).limit(10).all()
+    recent_importers = Importer.query.order_by(Importer.id.desc()).all()
+    recent_products = Product.query.order_by(Product.id.desc()).all()
 
     return render_template(
         "registration.html",
@@ -799,6 +801,63 @@ def registration():
         recent_products=recent_products,
         current_year=datetime.utcnow().year
     )
+
+@app.route("/edit_importer/<int:import_id>", methods=["GET", "POST"])
+@login_required
+def edit_importer(import_id):
+    importer = db.get_or_404(Importer, import_id)
+    form = ImporterEdit(obj=importer)  # pre-fills form fields from importer on GET
+
+    if form.validate_on_submit():
+        importer.name = form.name.data.strip()
+        importer.phone = form.phone.data.strip()
+        db.session.commit()
+
+        flash("Importer updated successfully.", "success")
+        return redirect(url_for("registration"))  # change to wherever makes sense
+
+    return render_template("edit_importer.html", form=form)
+
+
+
+
+@app.route("/toggle_red_flag_importer/<int:import_id>", methods=["POST"])
+@login_required
+def toggle_red_flag_importer(import_id):
+    importer = db.get_or_404(Importer, import_id)
+    importer.is_red_flagged = not importer.is_red_flagged
+    db.session.commit()
+
+    flash(
+        f"{importer.name} flagged." if importer.is_red_flagged
+        else f"Flag removed from {importer.name}.",
+        "success"
+    )
+    return redirect(url_for("registration"))
+
+
+@app.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
+@login_required
+def edit_product(product_id):
+    product = db.get_or_404(Product, product_id)
+    form = ProductEdit(obj=product)  # adjust to your actual product-edit form name
+
+    if form.validate_on_submit():
+        product.name = form.name.data.strip()
+        db.session.commit()
+
+        flash("Product updated successfully.", "success")
+        return redirect(url_for("registration"))
+
+    return render_template("edit_product.html", form=form)
+
+
+
+
+
+
+
+
 
 @app.route("/posts")
 @login_required

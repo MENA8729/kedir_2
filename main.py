@@ -1057,7 +1057,6 @@ def final_detail():
 
 
 
-
 @app.route("/final-post/<int:final_post_id>/red-flag", methods=["POST"])
 @login_required
 @motorist
@@ -1070,8 +1069,7 @@ def toggle_red_flag(final_post_id):
         return redirect(request.referrer or url_for("final_posts"))
 
     importer = Importer.query.get_or_404(importer_id)
-    importer.is_red_flagged = not importer.is_red_flagged
-    db.session.commit()
+
     print("BEFORE:", importer.name, importer.is_red_flagged)
 
     importer.is_red_flagged = not importer.is_red_flagged
@@ -1081,10 +1079,12 @@ def toggle_red_flag(final_post_id):
     db.session.commit()
 
     flash(
-        f"{importer.name} marked as red-flagged." if importer.is_red_flagged
+        f"{importer.name} marked as red-flagged."
+        if importer.is_red_flagged
         else f"Red flag removed from {importer.name}.",
         "success"
     )
+
     return redirect(request.referrer or url_for("final_posts"))
 
 

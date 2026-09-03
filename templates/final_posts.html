@@ -507,10 +507,10 @@ body{
 
 
 /* FLAGGED:
-   Less aggressive once importer is already flagged. */
+   Nearly white once importer is already flagged. */
 .btn-fp-flag.is-flagged{
-  background:#fff5f5;
-  border-color:#fca5a5;
+  background:#fefefe;
+  border-color:#f1d4d4;
   color:#b91c1c;
 
   font-weight:600;
@@ -519,8 +519,8 @@ body{
 }
 
 .btn-fp-flag.is-flagged:hover{
-  background:#fee2e2;
-  border-color:#f87171;
+  background:#fdf2f2;
+  border-color:#f5c2c2;
   color:#991b1b;
 
   transform:none;
@@ -961,8 +961,8 @@ body{
 
           <!-- EDIT -->
 
-          <a
-            href="{{ url_for('edit_final_post', final_post_id=fp.id) }}"
+
+            <a href="{{ url_for('edit_final_post', final_post_id=fp.id) }}"
             class="btn-fp btn-fp-edit"
           >
 
@@ -978,6 +978,13 @@ body{
           <form
             method="POST"
             action="{{ url_for('toggle_red_flag', final_post_id=fp.id) }}"
+            onsubmit="return confirm(
+              {% if importer and importer.is_red_flagged %}
+              'Remove red flag from {{ h.importer_name }}?'
+              {% else %}
+              'are you sure wanna do it ?'
+              {% endif %}
+            );"
           >
 
             <button
@@ -1058,4 +1065,3 @@ body{
 
 </body>
 </html>
-

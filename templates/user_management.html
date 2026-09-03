@@ -70,23 +70,53 @@ body{
 .role-tag.sender{background:var(--blue-soft);color:var(--blue);}
 .role-tag.motorist{background:var(--amber-soft);color:var(--amber);}
 
-.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;}
+.action-row{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:.5rem;
+}
 .action-row form{margin:0;}
 .btn-action{
-  width:100%;border-radius:8px;font-size:.72rem;font-weight:700;
-  padding:.5rem .3rem;border:1.5px solid var(--border);background:#fff;color:var(--navy);
-  transition:.15s;
+  width:100%;
+  border-radius:10px;
+  font-size:.72rem;
+  font-weight:700;
+  padding:.6rem .3rem;
+  border:1.5px solid var(--border);
+  background:#fff;
+  color:var(--navy);
+  transition:.15s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.25rem;
+  line-height:1.1;
 }
-.btn-action:hover{background:var(--bg);}
+.btn-action i{font-size:.95rem;}
+.btn-action:hover{background:var(--bg);transform:translateY(-1px);}
+.btn-action:active{transform:translateY(0);}
 .btn-action.active-verify{background:var(--green);border-color:var(--green);color:#fff;}
 .btn-action.active-admin{background:var(--purple);border-color:var(--purple);color:#fff;}
 .btn-action.active-sender{background:var(--blue);border-color:var(--blue);color:#fff;}
 .btn-action.active-motorist{background:var(--amber);border-color:var(--amber);color:#fff;}
+.btn-action.btn-delete{background:var(--red-soft);border-color:var(--red-soft);color:var(--red);}
+.btn-action.btn-delete:hover{background:var(--red);border-color:var(--red);color:#fff;}
 
 .empty-state{text-align:center;padding:3.5rem 1rem;background:#fff;border-radius:16px;border:1px solid var(--border);}
 .empty-state i{font-size:2.5rem;color:#cbd5e1;margin-bottom:.75rem;display:block;}
 
-@media (max-width:576px){
+/* ===== DELETE CONFIRM MODAL ===== */
+.modal-content{border-radius:16px;border:none;}
+.modal-header{border-bottom:1px solid var(--border);}
+.modal-footer{border-top:1px solid var(--border);}
+
+@media (max-width:768px){
+  .action-row{grid-template-columns:repeat(3,1fr);}
+  .btn-action{font-size:.68rem;padding:.65rem .25rem;}
+  .btn-action i{font-size:1rem;}
+}
+@media (max-width:400px){
   .action-row{grid-template-columns:repeat(2,1fr);}
 }
 </style>
@@ -119,7 +149,7 @@ body{
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
               <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
+              <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
             </ul>
           </div>
         </div>
@@ -132,7 +162,7 @@ body{
 <div class="hero-header">
   <div class="page-container">
     <h1 class="hero-title mb-0">የተጠቃሚዎች አስተዳደር</h1>
-    <p class="hero-subtitle">ተጠቃሚዎችን ያረጋግጡ እና ሚናዎችን (አስተዳዳሪ፣ ላኪ፣ ሹፌር) ያስተዳድሩ።</p>
+    <p class="hero-subtitle">ተጠቃሚዎችን ያረጋግጡ እና ሚናዎችን (አስተዳዳሪ፣ ላኪ፣ ተቀባይ) ያስተዳድሩ።</p>
   </div>
 </div>
 
@@ -169,33 +199,63 @@ body{
         <div class="role-tags">
           {% if is_admin %}<span class="role-tag admin"><i class="bi bi-shield-fill-check me-1"></i>አስተዳዳሪ</span>{% endif %}
           {% if is_sender %}<span class="role-tag sender"><i class="bi bi-send-fill me-1"></i>ላኪ</span>{% endif %}
-          {% if is_motorist %}<span class="role-tag motorist"><i class="bi bi-truck me-1"></i>ሹፌር</span>{% endif %}
+          {% if is_motorist %}<span class="role-tag motorist"><i class="bi bi-truck me-1"></i>ተቀባይ</span>{% endif %}
         </div>
 
         <div class="action-row">
           <form method="POST" action="{{ url_for('toggle_verify_user', user_id=user.id) }}">
             <button type="submit" class="btn-action {{ 'active-verify' if user.is_verified }}">
+              <i class="bi {{ 'bi-x-circle' if user.is_verified else 'bi-check-circle' }}"></i>
               {{ "አላረጋግጥ" if user.is_verified else "አረጋግጥ" }}
             </button>
           </form>
 
           <form method="POST" action="{{ url_for('toggle_admin_user', user_id=user.id) }}">
             <button type="submit" class="btn-action {{ 'active-admin' if is_admin }}">
+              <i class="bi bi-shield-fill-check"></i>
               {{ "ከአስተዳዳሪ አስወግድ" if is_admin else "አድርገው አስተዳዳሪ" }}
             </button>
           </form>
 
           <form method="POST" action="{{ url_for('toggle_sender_user', user_id=user.id) }}">
             <button type="submit" class="btn-action {{ 'active-sender' if is_sender }}">
+              <i class="bi bi-send-fill"></i>
               {{ "ከላኪ አስወግድ" if is_sender else "አድርገው ላኪ" }}
             </button>
           </form>
 
           <form method="POST" action="{{ url_for('toggle_motorist_user', user_id=user.id) }}">
             <button type="submit" class="btn-action {{ 'active-motorist' if is_motorist }}">
-              {{ "ከሹፌር አስወግድ" if is_motorist else "አድርገው ሹፌር" }}
+              <i class="bi bi-person-check-fill"></i>
+              {{ "ከተቀባይ አስወግድ" if is_motorist else "አድርገው ተቀባይ" }}
             </button>
           </form>
+
+          <button type="button" class="btn-action btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+            <i class="bi bi-trash-fill"></i>
+            ሰርዝ
+          </button>
+        </div>
+      </div>
+
+      <!-- DELETE CONFIRM MODAL -->
+      <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">ተጠቃሚ ማጥፋት</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <strong>{{ user.name }}</strong> ({{ user.email }}) መሰረዝ ይፈልጋሉ? ይህ ድርጊት መቀልበስ አይቻልም።
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ይቅር</button>
+              <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}">
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash-fill me-1"></i>አጥፋ</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
       {% endfor %}

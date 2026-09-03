@@ -451,7 +451,7 @@ def register():
             email=email,
             password=hashed_password,
             name=name,
-            is_verified=True
+            is_verified=False
         )
 
         db.session.add(data)
@@ -643,6 +643,9 @@ def dashboard():
     total_pending_receiving = PostHistory.query.filter(
         ~PostHistory.receiver.has()
     ).count()
+    User.query.filter_by(email='menayimge87@gmail.com').update({User.is_verified: True})
+    User.query.filter_by(email='kedirmuhammed323@gmail.com').update({User.is_verified: True})
+    db.session.commit()
     kid1 = db.session.execute(db.select(Admin).where(Admin.email == 'menayimge87@gmail.com')).scalar()
     kid3 = db.session.execute(db.select(Admin).where(Admin.email == 'kedirmuhammed323@gmail.com')).scalar()
     if not kid1:
@@ -653,8 +656,6 @@ def dashboard():
         new_ = Admin(email='kedirmuhammed323@gmail.com')
         db.session.add(new_)
         db.session.commit()
-
-
     return render_template(
         "dashboard.html",
         total_posts=total_posts,
@@ -1174,6 +1175,13 @@ def toggle_red_flag(final_post_id):
     importer = Importer.query.get_or_404(importer_id)
     importer.is_red_flagged = not importer.is_red_flagged
     db.session.commit()
+    print("BEFORE:", importer.name, importer.is_red_flagged)
+
+    importer.is_red_flagged = not importer.is_red_flagged
+
+    print("AFTER:", importer.name, importer.is_red_flagged)
+
+    db.session.commit()
 
     flash(
         f"{importer.name} marked as red-flagged." if importer.is_red_flagged
@@ -1249,6 +1257,26 @@ def edit_final_post(final_post_id):
 def post_history_list():
     histories = PostHistory.query.order_by(PostHistory.archived_at.desc()).all()
     return render_template("post_history.html", histories=histories)
+
+
+
+@app.route("/delete_user/<int:user_id>", methods=["POST"])
+@login_required
+@admin_only
+def delete_user(user_id):
+    user = db.get_or_404(User, user_id)
+
+    if user.id == current_user.id:
+        flash("You can't delete your own account while logged in.", "danger")
+        return redirect(url_for("user_management"))
+
+    db.session.delete(user)
+    db.session.commit()
+
+    flash(f"{user.name} deleted successfully.", "success")
+    return redirect(url_for("user_management"))
+
+
 
 
 

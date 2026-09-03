@@ -1,3 +1,29 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-success alert-dismissible fade show flash-message" role="alert">
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<style>
+    .flash-message {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.1px;
+        padding: 8px 12px;
+        margin: 10px auto;
+        max-width: 500px;
+        border-radius: 7px;
+    } </style>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -694,7 +720,7 @@ table.app-table tbody td{
 
             <a
               class="nav-link nav-link-app nav-logout"
-              href="#"
+              href="{{url_for('logout')}}"
             >
 
               <i class="bi bi-box-arrow-right"></i>

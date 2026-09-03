@@ -1,3 +1,30 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-success alert-dismissible fade show flash-message" role="alert">
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<style>
+    .flash-message {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.1px;
+        padding: 8px 12px;
+        margin: 10px auto;
+        max-width: 500px;
+        border-radius: 7px;
+    } </style>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,9 +311,9 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offs
               <i class="bi bi-chevron-down small text-muted"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-              <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>መገለጫ</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
+              <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>ውጣ</a></li>
             </ul>
           </div>
         </div>

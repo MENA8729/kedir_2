@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="am">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Receive Post</title>
+<title>ዕቃ መቀበያ</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,13 +35,13 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
 
 <div class="page-header">
   <div class="main-container">
-    <h2><i class="bi bi-box-arrow-in-down me-2"></i>Receive Post</h2>
+    <h2><i class="bi bi-box-arrow-in-down me-2"></i>ዕቃ መቀበያ</h2>
   </div>
 </div>
 
 <div class="main-container">
 
-  <!-- Original post reference info -->
+  <!-- የመጀመሪያው ልጥፍ መረጃ -->
   <div class="ref-card">
     <div class="ref-row"><span class="ref-label">አስመጪ</span><span class="ref-value">{{ history.importer_name }}</span></div>
     <div class="ref-row"><span class="ref-label">ስልክ</span><span class="ref-value">{{ history.importer_phone or "—" }}</span></div>
@@ -54,24 +55,28 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
   <form method="POST" id="post2Form">
     {{ form.hidden_tag() }}
 
-    <h5 class="mt-4 mb-3 fw-bold" style="color:var(--navy);">Products</h5>
+    <h5 class="mt-4 mb-3 fw-bold" style="color:var(--navy);">ዕቃዎች</h5>
+
     {% for item in history.items %}
     <div class="product-recv-card" data-expected="{{ item.expected_quantity or 0 }}">
       <div class="d-flex justify-content-between align-items-center product-recv-title">
         <span>{{ item.product_name }}</span>
-        <span class="expected-badge">Expected: {{ item.expected_quantity|int if item.expected_quantity == item.expected_quantity|int else item.expected_quantity }}</span>
+        <span class="expected-badge">የሚጠበቅ: {{ item.expected_quantity|int if item.expected_quantity == item.expected_quantity|int else item.expected_quantity }}</span>
       </div>
+
       <div class="row g-2">
         <div class="col-4">
-          <label class="form-label small fw-semibold">Received Qty</label>
+          <label class="form-label small fw-semibold">የተቀበሉት ብዛት</label>
           <input type="number" step="0.01" class="form-control recv-received" name="item-{{ item.id }}-received" data-item-id="{{ item.id }}">
         </div>
+
         <div class="col-4">
-          <label class="form-label small fw-semibold">Taxed Qty</label>
+          <label class="form-label small fw-semibold">የታክስ ብዛት</label>
           <input type="number" step="0.01" class="form-control recv-taxed" name="item-{{ item.id }}-taxed" data-item-id="{{ item.id }}">
         </div>
+
         <div class="col-4">
-          <label class="form-label small fw-semibold">Tax/Custom (ETB)</label>
+          <label class="form-label small fw-semibold">ታክስ/ጉምሩክ (ETB)</label>
           <input type="number" step="0.01" class="form-control recv-tax" name="item-{{ item.id }}-tax" data-item-id="{{ item.id }}">
         </div>
       </div>
@@ -79,25 +84,25 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
     {% endfor %}
 
     <div class="ref-card">
-      <label class="form-label fw-semibold">Actual Wage Paid (ETB)</label>
+      <label class="form-label fw-semibold">በእውነት የተከፈለ ደመወዝ (ETB)</label>
       {{ form.actual_wage_paid(class="form-control", id="actualWageInput") }}
-      <div class="form-text">Original wage: {{ "%.2f"|format(history.original_wage) }} ETB</div>
+      <div class="form-text">ዋና ደመወዝ: {{ "%.2f"|format(history.original_wage) }} ETB</div>
     </div>
 
-    <!-- Live summary -->
+    <!-- የቀጥታ ማጠቃለያ -->
     <div class="summary-card">
-      <div class="summary-row"><span>Total Expected</span><strong id="sumExpected">0</strong></div>
-      <div class="summary-row"><span>Total Received</span><strong id="sumReceived">0</strong></div>
-      <div class="summary-row"><span>Total Lost</span><strong id="sumLost">0</strong></div>
-      <div class="summary-row"><span>Total Taxed</span><strong id="sumTaxed">0</strong></div>
-      <div class="summary-row"><span>Total Tax/Custom</span><strong id="sumTax">0 ETB</strong></div>
-      <div class="summary-row"><span>Original Wage</span><strong>{{ "%.2f"|format(history.original_wage) }} ETB</strong></div>
-      <div class="summary-row"><span>Actual Wage Paid</span><strong id="sumActualWage">0 ETB</strong></div>
-      <div class="summary-row"><span>Additional Wage</span><strong id="sumAdditionalWage">0 ETB</strong></div>
+      <div class="summary-row"><span>ጠቅላላ የሚጠበቅ</span><strong id="sumExpected">0</strong></div>
+      <div class="summary-row"><span>ጠቅላላ የተቀበሉት</span><strong id="sumReceived">0</strong></div>
+      <div class="summary-row"><span>ጠቅላላ የጠፋ</span><strong id="sumLost">0</strong></div>
+      <div class="summary-row"><span>ጠቅላላ የታክስ ብዛት</span><strong id="sumTaxed">0</strong></div>
+      <div class="summary-row"><span>ጠቅላላ ታክስ/ጉምሩክ</span><strong id="sumTax">0 ETB</strong></div>
+      <div class="summary-row"><span>ዋና ደመወዝ</span><strong>{{ "%.2f"|format(history.original_wage) }} ETB</strong></div>
+      <div class="summary-row"><span>በእውነት የተከፈለ ደመወዝ</span><strong id="sumActualWage">0 ETB</strong></div>
+      <div class="summary-row"><span>ተጨማሪ ደመወዝ</span><strong id="sumAdditionalWage">0 ETB</strong></div>
     </div>
 
     <button type="submit" class="btn btn-save-recv w-100 mt-3">
-      <i class="bi bi-check2-circle me-2"></i>Confirm & Save
+      <i class="bi bi-check2-circle me-2"></i>አረጋግጥ እና አስቀምጥ
     </button>
   </form>
 </div>
@@ -140,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
   [...receivedInputs, ...taxedInputs, ...taxInputs].forEach(input => {
     input.addEventListener('input', recalc);
   });
+
   wageInput.addEventListener('input', recalc);
 
   recalc();
@@ -148,3 +154,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+

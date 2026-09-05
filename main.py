@@ -595,13 +595,11 @@ def new_post():
                 img_file.save(os.path.join(app.config["UPLOAD_FOLDER"], img_filename))
 
             # -------------------------
-            # Find or create importer
+            # Find or create importer (by phone only)
+            # Existing importer's name is NEVER overwritten
             # -------------------------
             importer = Importer.query.filter(
-                or_(
-                    Importer.name.ilike(name) if name else False,
-                    Importer.phone == phone if phone else False
-                )
+                Importer.phone == phone
             ).first()
 
             if not importer:
@@ -658,7 +656,10 @@ def new_post():
             ]
 
             # -------------------------
+            # Generate the package code for this post
             # -------------------------
+            # package_code = generate_package_code()
+
             post_group = PostGroup(
                 importer_id=importer.id,
                 location=location,
@@ -697,23 +698,18 @@ def new_post():
         registered_products=Product.query.order_by(Product.name).all()
     )
 
-
 @app.route("/check-red-flag")
 @login_required
 @motorist
 def check_red_flag():
-    name = request.args.get("name", "").strip()
     phone = request.args.get("phone", "").strip()
 
-    if not name and not phone:
+    if not phone:
         return jsonify({"red_flagged": False})
 
     flagged = Importer.query.filter(
         Importer.is_red_flagged == True,
-        or_(
-            Importer.name.ilike(name) if name else False,
-            Importer.phone == phone if phone else False
-        )
+        Importer.phone == phone
     ).first()
 
     return jsonify({
@@ -1118,7 +1114,6 @@ def final_detail():
 
 @app.route("/final-post/<int:final_post_id>/red-flag", methods=["POST"])
 @login_required
-@motorist
 def toggle_red_flag(final_post_id):
     fp = FinalPost.query.get_or_404(final_post_id)
     importer_id = fp.receiver.post_history.importer_id

@@ -194,6 +194,10 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
             <span class="label">ስልክ</span>
             <span class="value">{{ pg.importer.phone or "—" }}</span>
           </div>
+          <div class="info-row">
+            <span class="label">Package ቁጥር</span>
+            <span class="value">{{ "%03d" % pg.id }}</span>
+          </div>
 
           <div class="products-block">
             <div class="products-title">ምርቶች</div>

@@ -71,12 +71,12 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
         </div>
 
         <div class="col-4">
-          <label class="form-label small fw-semibold">የታክስ ብዛት</label>
+          <label class="form-label small fw-semibold">የቀረጥ ብዛት</label>
           <input type="number" step="0.01" class="form-control recv-taxed" name="item-{{ item.id }}-taxed" data-item-id="{{ item.id }}">
         </div>
 
         <div class="col-4">
-          <label class="form-label small fw-semibold">ታክስ/ጉምሩክ (ETB)</label>
+          <label class="form-label small fw-semibold">ቀረጥ/ጉምሩክ (ETB)</label>
           <input type="number" step="0.01" class="form-control recv-tax" name="item-{{ item.id }}-tax" data-item-id="{{ item.id }}">
         </div>
       </div>
@@ -94,8 +94,8 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
       <div class="summary-row"><span>ጠቅላላ የሚጠበቅ</span><strong id="sumExpected">0</strong></div>
       <div class="summary-row"><span>ጠቅላላ የተቀበሉት</span><strong id="sumReceived">0</strong></div>
       <div class="summary-row"><span>ጠቅላላ የጠፋ</span><strong id="sumLost">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ የታክስ ብዛት</span><strong id="sumTaxed">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ ታክስ/ጉምሩክ</span><strong id="sumTax">0 ETB</strong></div>
+      <div class="summary-row"><span>ጠቅላላ የቀረጥ ብዛት</span><strong id="sumTaxed">0</strong></div>
+      <div class="summary-row"><span>ጠቅላላ ቀረጥ/ጉምሩክ</span><strong id="sumTax">0 ETB</strong></div>
       <div class="summary-row"><span>ዋና ደመወዝ</span><strong>{{ "%.2f"|format(history.original_wage) }} ETB</strong></div>
       <div class="summary-row"><span>በእውነት የተከፈለ ደመወዝ</span><strong id="sumActualWage">0 ETB</strong></div>
       <div class="summary-row"><span>ተጨማሪ ደመወዝ</span><strong id="sumAdditionalWage">0 ETB</strong></div>

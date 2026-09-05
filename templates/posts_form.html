@@ -267,28 +267,28 @@ body{
         <i class="bi bi-exclamation-octagon-fill"></i>
         <div>
           <div class="rf-title">🚫 RED FLAGGED</div>
-          <p class="rf-reason">This sender requires administrator attention before processing.</p>
+          <p class="rf-reason">ይህ አምቺ ከማስኬድ በፊት የአስተዳዳሪውን ትኩረት ይፈልጋል፤ ስለዚህ ጥቅል አይሰጠውም።</p>
         </div>
       </div>
 
       <!-- Importer -->
       <div class="mb-3">
-        <label class="section-label"><i class="bi bi-person-fill"></i>የአስመጪው ስም</label>
+        <label class="section-label"><i class="bi bi-person-fill"></i>የአምጪው ስም</label>
         <div class="position-relative">
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" class="form-control importer-search-input" name="posts-__INDEX__-name" placeholder="የአስመጪ ስም ይፈልጉ..." autocomplete="off" required>
+            <input type="text" class="form-control importer-search-input" name="posts-__INDEX__-name" placeholder="የአምጪው ስም ይፈልጉ..." autocomplete="off" required>
           </div>
           <input type="hidden" class="importer-id-hidden">
           <div class="dropdown-menu w-100 shadow-sm importer-dropdown mt-1" style="max-height:220px;overflow-y:auto;">
             {% for imp in registered_importers|default([]) %}
             <a href="#" class="dropdown-item importer-option" data-name="{{ imp.name }}" data-id="{{ imp.id }}">{{ imp.name }}</a>
             {% endfor %}
-            <div class="importer-not-found text-muted fst-italic d-none">አስመጪው አልተገኘም</div>
+            <div class="importer-not-found text-muted fst-italic d-none">አምጪው አልተገኘም</div>
             <div class="importer-add-new d-none"><i class="bi bi-plus-circle-fill"></i><span>Add "<span class="new-name"></span>" as a new importer</span></div>
           </div>
         </div>
-        <div class="invalid-feedback">እባክዎ የአስመጪውን ስም ያስገቡ።</div>
+        <div class="invalid-feedback">እባክዎ የአምጪውን ስም ያስገቡ።</div>
       </div>
 
       <!-- Phone -->
@@ -300,7 +300,7 @@ body{
 
       <!-- Address -->
       <div class="mb-3">
-        <label class="section-label"><i class="bi bi-geo-alt-fill"></i>የአስመጪው አድራሻ</label>
+        <label class="section-label"><i class="bi bi-geo-alt-fill"></i>የአምጪው አድራሻ</label>
         <input type="text" name="posts-__INDEX__-location" class="form-control" maxlength="200" placeholder="ለምሳሌ፦ አራት ኪሎ" required>
         <div class="invalid-feedback">እባክዎ አድራሻ ያስገቡ።</div>
       </div>
@@ -511,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addNewRow.classList.add('d-none');
       }
       importerDropdown.classList.add('show');
-      runRedFlagCheck();
     });
 
     importerOptions.forEach(opt => {
@@ -521,7 +520,6 @@ document.addEventListener('DOMContentLoaded', function() {
         importerInput.value = val;
         hiddenImporterId.value = this.getAttribute('data-id');
         importerDropdown.classList.remove('show');
-        runRedFlagCheck();
       });
     });
 
@@ -534,21 +532,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!postEl.contains(e.target)) importerDropdown.classList.remove('show');
     });
 
-    // Red flag check
+    // Red flag check — phone only
     const phoneInput = postEl.querySelector('.phone-input');
     const redFlagAlert = postEl.querySelector('.red-flag-alert');
     const redFlagReasonEl = postEl.querySelector('.rf-reason');
 
     const runRedFlagCheck = debounce(function() {
-      const name = importerInput.value.trim();
       const phone = phoneInput.value.trim();
 
-      if (!name && !phone) {
+      if (!phone) {
         setRedFlagState(false);
         return;
       }
 
-      const params = new URLSearchParams({ name: name, phone: phone });
+      const params = new URLSearchParams({ phone: phone });
       fetch(`${RED_FLAG_URL}?${params.toString()}`)
         .then(res => res.json())
         .then(data => {
@@ -567,7 +564,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    importerInput.addEventListener('input', runRedFlagCheck);
     phoneInput.addEventListener('input', runRedFlagCheck);
 
     // Product search / select
@@ -654,6 +650,5 @@ document.addEventListener('DOMContentLoaded', function() {
   }, false);
 });
 </script>
-
 </body>
 </html>

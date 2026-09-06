@@ -43,13 +43,13 @@ body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e29
 
   <!-- የመጀመሪያው ልጥፍ መረጃ -->
   <div class="ref-card">
-    <div class="ref-row"><span class="ref-label">አስመጪ</span><span class="ref-value">{{ history.importer_name }}</span></div>
+    <div class="ref-row"><span class="ref-label">አምጭ</span><span class="ref-value">{{ history.importer_name }}</span></div>
     <div class="ref-row"><span class="ref-label">ስልክ</span><span class="ref-value">{{ history.importer_phone or "—" }}</span></div>
     <div class="ref-row"><span class="ref-label">የመድረሻ ቀን</span><span class="ref-value">{{ history.date.strftime('%b %d, %Y') }}</span></div>
     {% if history.time %}<div class="ref-row"><span class="ref-label">የመድረሻ ሰዓት</span><span class="ref-value">{{ history.time.strftime('%I:%M %p') }}</span></div>{% endif %}
     {% if history.location %}<div class="ref-row"><span class="ref-label">የመድረሻ ቦታ</span><span class="ref-value">{{ history.location }}</span></div>{% endif %}
-    <div class="ref-row"><span class="ref-label">ዋና ደመወዝ</span><span class="ref-value">{{ "%.2f"|format(history.original_wage) }} ETB</span></div>
-    {% if history.original_total_amount %}<div class="ref-row"><span class="ref-label">ጠቅላላ መጠን</span><span class="ref-value">{{ "%.2f"|format(history.original_total_amount) }} ETB</span></div>{% endif %}
+    <div class="ref-row"><span class="ref-label"> ክፍያ</span><span class="ref-value">{{ "%.2f"|format(history.original_wage) }} ETB</span></div>
+    {% if history.original_total_amount %}<div class="ref-row"><span class="ref-label">የእቃ ብዛት</span><span class="ref-value">{{ "%.2f"|format(history.original_total_amount) }}</span></div>{% endif %}
   </div>
 
   <form method="POST" id="post2Form">

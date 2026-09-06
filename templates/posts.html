@@ -171,7 +171,8 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
     {% for pg in post_groups %}
     <div class="col-6 col-md-4 col-lg-3 post-grid-item"
          data-importer="{{ pg.importer.name|lower }}"
-         data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}">
+         data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
+         data-package="{{ '%03d' % pg.id }}">
       <div class="post-card">
 
         <!-- ===== PHOTO — DOMINANT ELEMENT ===== -->
@@ -280,7 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
       gridItems.forEach(item => {
         const importer = item.dataset.importer || '';
         const phone = item.dataset.phone || '';
-        const match = importer.includes(query) || phone.includes(query);
+        const packageCode = item.dataset.package || '';
+        const match = importer.includes(query) || phone.includes(query) || packageCode.includes(query);
         item.style.display = match ? '' : 'none';
       });
     });

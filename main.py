@@ -232,6 +232,7 @@ class PostGroup(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     importer_id = db.Column(db.Integer, db.ForeignKey("importer.id"), nullable=False)
+    package_code = db.Column(db.String(50),unique=True,nullable=True)
     location = db.Column(db.String(200), nullable=True)
     img = db.Column(db.String(300), nullable=True)
     date = db.Column(db.Date, nullable=False)
@@ -569,7 +570,6 @@ def dashboard():
 
 @app.route("/new_post", methods=["GET", "POST"])
 @login_required
-@dubai
 def new_post():
     form = PostMainForm()
 
@@ -577,6 +577,7 @@ def new_post():
         created_count = 0
 
         for i, post_form in enumerate(form.posts):
+
             name = post_form.form.name.data.strip()
             phone = post_form.form.phone.data.strip()
             location = post_form.form.location.data
@@ -589,77 +590,121 @@ def new_post():
             # -------------------------
             img_file = post_form.form.img.data
             img_filename = None
+
             if img_file:
                 safe_name = secure_filename(img_file.filename)
-                img_filename = f"{uuid.uuid4().hex}_{safe_name}"
-                img_file.save(os.path.join(app.config["UPLOAD_FOLDER"], img_filename))
+
+                img_filename = (
+                    f"{uuid.uuid4().hex}_{safe_name}"
+                )
+
+                img_file.save(
+                    os.path.join(
+                        app.config["UPLOAD_FOLDER"],
+                        img_filename
+                    )
+                )
 
             # -------------------------
-            # Find or create importer (by phone only)
-            # Existing importer's name is NEVER overwritten
+            # Find or create importer
+            # By phone only
+            # Existing name is NOT overwritten
             # -------------------------
             importer = Importer.query.filter(
                 Importer.phone == phone
             ).first()
 
             if not importer:
-                importer = Importer(name=name, phone=phone)
+                importer = Importer(
+                    name=name,
+                    phone=phone
+                )
+
                 db.session.add(importer)
                 db.session.flush()
 
             # -------------------------
-            # Re-verify red-flag status server-side
+            # Re-check red flag
             # -------------------------
             if importer.is_red_flagged:
+
                 flash(
-                    f"ፖስት #{i + 1} ({name}) ከቀይ ምልክት ከተደረገለት አስመጪ ጋር የተያያዘ በመሆኑ አልተቀመጠም። "
-                    f"ምክንያት፦ ከፍተኛ የጉምሩክ ታክስ ወይም አጠራጣሪ ባህሪ",
+                    f"ፖስት #{i + 1} ({name}) "
+                    f"ከቀይ ምልክት ከተደረገለት አስመጪ ጋር "
+                    f"የተያያዘ በመሆኑ አልተቀመጠም። "
+                    f"ምክንያት፦ ከፍተኛ የጉምሩክ ታክስ "
+                    f"ወይም አጠራጣሪ ባህሪ",
                     "danger"
                 )
+
                 continue
 
             # -------------------------
-            # Parse this post's selected products from request.form
+            # Get selected products
             # -------------------------
             selected_products = []
-            id_pattern = re.compile(rf"^posts-{i}-products-(\d+)-id$")
+
+            id_pattern = re.compile(
+                rf"^posts-{i}-products-(\d+)-id$"
+            )
 
             for key in request.form:
+
                 match = id_pattern.match(key)
+
                 if not match:
                     continue
+
                 product_id_raw = request.form.get(key)
-                amount_raw = request.form.get(f"posts-{i}-products-{match.group(1)}-amount")
+
+                amount_raw = request.form.get(
+                    f"posts-{i}-products-"
+                    f"{match.group(1)}-amount"
+                )
+
                 if not product_id_raw or not amount_raw:
                     continue
+
                 try:
                     product_id = int(product_id_raw)
                     amount = float(amount_raw)
-                except ValueError:
+
+                except (ValueError, TypeError):
                     continue
+
                 if amount > 0:
-                    selected_products.append((product_id, amount))
+                    selected_products.append(
+                        (product_id, amount)
+                    )
 
             # -------------------------
-            # Validate submitted product IDs against the database
+            # Validate products
             # -------------------------
             valid_products = {}
+
             if selected_products:
+
                 valid_products = {
-                    p.id: p for p in Product.query.filter(
-                        Product.id.in_([pid for pid, _ in selected_products])
+                    p.id: p
+                    for p in Product.query.filter(
+                        Product.id.in_(
+                            [
+                                pid
+                                for pid, _ in selected_products
+                            ]
+                        )
                     ).all()
                 }
 
             valid_selected = [
-                (pid, amt) for pid, amt in selected_products if pid in valid_products
+                (pid, amount)
+                for pid, amount in selected_products
+                if pid in valid_products
             ]
 
             # -------------------------
-            # Generate the package code for this post
+            # Create PostGroup
             # -------------------------
-            # package_code = generate_package_code()
-
             post_group = PostGroup(
                 importer_id=importer.id,
                 location=location,
@@ -668,34 +713,68 @@ def new_post():
                 time=time,
                 wage=wage
             )
-            db.session.add(post_group)
-            db.session.flush()  # get post_group.id before creating items
 
+            db.session.add(post_group)
+
+            # Get database ID
+            db.session.flush()
+
+            # -------------------------
+            # Create permanent package code
+            # -------------------------
+            post_group.package_code = (
+                f"{post_group.id:03d}"
+            )
+
+            # -------------------------
+            # Create PostItems
+            # -------------------------
             if valid_selected:
+
                 for product_id, amount in valid_selected:
+
                     item = PostItem(
                         post_group_id=post_group.id,
                         product_id=product_id,
                         total_amount=amount
                     )
+
                     db.session.add(item)
 
             created_count += 1
 
+        # -------------------------
+        # Commit everything
+        # -------------------------
         db.session.commit()
 
         if created_count:
-            flash(f"{created_count} post(s) added successfully.", "success")
-        else:
-            flash("No posts were saved — see the warnings above.", "warning")
 
-        return redirect(url_for("posts"))
+            flash(
+                f"{created_count} post(s) added successfully.",
+                "success"
+            )
+
+        else:
+
+            flash(
+                "No posts were saved — see the warnings above.",
+                "warning"
+            )
+
+        return redirect(
+            url_for("posts")
+        )
 
     return render_template(
         "posts_form.html",
         form=form,
-        registered_importers=Importer.query.order_by(Importer.name).all(),
-        registered_products=Product.query.order_by(Product.name).all()
+        registered_importers=Importer.query.order_by(
+            Importer.name
+        ).all(),
+        registered_products=Product.query.order_by(
+            Product.name
+        ).all()
     )
 
 @app.route("/check-red-flag")
@@ -859,7 +938,12 @@ def edit_product(product_id):
 @login_required
 @dubai
 def posts():
-    post_groups = PostGroup.query.order_by(PostGroup.created_at.desc()).all()
+
+    post_groups = (
+        PostGroup.query
+        .order_by(PostGroup.created_at.desc())
+        .all()
+    )
 
     return render_template(
         "posts.html",

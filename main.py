@@ -262,7 +262,9 @@ class PostItem(db.Model):
     post_group = db.relationship("PostGroup", backref=db.backref("items", cascade="all, delete-orphan"))
     product = db.relationship("Product")
 
-
+class PackageCounter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    last_code = db.Column(db.Integer, nullable=False, default=0)
 
 
 class PostHistory(db.Model):
@@ -570,11 +572,25 @@ def dashboard():
 
 @app.route("/new_post", methods=["GET", "POST"])
 @login_required
+@motorist
 def new_post():
     form = PostMainForm()
 
     if form.validate_on_submit():
         created_count = 0
+
+        # ---------------------------------
+        # Get permanent package counter
+        # ---------------------------------
+        counter = PackageCounter.query.get(1)
+
+        if not counter:
+            counter = PackageCounter(
+                id=1,
+                last_code=0
+            )
+            db.session.add(counter)
+            db.session.flush()
 
         for i, post_form in enumerate(form.posts):
 
@@ -703,6 +719,13 @@ def new_post():
             ]
 
             # -------------------------
+            # Get next permanent code
+            # -------------------------
+            counter.last_code += 1
+
+            package_code = f"{counter.last_code:03d}"
+
+            # -------------------------
             # Create PostGroup
             # -------------------------
             post_group = PostGroup(
@@ -711,20 +734,11 @@ def new_post():
                 img=img_filename,
                 date=date,
                 time=time,
-                wage=wage
+                wage=wage,
+                package_code=package_code
             )
 
             db.session.add(post_group)
-
-            # Get database ID
-            db.session.flush()
-
-            # -------------------------
-            # Create permanent package code
-            # -------------------------
-            post_group.package_code = (
-                f"{post_group.id:03d}"
-            )
 
             # -------------------------
             # Create PostItems

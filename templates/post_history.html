@@ -12,7 +12,7 @@
 :root{
   --navy:#0f172a;--navy-light:#1e293b;--blue:#2563eb;--blue-soft:#eff6ff;
   --green:#16a34a;--green-soft:#f0fdf4;--amber:#d97706;--amber-soft:#fffbeb;
-  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;
+  --border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;--red:#dc2626;
 }
 *{box-sizing:border-box;}
 body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b;}
@@ -54,11 +54,13 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
 .hist-products{max-height:110px;overflow-y:auto;margin:.6rem 0;padding-right:.25rem;}
 .hist-product-item{background:var(--bg);border-radius:8px;padding:.4rem .6rem;margin-bottom:.35rem;font-size:.75rem;display:flex;justify-content:space-between;}
 
-.hist-actions{padding:.8rem 1rem;border-top:1px solid var(--border);background:#fafbfc;}
-.btn-resume{width:100%;background:var(--amber);border:none;color:#fff;font-weight:700;font-size:.82rem;padding:.55rem;border-radius:9px;}
+.hist-actions{padding:.8rem 1rem;border-top:1px solid var(--border);background:#fafbfc;display:flex;gap:.5rem;}
+.btn-resume{flex:1;background:var(--amber);border:none;color:#fff;font-weight:700;font-size:.82rem;padding:.55rem;border-radius:9px;}
 .btn-resume:hover{background:#b45309;color:#fff;}
-.btn-view-completed{width:100%;background:#fff;border:1.5px solid var(--border);color:var(--navy);font-weight:600;font-size:.82rem;padding:.55rem;border-radius:9px;}
+.btn-view-completed{flex:1;background:#fff;border:1.5px solid var(--border);color:var(--navy);font-weight:600;font-size:.82rem;padding:.55rem;border-radius:9px;}
 .btn-view-completed:hover{background:var(--bg);color:var(--navy);}
+.btn-delete-hist{background:#fff;border:1.5px solid var(--red);color:var(--red);font-weight:600;font-size:.82rem;padding:.55rem .7rem;border-radius:9px;}
+.btn-delete-hist:hover{background:var(--red);color:#fff;}
 
 .empty-state{text-align:center;padding:4rem 1rem;background:#fff;border-radius:18px;border:1px solid var(--border);}
 .empty-state i{font-size:3rem;color:#cbd5e1;margin-bottom:1rem;display:block;}
@@ -145,6 +147,12 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
           <a href="{{ url_for('post2', post_history_id=h.id) }}" class="btn btn-resume">
             <i class="bi bi-arrow-repeat me-1"></i>Resume Receiving
           </a>
+          <form method="POST" action="{{ url_for('delete_post_history', post_history_id=h.id) }}"
+                onsubmit="return confirm('Are you sure you want to delete this history record? This cannot be undone.');">
+            <button type="submit" class="btn btn-delete-hist" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
           {% endif %}
         </div>
       </div>

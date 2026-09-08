@@ -1294,6 +1294,31 @@ def post_history_list():
     return render_template("post_history.html", histories=histories)
 
 
+@app.route("/post_history/delete/<int:post_history_id>", methods=["POST"])
+@login_required
+@dubai
+def delete_post_history(post_history_id):
+    history = PostHistory.query.get_or_404(post_history_id)
+
+    # Prevent deleting a completed/received record accidentally —
+    # adjust or remove this check if you want completed ones deletable too
+    if history.receiver is not None:
+        flash("Cannot delete a completed record. This post has already been received.", "danger")
+        return redirect(url_for("post_history_list"))
+
+    # Delete related items first (if items don't cascade automatically)
+    for item in history.items:
+        db.session.delete(item)
+
+    db.session.delete(history)
+    db.session.commit()
+
+    flash("Post history record deleted successfully.", "success")
+    return redirect(url_for("post_history_list"))
+
+
+
+
 
 @app.route("/delete_user/<int:user_id>", methods=["POST"])
 @login_required

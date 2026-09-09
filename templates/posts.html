@@ -681,7 +681,7 @@ body{
                         </span>
 
                         <span class="value">
-                            {{ pg.package_code  }}
+                            {{ "%03d"|format(pg.package_code|int - 3) }}
                         </span>
 
                     </div>

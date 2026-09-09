@@ -1186,6 +1186,7 @@ table.app-table tbody td{
             <th>Status</th>
               <th>edit-importer</th>
               <th>Flag</th>
+              <th>delete-importer</th>
 
           </tr>
 
@@ -1228,6 +1229,19 @@ table.app-table tbody td{
                   </form>
                 </span>
               </td>
+
+              <td>
+    <form method="POST"
+          action="{{ url_for('delete_importer', importer_id=imp.id) }}"
+          onsubmit="return confirm('Are you sure you want to delete this importer?');"
+          style="display:inline;">
+
+        <button type="submit" class="action-badge">
+            delete
+        </button>
+
+    </form>
+</td>
 
           </tr>
 

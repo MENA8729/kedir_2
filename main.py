@@ -1468,6 +1468,21 @@ def toggle_motorist_user(user_id):
     return redirect(url_for("user_management"))
 
 
+
+@app.route("/delete-importer/<int:importer_id>", methods=["POST"])
+@login_required
+@motorist
+def delete_importer(importer_id):
+    importer = Importer.query.get_or_404(importer_id)
+
+    db.session.delete(importer)
+    db.session.commit()
+
+    flash("Importer deleted successfully.", "success")
+
+    return redirect(url_for("registration"))
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
     # app.run(debug=True, port=5005)

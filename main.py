@@ -572,7 +572,7 @@ def dashboard():
 
 @app.route("/new_post", methods=["GET", "POST"])
 @login_required
-@motorist
+@dubai
 def new_post():
     form = PostMainForm()
 
@@ -739,6 +739,7 @@ def new_post():
             )
 
             db.session.add(post_group)
+            db.session.flush()  # <-- FIX: assigns post_group.id before it's used below
 
             # -------------------------
             # Create PostItems
@@ -790,6 +791,8 @@ def new_post():
             Product.name
         ).all()
     )
+
+
 
 @app.route("/check-red-flag")
 @login_required

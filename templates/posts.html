@@ -157,6 +157,9 @@ body{
 
 .search-wrap{
     margin:1.5rem 0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
 }
 
 .search-box .input-group-text{
@@ -431,8 +434,8 @@ body{
 
         <div class="container-fluid page-container">
 
-            <a
-                class="navbar-brand d-flex align-items-center gap-2"
+
+            <a class="navbar-brand d-flex align-items-center gap-2"
                 href="#"
             >
 
@@ -466,8 +469,8 @@ body{
 
                     <li class="nav-item">
 
-                        <a
-                            class="nav-link nav-link-app"
+
+                           <a class="nav-link nav-link-app"
                             href="{{ url_for('dashboard') }}"
                         >
 
@@ -480,8 +483,8 @@ body{
 
                     <li class="nav-item">
 
-                        <a
-                            class="nav-link nav-link-app active"
+
+                            <a class="nav-link nav-link-app active"
                             href="#"
                         >
 
@@ -494,8 +497,8 @@ body{
 
                     <li class="nav-item">
 
-                        <a
-                            class="nav-link nav-link-app"
+
+                        <a    class="nav-link nav-link-app"
                             href="{{ url_for('new_post') }}"
                         >
 
@@ -508,8 +511,8 @@ body{
 
                     <li class="nav-item">
 
-                        <a
-                            class="nav-link nav-link-app"
+
+                        <a    class="nav-link nav-link-app"
                             href="{{ url_for('registration') }}"
                         >
 
@@ -522,8 +525,8 @@ body{
 
                     <li class="nav-item">
 
-                        <a
-                            class="nav-link nav-link-app"
+
+                         <a   class="nav-link nav-link-app"
                             href="{{ url_for('registration') }}"
                         >
 
@@ -590,6 +593,25 @@ body{
 
         </div>
 
+        <div
+            class="search-box input-group"
+            style="max-width:220px;"
+        >
+
+            <span class="input-group-text">
+
+                <i class="bi bi-calendar-event text-muted"></i>
+
+            </span>
+
+            <input
+                type="date"
+                class="form-control"
+                id="dateSearchInput"
+            >
+
+        </div>
+
     </div>
 
 
@@ -611,7 +633,9 @@ body{
 
             data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
 
-            data-package="{{ pg.package_code or ('%03d' % pg.id) }}"
+            data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
+
+            data-date="{{ pg.date.strftime('%Y-%m-%d') if pg.date else '' }}"
         >
 
             <div class="post-card">
@@ -829,8 +853,8 @@ body{
                     <div class="post-actions">
 
 
-                        <a
-                            href="{{ url_for('edit_post', post_group_id=pg.id) }}"
+
+                          <a href="{{ url_for('edit_post', post_group_id=pg.id) }}"
                             class="btn btn-edit-post"
                         >
                             ✏️ EDIT
@@ -884,8 +908,8 @@ body{
             Posts you create will appear here.
         </p>
 
-        <a
-            href="{{ url_for('new_post') }}"
+
+           <a href="{{ url_for('new_post') }}"
             class="btn btn-primary"
         >
 
@@ -912,42 +936,67 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput =
         document.getElementById('postSearchInput');
 
+    const dateInput =
+        document.getElementById('dateSearchInput');
+
     const gridItems =
         document.querySelectorAll('.post-grid-item');
 
 
-    if (searchInput) {
+    function applyFilters() {
 
-        searchInput.addEventListener('input', function() {
+        const query =
+            (searchInput ? searchInput.value : '').toLowerCase().trim();
 
-            const query =
-                this.value.toLowerCase().trim();
-
-
-            gridItems.forEach(item => {
-
-                const importer =
-                    item.dataset.importer || '';
-
-                const phone =
-                    item.dataset.phone || '';
-
-                const packageCode =
-                    item.dataset.package || '';
+        const dateQuery =
+            (dateInput ? dateInput.value : '').trim();
 
 
-                const match =
-                    importer.includes(query) ||
-                    phone.includes(query) ||
-                    packageCode.includes(query);
+        gridItems.forEach(item => {
+
+            const importer =
+                item.dataset.importer || '';
+
+            const phone =
+                item.dataset.phone || '';
+
+            const packageCode =
+                item.dataset.package || '';
+
+            const itemDate =
+                item.dataset.date || '';
 
 
-                item.style.display =
-                    match ? '' : 'none';
+            const matchesText =
+                query === '' ||
+                importer.includes(query) ||
+                phone.includes(query) ||
+                packageCode.includes(query);
 
-            });
+
+            const matchesDate =
+                dateQuery === '' ||
+                itemDate === dateQuery;
+
+
+            item.style.display =
+                (matchesText && matchesDate) ? '' : 'none';
 
         });
+
+    }
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener('input', applyFilters);
+
+    }
+
+
+    if (dateInput) {
+
+        dateInput.addEventListener('change', applyFilters);
 
     }
 

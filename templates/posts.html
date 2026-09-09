@@ -1,19 +1,22 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category if category in ['success', 'danger', 'warning', 'info'] else 'success' }} alert-dismissible fade show flash-message" role="alert">
-                {{ message }}
+{% if messages %}
+{% for category, message in messages %} <div class="alert alert-{{ category if category in ['success', 'danger', 'warning', 'info'] else 'success' }} alert-dismissible fade show flash-message" role="alert">
+{{ message }}
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert">
-                </button>
-            </div>
-        {% endfor %}
-    {% endif %}
+```
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+```
+
 {% endwith %}
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -430,504 +433,501 @@ body{
 
 <header class="app-header sticky-top">
 
-    <nav class="navbar navbar-expand-lg py-2">
+```
+<nav class="navbar navbar-expand-lg py-2">
 
-        <div class="container-fluid page-container">
-
-
-            <a class="navbar-brand d-flex align-items-center gap-2"
-                href="#"
-            >
-
-                <span class="app-logo">
-                    <i class="bi bi-boxes"></i>
-                </span>
-
-                <span class="app-brand">
-                    CargoTrack
-                </span>
-
-            </a>
-
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNav"
-            >
-
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
-
-            <div
-                class="collapse navbar-collapse"
-                id="mainNav"
-            >
-
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
-
-                    <li class="nav-item">
+    <div class="container-fluid page-container">
 
 
-                           <a class="nav-link nav-link-app"
-                            href="{{ url_for('dashboard') }}"
-                        >
+        <a class="navbar-brand d-flex align-items-center gap-2"
+            href="#"
+        >
 
-                            <i class="bi bi-speedometer2 me-1"></i>
-                            Dashboard
+            <span class="app-logo">
+                <i class="bi bi-boxes"></i>
+            </span>
 
-                        </a>
+            <span class="app-brand">
+                CargoTrack
+            </span>
 
-                    </li>
+        </a>
 
-                    <li class="nav-item">
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNav"
+        >
 
+            <span class="navbar-toggler-icon"></span>
 
-                            <a class="nav-link nav-link-app active"
-                            href="#"
-                        >
+        </button>
 
-                            <i class="bi bi-file-earmark-text me-1"></i>
-                            Posts
+        <div
+            class="collapse navbar-collapse"
+            id="mainNav"
+        >
 
-                        </a>
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
 
-                    </li>
+                <li class="nav-item">
 
-                    <li class="nav-item">
+                    <a class="nav-link nav-link-app"
+                        href="{{ url_for('dashboard') }}"
+                    >
 
+                        <i class="bi bi-speedometer2 me-1"></i>
+                        Dashboard
 
-                        <a    class="nav-link nav-link-app"
-                            href="{{ url_for('new_post') }}"
-                        >
+                    </a>
 
-                            <i class="bi bi-box-seam me-1"></i>
-                            new post
+                </li>
 
-                        </a>
+                <li class="nav-item">
 
-                    </li>
+                    <a class="nav-link nav-link-app active"
+                        href="#"
+                    >
 
-                    <li class="nav-item">
+                        <i class="bi bi-file-earmark-text me-1"></i>
+                        Posts
 
+                    </a>
 
-                        <a    class="nav-link nav-link-app"
-                            href="{{ url_for('registration') }}"
-                        >
+                </li>
 
-                            <i class="bi bi-people me-1"></i>
-                            Importers
+                <li class="nav-item">
 
-                        </a>
+                    <a class="nav-link nav-link-app"
+                        href="{{ url_for('new_post') }}"
+                    >
 
-                    </li>
+                        <i class="bi bi-box-seam me-1"></i>
+                        new post
 
-                    <li class="nav-item">
+                    </a>
 
+                </li>
 
-                         <a   class="nav-link nav-link-app"
-                            href="{{ url_for('registration') }}"
-                        >
+                <li class="nav-item">
 
-                            <i class="bi bi-clipboard-plus me-1"></i>
-                            Registration
+                    <a class="nav-link nav-link-app"
+                        href="{{ url_for('registration') }}"
+                    >
 
-                        </a>
+                        <i class="bi bi-people me-1"></i>
+                        Importers
 
-                    </li>
+                    </a>
 
-                </ul>
+                </li>
 
-            </div>
+                <li class="nav-item">
+
+                    <a class="nav-link nav-link-app"
+                        href="{{ url_for('registration') }}"
+                    >
+
+                        <i class="bi bi-clipboard-plus me-1"></i>
+                        Registration
+
+                    </a>
+
+                </li>
+
+            </ul>
 
         </div>
 
-    </nav>
+    </div>
+
+</nav>
+```
 
 </header>
-
 
 <!-- ===== HERO ===== -->
 
 <section class="hero-section">
 
-    <div class="page-container">
+```
+<div class="page-container">
 
-        <h1 class="hero-heading mb-0">
-            Posts
-        </h1>
+    <h1 class="hero-heading mb-0">
+        Posts
+    </h1>
 
-        <p class="hero-subtitle">
-            Manage arrivals, products, importers, and post information from one organized workspace.
-        </p>
+    <p class="hero-subtitle">
+        Manage arrivals, products, importers, and post information from one organized workspace.
+    </p>
 
-    </div>
+</div>
+```
 
 </section>
 
-
 <div class="page-container">
 
-    <!-- ===== SEARCH ===== -->
+```
+<!-- ===== SEARCH ===== -->
 
-    <div class="search-wrap">
+<div class="search-wrap">
 
-        <div
-            class="search-box input-group"
-            style="max-width:360px;"
+    <div
+        class="search-box input-group"
+        style="max-width:360px;"
+    >
+
+        <span class="input-group-text">
+
+            <i class="bi bi-search text-muted"></i>
+
+        </span>
+
+        <input
+            type="text"
+            class="form-control"
+            id="postSearchInput"
+            placeholder="Search posts..."
         >
-
-            <span class="input-group-text">
-
-                <i class="bi bi-search text-muted"></i>
-
-            </span>
-
-            <input
-                type="text"
-                class="form-control"
-                id="postSearchInput"
-                placeholder="Search posts..."
-            >
-
-        </div>
-
-        <div
-            class="search-box input-group"
-            style="max-width:220px;"
-        >
-
-            <span class="input-group-text">
-
-                <i class="bi bi-calendar-event text-muted"></i>
-
-            </span>
-
-            <input
-                type="date"
-                class="form-control"
-                id="dateSearchInput"
-            >
-
-        </div>
 
     </div>
 
-
-    {% if post_groups %}
-
-    <!-- ===== POST GRID ===== -->
-
     <div
-        class="row g-3"
-        id="postGrid"
+        class="search-box input-group"
+        style="max-width:220px;"
     >
 
-        {% for pg in post_groups %}
+        <span class="input-group-text">
 
-        <div
-            class="col-6 col-md-4 col-lg-3 post-grid-item"
+            <i class="bi bi-geo-alt text-muted"></i>
 
-            data-importer="{{ pg.importer.name|lower }}"
+        </span>
 
-            data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
-
-            data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
-
-            data-date="{{ pg.date.strftime('%Y-%m-%d') if pg.date else '' }}"
+        <input
+            type="text"
+            class="form-control"
+            id="locationSearchInput"
+            placeholder="የመድረሻ ቦታ"
         >
 
-            <div class="post-card">
+    </div>
+
+</div>
 
 
-                <!-- ===== PHOTO ===== -->
+{% if post_groups %}
 
-                <div class="post-image-wrap">
+<!-- ===== POST GRID ===== -->
 
-                    {% if pg.img %}
+<div
+    class="row g-3"
+    id="postGrid"
+>
 
-                    <img
-                        src="{{ url_for('static', filename='uploads/' ~ pg.img) }}"
-                        alt="Post image"
-                    >
+    {% for pg in post_groups %}
+
+    <div
+        class="col-6 col-md-4 col-lg-3 post-grid-item"
+
+        data-importer="{{ pg.importer.name|lower }}"
+
+        data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
+
+        data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
+
+        data-location="{{ pg.location|lower if pg.location else '' }}"
+    >
+
+        <div class="post-card">
+
+
+            <!-- ===== PHOTO ===== -->
+
+            <div class="post-image-wrap">
+
+                {% if pg.img %}
+
+                <img
+                    src="{{ url_for('static', filename='uploads/' ~ pg.img) }}"
+                    alt="Post image"
+                >
+
+                {% else %}
+
+                <div class="post-image-placeholder">
+
+                    <i class="bi bi-image"></i>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- ===== INFO PANEL ===== -->
+
+            <div class="post-info">
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        አምጭ
+                    </span>
+
+                    <span class="value">
+                        {{ pg.importer.name }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        ስልክ
+                    </span>
+
+                    <span class="value">
+                        {{ pg.importer.phone or "—" }}
+                    </span>
+
+                </div>
+
+
+                <!-- ===== PERMANENT PACKAGE CODE ===== -->
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Package ቁጥር
+                    </span>
+
+                    <span class="value">
+                        {{ "%03d"|format(pg.package_code|int - 3) }}
+                    </span>
+
+                </div>
+
+
+                <!-- ===== PRODUCTS ===== -->
+
+                <div class="products-block">
+
+                    <div class="products-title">
+                        ምርቶች
+                    </div>
+
+                    {% if pg.items %}
+
+                    <div class="products-scroll">
+
+                        <ul>
+
+                            {% for item in pg.items %}
+
+                            <li>
+
+                                <span>
+                                    {{ item.product.name if item.product else "Unnamed product" }}
+                                </span>
+
+                                <span>
+                                    ×
+                                    {{
+                                        item.total_amount|int
+                                        if item.total_amount == item.total_amount|int
+                                        else item.total_amount
+                                    }}
+                                </span>
+
+                            </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                    </div>
 
                     {% else %}
 
-                    <div class="post-image-placeholder">
-
-                        <i class="bi bi-image"></i>
-
-                    </div>
+                    <span class="no-products-text">
+                        ምንም ምርት የለም
+                    </span>
 
                     {% endif %}
 
                 </div>
 
 
-                <!-- ===== INFO PANEL ===== -->
+                <!-- ===== DATE ===== -->
 
-                <div class="post-info">
+                <div class="info-row">
 
+                    <span class="label">
+                        የመድረሻ ቀን
+                    </span>
 
-                    <div class="info-row">
-
-                        <span class="label">
-                            አስመጪ
-                        </span>
-
-                        <span class="value">
-                            {{ pg.importer.name }}
-                        </span>
-
-                    </div>
-
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            ስልክ
-                        </span>
-
-                        <span class="value">
-                            {{ pg.importer.phone or "—" }}
-                        </span>
-
-                    </div>
-
-
-                    <!-- ===== PERMANENT PACKAGE CODE ===== -->
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            Package ቁጥር
-                        </span>
-
-                        <span class="value">
-                            {{ "%03d"|format(pg.package_code|int - 3) }}
-                        </span>
-
-                    </div>
-
-
-                    <!-- ===== PRODUCTS ===== -->
-
-                    <div class="products-block">
-
-                        <div class="products-title">
-                            ምርቶች
-                        </div>
-
-                        {% if pg.items %}
-
-                        <div class="products-scroll">
-
-                            <ul>
-
-                                {% for item in pg.items %}
-
-                                <li>
-
-                                    <span>
-                                        {{ item.product.name if item.product else "Unnamed product" }}
-                                    </span>
-
-                                    <span>
-                                        ×
-                                        {{
-                                            item.total_amount|int
-                                            if item.total_amount == item.total_amount|int
-                                            else item.total_amount
-                                        }}
-                                    </span>
-
-                                </li>
-
-                                {% endfor %}
-
-                            </ul>
-
-                        </div>
-
-                        {% else %}
-
-                        <span class="no-products-text">
-                            ምንም ምርት የለም
-                        </span>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- ===== DATE ===== -->
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            የመድረሻ ቀን
-                        </span>
-
-                        <span class="value">
-                            {{ pg.date.strftime('%b %d, %Y') }}
-                        </span>
-
-                    </div>
-
-
-                    <!-- ===== TIME ===== -->
-
-                    {% if pg.time %}
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            የመድረሻ ሰዓት
-                        </span>
-
-                        <span class="value">
-                            {{ pg.time.strftime('%I:%M %p') }}
-                        </span>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    <!-- ===== LOCATION ===== -->
-
-                    {% if pg.location %}
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            የመድረሻ ቦታ
-                        </span>
-
-                        <span class="value">
-                            {{ pg.location }}
-                        </span>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    <!-- ===== WAGE ===== -->
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            wage
-                        </span>
-
-                        <span class="value">
-                            {{ "%.2f"|format(pg.wage) }} ETB
-                        </span>
-
-                    </div>
-
-
-                    <!-- ===== TOTAL PRODUCT ===== -->
-
-                    {% if pg.total_amount %}
-
-                    <div class="info-row">
-
-                        <span class="label">
-                            total product
-                        </span>
-
-                        <span class="value">
-                            {{ "%.2f"|format(pg.total_amount) }}
-                        </span>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    <!-- ===== ACTIONS ===== -->
-
-                    <div class="post-actions">
-
-
-
-                          <a href="{{ url_for('edit_post', post_group_id=pg.id) }}"
-                            class="btn btn-edit-post"
-                        >
-                            ✏️ EDIT
-                        </a>
-
-
-                        <form
-                            method="POST"
-                            action="{{ url_for('receive_post', post_group_id=pg.id) }}"
-                            style="flex:1;"
-                            onsubmit="return confirm('Are you sure you want to mark this post as received? This will archive it and open the receiving form.');"
-                        >
-
-                            <button
-                                type="submit"
-                                class="btn btn-received w-100"
-                            >
-                                ✓ RECEIVED
-                            </button>
-
-                        </form>
-
-                    </div>
-
+                    <span class="value">
+                        {{ pg.date.strftime('%b %d, %Y') }}
+                    </span>
 
                 </div>
+
+
+                <!-- ===== TIME ===== -->
+
+                {% if pg.time %}
+
+                <div class="info-row">
+
+                    <span class="label">
+                        የመድረሻ ሰዓት
+                    </span>
+
+                    <span class="value">
+                        {{ pg.time.strftime('%I:%M %p') }}
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- ===== LOCATION ===== -->
+
+                {% if pg.location %}
+
+                <div class="info-row">
+
+                    <span class="label">
+                        የመድረሻ ቦታ
+                    </span>
+
+                    <span class="value">
+                        {{ pg.location }}
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- ===== WAGE ===== -->
+
+                <div class="info-row">
+
+                    <span class="label">
+                        wage
+                    </span>
+
+                    <span class="value">
+                        {{ "%.2f"|format(pg.wage) }} ETB
+                    </span>
+
+                </div>
+
+
+                <!-- ===== TOTAL PRODUCT ===== -->
+
+                {% if pg.total_amount %}
+
+                <div class="info-row">
+
+                    <span class="label">
+                        total product
+                    </span>
+
+                    <span class="value">
+                        {{ "%.2f"|format(pg.total_amount) }}
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- ===== ACTIONS ===== -->
+
+                <div class="post-actions">
+
+
+                    <a href="{{ url_for('edit_post', post_group_id=pg.id) }}"
+                        class="btn btn-edit-post"
+                    >
+                        ✏️ EDIT
+                    </a>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('receive_post', post_group_id=pg.id) }}"
+                        style="flex:1;"
+                        onsubmit="return confirm('Are you sure you want to mark this post as received? This will archive it and open the receiving form.');"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-received w-100"
+                        >
+                            ✓ RECEIVED
+                        </button>
+
+                    </form>
+
+                </div>
+
 
             </div>
 
         </div>
 
-        {% endfor %}
-
     </div>
 
-
-    {% else %}
-
-
-    <!-- ===== EMPTY STATE ===== -->
-
-    <div class="empty-state">
-
-        <i class="bi bi-inbox"></i>
-
-        <h5>
-            No posts yet
-        </h5>
-
-        <p>
-            Posts you create will appear here.
-        </p>
-
-
-           <a href="{{ url_for('new_post') }}"
-            class="btn btn-primary"
-        >
-
-            <i class="bi bi-plus-lg me-1"></i>
-            Create Post
-
-        </a>
-
-    </div>
-
-
-    {% endif %}
+    {% endfor %}
 
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% else %}
 
+
+<!-- ===== EMPTY STATE ===== -->
+
+<div class="empty-state">
+
+    <i class="bi bi-inbox"></i>
+
+    <h5>
+        No posts yet
+    </h5>
+
+    <p>
+        Posts you create will appear here.
+    </p>
+
+
+    <a href="{{ url_for('new_post') }}"
+        class="btn btn-primary"
+    >
+
+        <i class="bi bi-plus-lg me-1"></i>
+        Create Post
+
+    </a>
+
+</div>
+
+
+{% endif %}
+```
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 
@@ -936,8 +936,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput =
         document.getElementById('postSearchInput');
 
-    const dateInput =
-        document.getElementById('dateSearchInput');
+    const locationInput =
+        document.getElementById('locationSearchInput');
 
     const gridItems =
         document.querySelectorAll('.post-grid-item');
@@ -948,8 +948,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const query =
             (searchInput ? searchInput.value : '').toLowerCase().trim();
 
-        const dateQuery =
-            (dateInput ? dateInput.value : '').trim();
+        const locationQuery =
+            (locationInput ? locationInput.value : '').toLowerCase().trim();
 
 
         gridItems.forEach(item => {
@@ -963,8 +963,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const packageCode =
                 item.dataset.package || '';
 
-            const itemDate =
-                item.dataset.date || '';
+            const location =
+                item.dataset.location || '';
 
 
             const matchesText =
@@ -974,13 +974,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 packageCode.includes(query);
 
 
-            const matchesDate =
-                dateQuery === '' ||
-                itemDate === dateQuery;
+            const matchesLocation =
+                locationQuery === '' ||
+                location.includes(locationQuery);
 
 
             item.style.display =
-                (matchesText && matchesDate) ? '' : 'none';
+                (matchesText && matchesLocation) ? '' : 'none';
 
         });
 
@@ -994,9 +994,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    if (dateInput) {
+    if (locationInput) {
 
-        dateInput.addEventListener('change', applyFilters);
+        locationInput.addEventListener('input', applyFilters);
 
     }
 

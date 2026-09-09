@@ -386,69 +386,188 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitBtn = document.getElementById('submitAllBtn');
   const RED_FLAG_URL = "{{ url_for('check_red_flag') }}";
 
+  // =========================================================
+  // PRODUCT MEMORY
+  // Same browser + same phone
+  // =========================================================
+  const PRODUCT_MEMORY_KEY = 'kedir2_product_memory';
+
+  function getProductMemory() {
+    try {
+      return JSON.parse(localStorage.getItem(PRODUCT_MEMORY_KEY)) || {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function saveProductMemory(productId, selected, quantity) {
+    const memory = getProductMemory();
+
+    memory[productId] = {
+      selected: selected,
+      quantity: quantity
+    };
+
+    localStorage.setItem(PRODUCT_MEMORY_KEY, JSON.stringify(memory));
+  }
+
+  function restoreProductMemory(item) {
+    const productId = item.getAttribute('data-product-id');
+    const memory = getProductMemory();
+    const saved = memory[productId];
+
+    if (!saved) {
+      return;
+    }
+
+    const indicator = item.querySelector('.selection-indicator');
+    const amountWrapper = item.querySelector('.product-amount-wrapper');
+    const amountInput = item.querySelector('.product-amount-input');
+    const hiddenIdInput = item.querySelector('.hidden-product-id-input');
+    const hiddenAmountInput = item.querySelector('.hidden-product-amount-input');
+
+    // Restore last quantity
+    if (saved.quantity !== undefined && saved.quantity !== '') {
+      amountInput.value = saved.quantity;
+    }
+
+    // Restore selected state
+    if (saved.selected) {
+      item.classList.add('selected');
+
+      indicator.textContent = '✓';
+      indicator.className = 'selection-indicator text-success fw-bold';
+
+      amountWrapper.classList.remove('d-none');
+      amountWrapper.classList.add('d-flex');
+
+      hiddenIdInput.value = productId;
+      hiddenAmountInput.value = amountInput.value;
+    } else {
+      item.classList.remove('selected');
+
+      indicator.textContent = '○';
+      indicator.className = 'selection-indicator text-muted';
+
+      amountWrapper.classList.remove('d-flex');
+      amountWrapper.classList.add('d-none');
+
+      hiddenIdInput.value = '';
+      hiddenAmountInput.value = '';
+    }
+  }
+
   addNewPost();
   addPostBtn.addEventListener('click', addNewPost);
 
   function addNewPost() {
     const currentIndex = postIndexCounter++;
+
     const rendered = postTemplate.innerHTML
       .replaceAll('__INDEX__', currentIndex)
       .replaceAll('__NUM__', currentIndex + 1);
 
     const wrapper = document.createElement('div');
     wrapper.innerHTML = rendered;
+
     const postElement = wrapper.firstElementChild;
 
     postsContainer.appendChild(postElement);
+
     initPostModule(postElement, currentIndex);
+
     updatePostUIState();
-    postElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    postElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
   function updatePostUIState() {
     const postCards = postsContainer.querySelectorAll('.post-card');
+
     postCards.forEach((card, idx) => {
       const numBadge = card.querySelector('.num-badge');
       const titleText = card.querySelector('.post-title');
-      if (numBadge) numBadge.textContent = idx + 1;
-      if (titleText) {
-        titleText.childNodes[titleText.childNodes.length - 1].textContent = ` Post #${idx + 1}`;
+
+      if (numBadge) {
+        numBadge.textContent = idx + 1;
       }
+
+      if (titleText) {
+        titleText.childNodes[titleText.childNodes.length - 1].textContent =
+          ` Post #${idx + 1}`;
+      }
+
       const removeBtn = card.querySelector('.remove-post-btn');
-      if (removeBtn) removeBtn.classList.toggle('d-none', postCards.length <= 1);
+
+      if (removeBtn) {
+        removeBtn.classList.toggle(
+          'd-none',
+          postCards.length <= 1
+        );
+      }
     });
   }
 
   function formatReadableDate(dateStr) {
     if (!dateStr) return '';
+
     const d = new Date(dateStr + 'T00:00:00');
+
     if (isNaN(d)) return '';
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    return d.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   }
 
   function debounce(fn, delay) {
     let timer = null;
+
     return function(...args) {
       clearTimeout(timer);
-      timer = setTimeout(() => fn.apply(this, args), delay);
+
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+      }, delay);
     };
   }
 
   function initPostModule(postEl, index) {
-    // Remove post
-    postEl.querySelector('.remove-post-btn').addEventListener('click', function() {
-      postEl.remove();
-      updatePostUIState();
-    });
 
-    // Date readable display
+    // =========================================================
+    // REMOVE POST
+    // =========================================================
+    postEl.querySelector('.remove-post-btn').addEventListener(
+      'click',
+      function() {
+        postEl.remove();
+        updatePostUIState();
+      }
+    );
+
+
+    // =========================================================
+    // DATE READABLE DISPLAY
+    // =========================================================
     const dateInput = postEl.querySelector('.date-input');
     const dateReadable = postEl.querySelector('.date-readable');
+
     dateInput.addEventListener('change', function() {
-      dateReadable.textContent = this.value ? '📅 ' + formatReadableDate(this.value) : '';
+      dateReadable.textContent =
+        this.value
+          ? '📅 ' + formatReadableDate(this.value)
+          : '';
     });
 
-    // File upload preview
+
+    // =========================================================
+    // FILE UPLOAD PREVIEW
+    // =========================================================
     const dropzone = postEl.querySelector('.file-upload-area');
     const fileInput = postEl.querySelector('.file-input');
     const promptEl = postEl.querySelector('.upload-prompt');
@@ -457,197 +576,486 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileNameEl = postEl.querySelector('.file-name');
     const removeFileBtn = postEl.querySelector('.remove-file-btn');
 
-    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
     fileInput.addEventListener('change', function() {
+
       if (this.files && this.files[0]) {
+
         const file = this.files[0];
         const reader = new FileReader();
+
         reader.onload = function(e) {
+
           previewImg.src = e.target.result;
           fileNameEl.textContent = file.name;
+
           promptEl.classList.add('d-none');
           previewContainer.classList.remove('d-none');
         };
+
         reader.readAsDataURL(file);
       }
     });
+
     removeFileBtn.addEventListener('click', function(e) {
+
       e.stopPropagation();
+
       fileInput.value = '';
       previewImg.src = '';
       fileNameEl.textContent = '';
+
       previewContainer.classList.add('d-none');
       promptEl.classList.remove('d-none');
     });
 
-    // Importer search / select / add-new
-    const importerInput = postEl.querySelector('.importer-search-input');
-    const hiddenImporterId = postEl.querySelector('.importer-id-hidden');
-    const importerDropdown = postEl.querySelector('.importer-dropdown');
-    const importerOptions = postEl.querySelectorAll('.importer-option');
-    const importerNotFound = postEl.querySelector('.importer-not-found');
-    const addNewRow = postEl.querySelector('.importer-add-new');
-    const newNameSpan = postEl.querySelector('.new-name');
 
-    importerInput.addEventListener('focus', () => importerDropdown.classList.add('show'));
+    // =========================================================
+    // IMPORTER SEARCH / SELECT / ADD NEW
+    // =========================================================
+    const importerInput =
+      postEl.querySelector('.importer-search-input');
 
-    importerInput.addEventListener('input', function() {
-      const query = this.value.toLowerCase().trim();
-      hiddenImporterId.value = '';
-      let matchCount = 0;
+    const hiddenImporterId =
+      postEl.querySelector('.importer-id-hidden');
 
-      importerOptions.forEach(opt => {
-        const match = opt.textContent.toLowerCase().includes(query);
-        opt.classList.toggle('d-none', !match);
-        if (match) matchCount++;
-      });
+    const importerDropdown =
+      postEl.querySelector('.importer-dropdown');
 
-      if (matchCount === 0 && query.length > 0) {
-        importerNotFound.classList.remove('d-none');
-        addNewRow.classList.remove('d-none');
-        newNameSpan.textContent = this.value;
-      } else {
-        importerNotFound.classList.add('d-none');
-        addNewRow.classList.add('d-none');
-      }
+    const importerOptions =
+      postEl.querySelectorAll('.importer-option');
+
+    const importerNotFound =
+      postEl.querySelector('.importer-not-found');
+
+    const addNewRow =
+      postEl.querySelector('.importer-add-new');
+
+    const newNameSpan =
+      postEl.querySelector('.new-name');
+
+
+    importerInput.addEventListener('focus', () => {
       importerDropdown.classList.add('show');
     });
 
+
+    importerInput.addEventListener('input', function() {
+
+      const query = this.value.toLowerCase().trim();
+
+      hiddenImporterId.value = '';
+
+      let matchCount = 0;
+
+      importerOptions.forEach(opt => {
+
+        const match =
+          opt.textContent.toLowerCase().includes(query);
+
+        opt.classList.toggle('d-none', !match);
+
+        if (match) {
+          matchCount++;
+        }
+      });
+
+
+      if (matchCount === 0 && query.length > 0) {
+
+        importerNotFound.classList.remove('d-none');
+        addNewRow.classList.remove('d-none');
+
+        newNameSpan.textContent = this.value;
+
+      } else {
+
+        importerNotFound.classList.add('d-none');
+        addNewRow.classList.add('d-none');
+      }
+
+      importerDropdown.classList.add('show');
+    });
+
+
     importerOptions.forEach(opt => {
+
       opt.addEventListener('click', function(e) {
+
         e.preventDefault();
-        const val = this.getAttribute('data-name');
+
+        const val =
+          this.getAttribute('data-name');
+
         importerInput.value = val;
-        hiddenImporterId.value = this.getAttribute('data-id');
+
+        hiddenImporterId.value =
+          this.getAttribute('data-id');
+
         importerDropdown.classList.remove('show');
       });
     });
 
+
     addNewRow.addEventListener('click', function() {
+
       hiddenImporterId.value = '';
+
       importerDropdown.classList.remove('show');
     });
 
+
     document.addEventListener('click', function(e) {
-      if (!postEl.contains(e.target)) importerDropdown.classList.remove('show');
+
+      if (!postEl.contains(e.target)) {
+        importerDropdown.classList.remove('show');
+      }
     });
 
-    // Red flag check — phone only
-    const phoneInput = postEl.querySelector('.phone-input');
-    const redFlagAlert = postEl.querySelector('.red-flag-alert');
-    const redFlagReasonEl = postEl.querySelector('.rf-reason');
+
+    // =========================================================
+    // RED FLAG CHECK — PHONE ONLY
+    // =========================================================
+    const phoneInput =
+      postEl.querySelector('.phone-input');
+
+    const redFlagAlert =
+      postEl.querySelector('.red-flag-alert');
+
+    const redFlagReasonEl =
+      postEl.querySelector('.rf-reason');
+
 
     const runRedFlagCheck = debounce(function() {
+
       const phone = phoneInput.value.trim();
 
       if (!phone) {
+
         setRedFlagState(false);
+
         return;
       }
 
-      const params = new URLSearchParams({ phone: phone });
+
+      const params =
+        new URLSearchParams({
+          phone: phone
+        });
+
+
       fetch(`${RED_FLAG_URL}?${params.toString()}`)
         .then(res => res.json())
         .then(data => {
-          setRedFlagState(!!data.red_flagged, data.reason);
+
+          setRedFlagState(
+            !!data.red_flagged,
+            data.reason
+          );
+
         })
         .catch(() => {
-          // Fail silently on the frontend — backend re-checks at submit anyway
+          // Backend checks again during submit
         });
+
     }, 500);
 
+
     function setRedFlagState(isFlagged, reason) {
-      postEl.classList.toggle('is-flagged', isFlagged);
-      redFlagAlert.classList.toggle('show', isFlagged);
+
+      postEl.classList.toggle(
+        'is-flagged',
+        isFlagged
+      );
+
+      redFlagAlert.classList.toggle(
+        'show',
+        isFlagged
+      );
+
       if (isFlagged) {
-        redFlagReasonEl.textContent = reason || 'This sender requires administrator attention before processing.';
+
+        redFlagReasonEl.textContent =
+          reason ||
+          'This sender requires administrator attention before processing.';
       }
     }
 
-    phoneInput.addEventListener('input', runRedFlagCheck);
 
-    // Product search / select
-    const productSearch = postEl.querySelector('.product-search-input');
-    const productItems = postEl.querySelectorAll('.product-item');
-    const summaryContainer = postEl.querySelector('.selected-products-summary');
+    phoneInput.addEventListener(
+      'input',
+      runRedFlagCheck
+    );
+
+
+    // =========================================================
+    // PRODUCT SEARCH / SELECT
+    // =========================================================
+    const productSearch =
+      postEl.querySelector('.product-search-input');
+
+    const productItems =
+      postEl.querySelectorAll('.product-item');
+
+    const summaryContainer =
+      postEl.querySelector('.selected-products-summary');
+
 
     productSearch.addEventListener('input', function() {
-      const query = this.value.toLowerCase().trim();
+
+      const query =
+        this.value.toLowerCase().trim();
+
       productItems.forEach(item => {
-        const name = item.getAttribute('data-product-name').toLowerCase();
-        item.classList.toggle('d-none', !name.includes(query));
+
+        const name =
+          item
+            .getAttribute('data-product-name')
+            .toLowerCase();
+
+        item.classList.toggle(
+          'd-none',
+          !name.includes(query)
+        );
       });
     });
 
+
+    // =========================================================
+    // PRODUCT INITIALIZATION
+    // =========================================================
     productItems.forEach(item => {
-      const indicator = item.querySelector('.selection-indicator');
-      const amountWrapper = item.querySelector('.product-amount-wrapper');
-      const amountInput = item.querySelector('.product-amount-input');
-      const hiddenIdInput = item.querySelector('.hidden-product-id-input');
-      const hiddenAmountInput = item.querySelector('.hidden-product-amount-input');
-      const productId = item.getAttribute('data-product-id');
 
-      hiddenIdInput.name = `posts-${index}-products-${productId}-id`;
-      hiddenAmountInput.name = `posts-${index}-products-${productId}-amount`;
+      const indicator =
+        item.querySelector('.selection-indicator');
 
+      const amountWrapper =
+        item.querySelector('.product-amount-wrapper');
+
+      const amountInput =
+        item.querySelector('.product-amount-input');
+
+      const hiddenIdInput =
+        item.querySelector('.hidden-product-id-input');
+
+      const hiddenAmountInput =
+        item.querySelector('.hidden-product-amount-input');
+
+      const productId =
+        item.getAttribute('data-product-id');
+
+
+      // Set the correct field names
+      hiddenIdInput.name =
+        `posts-${index}-products-${productId}-id`;
+
+      hiddenAmountInput.name =
+        `posts-${index}-products-${productId}-amount`;
+
+
+      // =======================================================
+      // RESTORE SAVED PRODUCT STATE
+      // =======================================================
+      restoreProductMemory(item);
+
+
+      // =======================================================
+      // PRODUCT CLICK
+      // =======================================================
       item.addEventListener('click', function() {
-        const isSelected = item.classList.contains('selected');
+
+        const isSelected =
+          item.classList.contains('selected');
+
+
         if (!isSelected) {
+
+          // SELECT PRODUCT
           item.classList.add('selected');
+
           indicator.textContent = '✓';
-          indicator.className = 'selection-indicator text-success fw-bold';
+
+          indicator.className =
+            'selection-indicator text-success fw-bold';
+
           amountWrapper.classList.remove('d-none');
+
           amountWrapper.classList.add('d-flex');
+
           hiddenIdInput.value = productId;
-          hiddenAmountInput.value = amountInput.value;
+
+          hiddenAmountInput.value =
+            amountInput.value;
+
+
+          // Remember selected + quantity
+          saveProductMemory(
+            productId,
+            true,
+            amountInput.value
+          );
+
+
         } else {
+
+          // UNSELECT PRODUCT
           item.classList.remove('selected');
+
           indicator.textContent = '○';
-          indicator.className = 'selection-indicator text-muted';
+
+          indicator.className =
+            'selection-indicator text-muted';
+
           amountWrapper.classList.remove('d-flex');
+
           amountWrapper.classList.add('d-none');
+
           hiddenIdInput.value = '';
+
           hiddenAmountInput.value = '';
+
+
+          // Remember that it is unchecked,
+          // BUT keep the last quantity
+          saveProductMemory(
+            productId,
+            false,
+            amountInput.value
+          );
         }
+
+
         updateSummary();
       });
 
-      amountInput.addEventListener('input', function() {
-        hiddenAmountInput.value = this.value;
+
+      // =======================================================
+      // QUANTITY CHANGE
+      // =======================================================
+      amountInput.addEventListener('input', function(e) {
+
+        e.stopPropagation();
+
+        hiddenAmountInput.value =
+          this.value;
+
+
+        // Save the latest quantity
+        saveProductMemory(
+          productId,
+          item.classList.contains('selected'),
+          this.value
+        );
+
+
         updateSummary();
       });
+
+
+      // Prevent clicking the quantity input
+      // from selecting/unselecting the product
+      amountInput.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+
+
+      // Restore summary
+      updateSummary();
     });
 
+
+    // =========================================================
+    // PRODUCT SUMMARY
+    // =========================================================
     function updateSummary() {
-      const selectedItems = postEl.querySelectorAll('.product-item.selected');
+
+      const selectedItems =
+        postEl.querySelectorAll(
+          '.product-item.selected'
+        );
+
+
       if (selectedItems.length === 0) {
-        summaryContainer.textContent = "ምንም ምርት አልተመረጠም።";
+
+        summaryContainer.textContent =
+          "ምንም ምርት አልተመረጠም።";
+
         return;
       }
+
+
       const parts = [];
+
+
       selectedItems.forEach(item => {
-        const name = item.getAttribute('data-product-name');
-        const qty = item.querySelector('.product-amount-input').value || 1;
-        parts.push(`${name} × ${qty}`);
+
+        const name =
+          item.getAttribute(
+            'data-product-name'
+          );
+
+        const qty =
+          item.querySelector(
+            '.product-amount-input'
+          ).value || 1;
+
+
+        parts.push(
+          `${name} × ${qty}`
+        );
       });
-      summaryContainer.textContent = "Selected: " + parts.join(" • ");
+
+
+      summaryContainer.textContent =
+        "Selected: " + parts.join(" • ");
     }
   }
 
-  // Validation + submit loading state
+
+  // =========================================================
+  // VALIDATION + SUBMIT LOADING STATE
+  // =========================================================
   mainForm.addEventListener('submit', function(event) {
+
     if (!mainForm.checkValidity()) {
+
       event.preventDefault();
       event.stopPropagation();
-      const firstInvalid = mainForm.querySelector(':invalid');
-      if (firstInvalid) firstInvalid.closest('.post-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      const firstInvalid =
+        mainForm.querySelector(':invalid');
+
+      if (firstInvalid) {
+
+        firstInvalid
+          .closest('.post-card')
+          ?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+      }
+
     } else {
+
       submitBtn.disabled = true;
-      submitBtn.querySelector('.submit-label').classList.add('d-none');
-      submitBtn.querySelector('.submit-loading').classList.remove('d-none');
+
+      submitBtn
+        .querySelector('.submit-label')
+        .classList.add('d-none');
+
+      submitBtn
+        .querySelector('.submit-loading')
+        .classList.remove('d-none');
     }
+
+
     mainForm.classList.add('was-validated');
+
   }, false);
+
 });
 </script>
 </body>

@@ -63,12 +63,17 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','8BYkEfBA6O6donzWlSihBXox
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 login_manager=LoginManager()
 login_manager.init_app(app)
+login_manager.remember_cookie_duration = timedelta(days=365)
 class Base(DeclarativeBase):
     pass
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL',
     'sqlite:///merkato.db'
 )
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=365)
+app.config['REMEMBER_COOKIE_HTTPONLY'] = True
+app.config['REMEMBER_COOKIE_SECURE'] = True
+
 UPLOAD_FOLDER = os.path.join(app.root_path, "static", "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 #Tell Flask that uploaded files should be saved in the static/uploads folder.
@@ -513,7 +518,7 @@ def login():
         if not password_correct:
             flash("Wrong password!")
             return redirect(url_for('login'))
-        login_user(existing_user)
+        login_user(existing_user, remember=True)
         flash('Logged in successfully!', 'success')
         return redirect(url_for('dashboard'))
 
@@ -1096,6 +1101,8 @@ def edit_post(post_group_id):
 
 
 
+
+
 @app.route("/post/receive/<int:post_group_id>", methods=["POST"])
 @login_required
 @motorist
@@ -1510,6 +1517,11 @@ def delete_importer(importer_id):
     flash("Importer deleted successfully.", "success")
 
     return redirect(url_for("registration"))
+
+
+
+
+
 
 
 if __name__ == '__main__':

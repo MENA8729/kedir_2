@@ -925,7 +925,7 @@ def toggle_red_flag_importer(import_id):
         else f"Flag removed from {importer.name}.",
         "success"
     )
-    return redirect(url_for("registration"))
+    return redirect(url_for("final_posts"))
 
 
 @app.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
@@ -1201,7 +1201,22 @@ def post2(post_history_id):
 @motorist
 def final_posts():
     posts = FinalPost.query.filter_by(is_reset=False).order_by(FinalPost.created_at.desc()).all()
-    return render_template("final_posts.html", final_posts=posts)
+
+    importer_map = {}
+
+    for fp in posts:
+        r = fp.receiver
+        h = r.post_history if r else None
+
+        if h and h.importer_id:
+            importer = db.session.get(Importer, h.importer_id)
+            importer_map[h.id] = importer
+
+    return render_template(
+        "final_posts.html",
+        final_posts=posts,
+        importer_map=importer_map
+    )
 
 
 @app.route("/final-detail")
@@ -1209,7 +1224,21 @@ def final_posts():
 @admin_only
 def final_detail():
     posts = FinalPost.query.order_by(FinalPost.created_at.desc()).all()
-    return render_template("final_detail.html", final_posts=posts)
+
+    importer_map = {}
+
+    for fp in posts:
+        r = fp.receiver
+        h = r.post_history if r else None
+
+        if h and h.importer_id:
+            importer_map[h.id] = db.session.get(Importer, h.importer_id)
+
+    return render_template(
+        "final_detail.html",
+        final_posts=posts,
+        importer_map=importer_map
+    )
 
 
 

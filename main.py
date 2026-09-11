@@ -309,6 +309,7 @@ class Receiver(db.Model):
     original_wage = db.Column(db.Float, nullable=False)
     actual_wage_paid = db.Column(db.Float, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    collector_name = db.Column(db.String(150), nullable=True)
 
     post_history = db.relationship("PostHistory", backref=db.backref("receiver", uselist=False))
 
@@ -1150,31 +1151,49 @@ def receive_post(post_group_id):
 @motorist
 def post2(post_history_id):
     history = PostHistory.query.get_or_404(post_history_id)
+
     if history.receiver:
         flash("This post has already been received.", "warning")
         return redirect(url_for("final_posts"))
+
+    # Get the original PostGroup so we can display the permanent package code
+    post_group = None
+    if history.original_post_group_id:
+        post_group = PostGroup.query.get(history.original_post_group_id)
 
     form = Post2Form()
 
     if form.validate_on_submit():
         try:
+            # Collector name
+            collector_name = request.form.get("collector_name", "").strip()
+
             receiver = Receiver(
                 post_history_id=history.id,
                 original_wage=history.original_wage,
-                actual_wage_paid=float(form.actual_wage_paid.data)
+                actual_wage_paid=float(form.actual_wage_paid.data),
+                collector_name=collector_name
             )
+
             db.session.add(receiver)
             db.session.flush()  # get receiver.id
 
+            # Save each received product
             for hist_item in history.items:
-                received_raw = request.form.get(f"item-{hist_item.id}-received")
-                taxed_raw = request.form.get(f"item-{hist_item.id}-taxed")
-                tax_raw = request.form.get(f"item-{hist_item.id}-tax")
+                received_raw = request.form.get(
+                    f"item-{hist_item.id}-received"
+                )
+                taxed_raw = request.form.get(
+                    f"item-{hist_item.id}-taxed"
+                )
+                tax_raw = request.form.get(
+                    f"item-{hist_item.id}-tax"
+                )
 
                 def to_float(val):
                     try:
                         return float(val) if val not in (None, "") else None
-                    except ValueError:
+                    except (ValueError, TypeError):
                         return None
 
                 receiver_item = ReceiverItem(
@@ -1184,6 +1203,7 @@ def post2(post_history_id):
                     taxed_quantity=to_float(taxed_raw),
                     tax_amount=to_float(tax_raw)
                 )
+
                 db.session.add(receiver_item)
 
             # ---- Create the Final Post ----
@@ -1191,16 +1211,28 @@ def post2(post_history_id):
             db.session.add(final_post)
 
             db.session.commit()
-            flash("Receiving information saved. Final post created.", "success")
+
+            flash(
+                "Receiving information saved. Final post created.",
+                "success"
+            )
+
             return redirect(url_for("final_posts"))
 
         except Exception:
             db.session.rollback()
-            flash("Something went wrong while saving. Nothing was recorded.", "danger")
 
-    return render_template("post2.html", history=history, form=form)
+            flash(
+                "Something went wrong while saving. Nothing was recorded.",
+                "danger"
+            )
 
-
+    return render_template(
+        "post2.html",
+        history=history,
+        form=form,
+        post_group=post_group
+    )
 
 
 @app.route("/final-posts")

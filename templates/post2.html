@@ -1,157 +1,738 @@
-
 <!DOCTYPE html>
 <html lang="am">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ዕቃ መቀበያ</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+  rel="stylesheet"
+>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+>
+
 <style>
-:root{--navy:#0f172a;--navy-light:#1e293b;--green:#16a34a;--green-soft:#f0fdf4;--border:#e2e8f0;--muted:#64748b;--bg:#f4f6f9;}
-*{box-sizing:border-box;}
-body{background:var(--bg);font-family:'Poppins',system-ui,sans-serif;color:#1e293b;}
-.page-header{background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:2rem 1rem;border-radius:0 0 24px 24px;margin-bottom:-1.5rem;}
-.page-header h2{color:#fff;font-weight:800;margin:0;}
-.main-container{max-width:800px;margin:0 auto;padding:0 1rem 3rem;position:relative;z-index:2;}
-.ref-card{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 6px 18px rgba(15,23,42,.06);padding:1.25rem 1.5rem;margin-top:1.5rem;}
-.ref-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f1f5f9;font-size:.9rem;}
-.ref-row:last-child{border-bottom:none;}
-.ref-label{color:var(--muted);font-weight:600;}
-.ref-value{font-weight:600;}
-.product-recv-card{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1rem;}
-.product-recv-title{font-weight:700;color:var(--navy);margin-bottom:.7rem;}
-.expected-badge{background:#e2e8f0;color:var(--navy);font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;}
-.summary-card{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;border-radius:16px;padding:1.25rem 1.5rem;margin-top:1.5rem;}
-.summary-row{display:flex;justify-content:space-between;font-size:.88rem;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.1);}
-.summary-row:last-child{border-bottom:none;}
-.summary-row strong{font-weight:700;}
-.btn-save-recv{background:var(--green);border:none;border-radius:14px;padding:.9rem;font-weight:700;color:#fff;font-size:1.05rem;}
+
+:root{
+  --navy:#0f172a;
+  --navy-light:#1e293b;
+  --green:#16a34a;
+  --green-soft:#f0fdf4;
+  --border:#e2e8f0;
+  --muted:#64748b;
+  --bg:#f4f6f9;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Poppins',system-ui,sans-serif;
+  color:#1e293b;
+}
+
+.page-header{
+  background:linear-gradient(
+    135deg,
+    var(--navy),
+    var(--navy-light)
+  );
+  padding:2rem 1rem;
+  border-radius:0 0 24px 24px;
+  margin-bottom:-1.5rem;
+}
+
+.page-header h2{
+  color:#fff;
+  font-weight:800;
+  margin:0;
+}
+
+.main-container{
+  max-width:800px;
+  margin:0 auto;
+  padding:0 1rem 3rem;
+  position:relative;
+  z-index:2;
+}
+
+.ref-card{
+  background:#fff;
+  border-radius:16px;
+  border:1px solid var(--border);
+  box-shadow:0 6px 18px rgba(15,23,42,.06);
+  padding:1.25rem 1.5rem;
+  margin-top:1.5rem;
+}
+
+.ref-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  padding:.55rem 0;
+  border-bottom:1px solid #f1f5f9;
+  font-size:.9rem;
+}
+
+.ref-row:last-child{
+  border-bottom:none;
+}
+
+.ref-label{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.ref-value{
+  font-weight:600;
+  text-align:right;
+}
+
+.package-code{
+  color:var(--green);
+  font-size:1.05rem;
+  font-weight:800;
+}
+
+.product-recv-card{
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem;
+  margin-bottom:1rem;
+}
+
+.product-recv-title{
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:.7rem;
+}
+
+.expected-badge{
+  background:#e2e8f0;
+  color:var(--navy);
+  font-size:.75rem;
+  font-weight:700;
+  padding:.2rem .6rem;
+  border-radius:6px;
+}
+
+.summary-card{
+  background:linear-gradient(
+    135deg,
+    var(--navy),
+    var(--navy-light)
+  );
+  color:#fff;
+  border-radius:16px;
+  padding:1.25rem 1.5rem;
+  margin-top:1.5rem;
+}
+
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  font-size:.88rem;
+  padding:.3rem 0;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.summary-row:last-child{
+  border-bottom:none;
+}
+
+.summary-row strong{
+  font-weight:700;
+}
+
+.btn-save-recv{
+  background:var(--green);
+  border:none;
+  border-radius:14px;
+  padding:.9rem;
+  font-weight:700;
+  color:#fff;
+  font-size:1.05rem;
+}
+
+.btn-save-recv:hover{
+  background:#15803d;
+  color:#fff;
+}
+
 </style>
 </head>
+
 <body>
 
+<!-- HEADER -->
+
 <div class="page-header">
+
   <div class="main-container">
-    <h2><i class="bi bi-box-arrow-in-down me-2"></i>ዕቃ መቀበያ</h2>
+
+    <h2>
+      <i class="bi bi-box-arrow-in-down me-2"></i>
+      ዕቃ መቀበያ
+    </h2>
+
   </div>
+
 </div>
+
 
 <div class="main-container">
 
-  <!-- የመጀመሪያው ልጥፍ መረጃ -->
+  <!-- PACKAGE / IMPORTER INFORMATION -->
+
   <div class="ref-card">
-    <div class="ref-row"><span class="ref-label">አምጭ</span><span class="ref-value">{{ history.importer_name }}</span></div>
-    <div class="ref-row"><span class="ref-label">ስልክ</span><span class="ref-value">{{ history.importer_phone or "—" }}</span></div>
-    <div class="ref-row"><span class="ref-label">የመድረሻ ቀን</span><span class="ref-value">{{ history.date.strftime('%b %d, %Y') }}</span></div>
-    {% if history.time %}<div class="ref-row"><span class="ref-label">የመድረሻ ሰዓት</span><span class="ref-value">{{ history.time.strftime('%I:%M %p') }}</span></div>{% endif %}
-    {% if history.location %}<div class="ref-row"><span class="ref-label">የመድረሻ ቦታ</span><span class="ref-value">{{ history.location }}</span></div>{% endif %}
-    <div class="ref-row"><span class="ref-label"> ክፍያ</span><span class="ref-value">{{ "%.2f"|format(history.original_wage) }} ETB</span></div>
-    {% if history.original_total_amount %}<div class="ref-row"><span class="ref-label">የእቃ ብዛት</span><span class="ref-value">{{ "%.2f"|format(history.original_total_amount) }}</span></div>{% endif %}
-  </div>
 
-  <form method="POST" id="post2Form">
-    {{ form.hidden_tag() }}
+    {% if post_group %}
 
-    <h5 class="mt-4 mb-3 fw-bold" style="color:var(--navy);">ዕቃዎች</h5>
+    <div class="ref-row">
+  <span class="ref-label">የፓኬጅ ቁጥር</span>
 
-    {% for item in history.items %}
-    <div class="product-recv-card" data-expected="{{ item.expected_quantity or 0 }}">
-      <div class="d-flex justify-content-between align-items-center product-recv-title">
-        <span>{{ item.product_name }}</span>
-        <span class="expected-badge">የሚጠበቅ: {{ item.expected_quantity|int if item.expected_quantity == item.expected_quantity|int else item.expected_quantity }}</span>
-      </div>
-
-      <div class="row g-2">
-        <div class="col-4">
-          <label class="form-label small fw-semibold">የተቀበሉት ብዛት</label>
-          <input type="number" step="0.01" class="form-control recv-received" name="item-{{ item.id }}-received" data-item-id="{{ item.id }}">
-        </div>
-
-        <div class="col-4">
-          <label class="form-label small fw-semibold">የቀረጥ ብዛት</label>
-          <input type="number" step="0.01" class="form-control recv-taxed" name="item-{{ item.id }}-taxed" data-item-id="{{ item.id }}">
-        </div>
-
-        <div class="col-4">
-          <label class="form-label small fw-semibold">ቀረጥ/ጉምሩክ (ETB)</label>
-          <input type="number" step="0.01" class="form-control recv-tax" name="item-{{ item.id }}-tax" data-item-id="{{ item.id }}">
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-
-    <div class="ref-card">
-      <label class="form-label fw-semibold">በእውነት የተከፈለ ደመወዝ (ETB)</label>
-      {{ form.actual_wage_paid(class="form-control", id="actualWageInput") }}
-      <div class="form-text">ዋና ደመወዝ: {{ "%.2f"|format(history.original_wage) }} ETB</div>
-    </div>
-
-    <!-- የቀጥታ ማጠቃለያ -->
-    <div class="summary-card">
-      <div class="summary-row"><span>ጠቅላላ የሚጠበቅ</span><strong id="sumExpected">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ የተቀበሉት</span><strong id="sumReceived">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ የጠፋ</span><strong id="sumLost">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ የቀረጥ ብዛት</span><strong id="sumTaxed">0</strong></div>
-      <div class="summary-row"><span>ጠቅላላ ቀረጥ/ጉምሩክ</span><strong id="sumTax">0 ETB</strong></div>
-      <div class="summary-row"><span>ዋና ደመወዝ</span><strong>{{ "%.2f"|format(history.original_wage) }} ETB</strong></div>
-      <div class="summary-row"><span>በእውነት የተከፈለ ደመወዝ</span><strong id="sumActualWage">0 ETB</strong></div>
-      <div class="summary-row"><span>ተጨማሪ ደመወዝ</span><strong id="sumAdditionalWage">0 ETB</strong></div>
-    </div>
-
-    <button type="submit" class="btn btn-save-recv w-100 mt-3">
-      <i class="bi bi-check2-circle me-2"></i>አረጋግጥ እና አስቀምጥ
-    </button>
-  </form>
+  <span class="ref-value package-code">
+    {{ post_group.package_code if post_group else "—" }}
+  </span>
 </div>
 
+    {% endif %}
+
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        አምጭ
+      </span>
+
+      <span class="ref-value">
+        {{ history.importer_name }}
+      </span>
+
+    </div>
+
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        ስልክ
+      </span>
+
+      <span class="ref-value">
+        {{ history.importer_phone or "—" }}
+      </span>
+
+    </div>
+
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        የመድረሻ ቀን
+      </span>
+
+      <span class="ref-value">
+        {{ history.date.strftime('%b %d, %Y') }}
+      </span>
+
+    </div>
+
+
+    {% if history.time %}
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        የመድረሻ ሰዓት
+      </span>
+
+      <span class="ref-value">
+        {{ history.time.strftime('%I:%M %p') }}
+      </span>
+
+    </div>
+
+    {% endif %}
+
+
+    {% if history.location %}
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        የመድረሻ ቦታ
+      </span>
+
+      <span class="ref-value">
+        {{ history.location }}
+      </span>
+
+    </div>
+
+    {% endif %}
+
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        ክፍያ
+      </span>
+
+      <span class="ref-value">
+        {{ "%.2f"|format(history.original_wage) }} ETB
+      </span>
+
+    </div>
+
+
+    {% if history.original_total_amount %}
+
+    <div class="ref-row">
+
+      <span class="ref-label">
+        የእቃ ብዛት
+      </span>
+
+      <span class="ref-value">
+        {{ "%.2f"|format(history.original_total_amount) }}
+      </span>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+
+  <form method="POST" id="post2Form">
+
+    {{ form.hidden_tag() }}
+
+
+    <!-- COLLECTOR NAME -->
+
+    <div class="ref-card">
+
+      <label
+        for="collectorName"
+        class="form-label fw-semibold"
+      >
+        የተቀባዩ ስም
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        id="collectorName"
+        name="collector_name"
+        placeholder="የተቀባዩን ስም ያስገቡ"
+      >
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <h5
+      class="mt-4 mb-3 fw-bold"
+      style="color:var(--navy);"
+    >
+      ዕቃዎች
+    </h5>
+
+
+    {% for item in history.items %}
+
+    <div
+      class="product-recv-card"
+      data-expected="{{ item.expected_quantity or 0 }}"
+    >
+
+      <div
+        class="d-flex justify-content-between align-items-center product-recv-title"
+      >
+
+        <span>
+          {{ item.product_name }}
+        </span>
+
+        <span class="expected-badge">
+
+          የሚጠበቅ:
+
+          {{ item.expected_quantity|int
+             if item.expected_quantity == item.expected_quantity|int
+             else item.expected_quantity }}
+
+        </span>
+
+      </div>
+
+
+      <div class="row g-2">
+
+
+        <!-- RECEIVED -->
+
+        <div class="col-4">
+
+          <label class="form-label small fw-semibold">
+            የተቀበሉት ብዛት
+          </label>
+
+          <input
+            type="number"
+            step="0.01"
+            class="form-control recv-received"
+            name="item-{{ item.id }}-received"
+            data-item-id="{{ item.id }}"
+          >
+
+        </div>
+
+
+        <!-- TAXED QUANTITY -->
+
+        <div class="col-4">
+
+          <label class="form-label small fw-semibold">
+            የቀረጥ ብዛት
+          </label>
+
+          <input
+            type="number"
+            step="0.01"
+            class="form-control recv-taxed"
+            name="item-{{ item.id }}-taxed"
+            data-item-id="{{ item.id }}"
+          >
+
+        </div>
+
+
+        <!-- TAX -->
+
+        <div class="col-4">
+
+          <label class="form-label small fw-semibold">
+            ቀረጥ/ጉምሩክ (ETB)
+          </label>
+
+          <input
+            type="number"
+            step="0.01"
+            class="form-control recv-tax"
+            name="item-{{ item.id }}-tax"
+            data-item-id="{{ item.id }}"
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% endfor %}
+
+
+    <!-- ACTUAL WAGE -->
+
+    <div class="ref-card">
+
+      <label
+        class="form-label fw-semibold"
+        for="actualWageInput"
+      >
+        በእውነት የተከፈለ ደመወዝ (ETB)
+      </label>
+
+      {{ form.actual_wage_paid(
+          class="form-control",
+          id="actualWageInput"
+      ) }}
+
+      <div class="form-text">
+
+        ዋና ደመወዝ:
+
+        {{ "%.2f"|format(history.original_wage) }}
+
+        ETB
+
+      </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary-card">
+
+      <div class="summary-row">
+
+        <span>
+          ጠቅላላ የሚጠበቅ
+        </span>
+
+        <strong id="sumExpected">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ጠቅላላ የተቀበሉት
+        </span>
+
+        <strong id="sumReceived">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ጠቅላላ የጠፋ
+        </span>
+
+        <strong id="sumLost">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ጠቅላላ የቀረጥ ብዛት
+        </span>
+
+        <strong id="sumTaxed">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ጠቅላላ ቀረጥ/ጉምሩክ
+        </span>
+
+        <strong id="sumTax">
+          0 ETB
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ዋና ደመወዝ
+        </span>
+
+        <strong>
+          {{ "%.2f"|format(history.original_wage) }} ETB
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          በእውነት የተከፈለ ደመወዝ
+        </span>
+
+        <strong id="sumActualWage">
+          0 ETB
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ተጨማሪ ደመወዝ
+        </span>
+
+        <strong id="sumAdditionalWage">
+          0 ETB
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- SAVE -->
+
+    <button
+      type="submit"
+      class="btn btn-save-recv w-100 mt-3"
+    >
+
+      <i class="bi bi-check2-circle me-2"></i>
+
+      አረጋግጥ እና አስቀምጥ
+
+    </button>
+
+  </form>
+
+</div>
+
+
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
+
   const originalWage = {{ history.original_wage }};
-  const receivedInputs = document.querySelectorAll('.recv-received');
-  const taxedInputs = document.querySelectorAll('.recv-taxed');
-  const taxInputs = document.querySelectorAll('.recv-tax');
-  const wageInput = document.getElementById('actualWageInput');
+
+  const receivedInputs =
+    document.querySelectorAll('.recv-received');
+
+  const taxedInputs =
+    document.querySelectorAll('.recv-taxed');
+
+  const taxInputs =
+    document.querySelectorAll('.recv-tax');
+
+  const wageInput =
+    document.getElementById('actualWageInput');
+
 
   function recalc() {
-    let totalExpected = 0, totalReceived = 0, totalTaxed = 0, totalTax = 0;
 
-    document.querySelectorAll('.product-recv-card').forEach(card => {
-      const expected = parseFloat(card.dataset.expected) || 0;
-      totalExpected += expected;
-      const received = parseFloat(card.querySelector('.recv-received').value) || 0;
-      totalReceived += received;
-      const taxed = parseFloat(card.querySelector('.recv-taxed').value) || 0;
-      totalTaxed += taxed;
-      const tax = parseFloat(card.querySelector('.recv-tax').value) || 0;
-      totalTax += tax;
-    });
+    let totalExpected = 0;
+    let totalReceived = 0;
+    let totalTaxed = 0;
+    let totalTax = 0;
 
-    const totalLost = totalExpected - totalReceived;
-    const actualWage = parseFloat(wageInput.value) || 0;
-    const additionalWage = actualWage - originalWage;
 
-    document.getElementById('sumExpected').textContent = totalExpected;
-    document.getElementById('sumReceived').textContent = totalReceived;
-    document.getElementById('sumLost').textContent = totalLost;
-    document.getElementById('sumTaxed').textContent = totalTaxed;
-    document.getElementById('sumTax').textContent = totalTax.toFixed(2) + ' ETB';
-    document.getElementById('sumActualWage').textContent = actualWage.toFixed(2) + ' ETB';
-    document.getElementById('sumAdditionalWage').textContent = additionalWage.toFixed(2) + ' ETB';
+    document
+      .querySelectorAll('.product-recv-card')
+      .forEach(card => {
+
+        const expected =
+          parseFloat(card.dataset.expected) || 0;
+
+        totalExpected += expected;
+
+
+        const received =
+          parseFloat(
+            card.querySelector('.recv-received').value
+          ) || 0;
+
+        totalReceived += received;
+
+
+        const taxed =
+          parseFloat(
+            card.querySelector('.recv-taxed').value
+          ) || 0;
+
+        totalTaxed += taxed;
+
+
+        const tax =
+          parseFloat(
+            card.querySelector('.recv-tax').value
+          ) || 0;
+
+        totalTax += tax;
+
+      });
+
+
+    const totalLost =
+      totalExpected - totalReceived;
+
+
+    const actualWage =
+      parseFloat(wageInput.value) || 0;
+
+
+    const additionalWage =
+      actualWage - originalWage;
+
+
+    document.getElementById('sumExpected').textContent =
+      totalExpected;
+
+
+    document.getElementById('sumReceived').textContent =
+      totalReceived;
+
+
+    document.getElementById('sumLost').textContent =
+      totalLost;
+
+
+    document.getElementById('sumTaxed').textContent =
+      totalTaxed;
+
+
+    document.getElementById('sumTax').textContent =
+      totalTax.toFixed(2) + ' ETB';
+
+
+    document.getElementById('sumActualWage').textContent =
+      actualWage.toFixed(2) + ' ETB';
+
+
+    document.getElementById('sumAdditionalWage').textContent =
+      additionalWage.toFixed(2) + ' ETB';
+
   }
 
-  [...receivedInputs, ...taxedInputs, ...taxInputs].forEach(input => {
+
+  [
+    ...receivedInputs,
+    ...taxedInputs,
+    ...taxInputs
+  ].forEach(input => {
+
     input.addEventListener('input', recalc);
+
   });
+
 
   wageInput.addEventListener('input', recalc);
 
+
   recalc();
+
 });
+
 </script>
 
 </body>
 </html>
-

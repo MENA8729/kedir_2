@@ -651,32 +651,30 @@ body{
 
   <div class="header-overlay">
 
-```
-<div class="header-content">
+    <div class="header-content">
 
-  <a href="{{ url_for('dashboard') }}" class="back-dashboard">
-    <i class="bi bi-arrow-left"></i>
-    Dashboard
-  </a>
+      <a href="{{ url_for('dashboard') }}" class="back-dashboard">
+        <i class="bi bi-arrow-left"></i>
+        Dashboard
+      </a>
 
-  <div class="header-title">
+      <div class="header-title">
 
-    <div class="header-icon">
-      <i class="bi bi-clipboard-check"></i>
+        <div class="header-icon">
+          <i class="bi bi-clipboard-check"></i>
+        </div>
+
+        <div>
+          <h1>Final Posts</h1>
+
+          <p>
+            Review received posts, manage flags, and reset entries into history.
+          </p>
+        </div>
+
+      </div>
+
     </div>
-
-    <div>
-      <h1>Final Posts</h1>
-
-      <p>
-        Review received posts, manage flags, and reset entries into history.
-      </p>
-    </div>
-
-  </div>
-
-</div>
-```
 
   </div>
 
@@ -686,56 +684,52 @@ body{
 
   <div class="top-bar">
 
-```
-<div>
-  <h2 class="page-title mb-0">
-    <i class="bi bi-clipboard-check me-2"></i>
-    Final Posts
-  </h2>
+    <div>
+      <h2 class="page-title mb-0">
+        <i class="bi bi-clipboard-check me-2"></i>
+        Final Posts
+      </h2>
 
-  <p class="page-subtitle mb-0">
-    Review received posts, manage flags, and reset entries into history.
-  </p>
-</div>
+      <p class="page-subtitle mb-0">
+        Review received posts, manage flags, and reset entries into history.
+      </p>
+    </div>
 
 
-<a href="{{ url_for('final_detail') }}" class="btn-final-detail">
+    <a href="{{ url_for('final_detail') }}" class="btn-final-detail">
 
-  <i class="bi bi-archive me-1"></i>
+      <i class="bi bi-archive me-1"></i>
 
-  View Final Detail (all history)
+      View Final Detail (all history)
 
-</a>
-```
+    </a>
 
   </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 
-```
-{% if messages %}
+  {% if messages %}
 
-  {% for category, message in messages %}
+    {% for category, message in messages %}
 
-  <div
-    class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show"
-    role="alert"
-  >
+    <div
+      class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show"
+      role="alert"
+    >
 
-    {{ message }}
+      {{ message }}
 
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-    ></button>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+      ></button>
 
-  </div>
+    </div>
 
-  {% endfor %}
+    {% endfor %}
 
-{% endif %}
-```
+  {% endif %}
 
 {% endwith %}
 
@@ -743,324 +737,346 @@ body{
 
   <div class="row g-3">
 
-```
-{% for fp in final_posts %}
+    {% for fp in final_posts %}
 
-{% set r = fp.receiver %}
-{% set h = r.post_history %}
-{% set importer = importer_map.get(h.id) %}
-
-
-<div class="col-6 col-md-4 col-lg-3">
-
-  <div class="fp-card {{ 'flagged' if importer and importer.is_red_flagged }}">
+    {% set r = fp.receiver %}
+    {% set h = r.post_history %}
+    {% set importer = importer_map.get(h.id) %}
 
 
-    <!-- CARD HEADER -->
+    <div class="col-6 col-md-4 col-lg-3">
 
-    <div class="fp-header">
-
-      {% if importer and importer.is_red_flagged %}
-
-      <span class="flag-pill">
-
-        <i class="bi bi-flag-fill"></i>
-
-        FLAGGED
-
-      </span>
-
-      {% endif %}
+      <div class="fp-card {{ 'flagged' if importer and importer.is_red_flagged }}">
 
 
-      <!-- IMPORTER NAME -->
-      <p class="name {{ 'flagged-name' if importer and importer.is_red_flagged }}">
+        <!-- CARD HEADER -->
 
-        {{ h.importer_name }}
+        <div class="fp-header">
 
-      </p>
+          {% if importer and importer.is_red_flagged %}
 
+          <span class="flag-pill">
 
-      <div class="phone">
+            <i class="bi bi-flag-fill"></i>
 
-        <i class="bi bi-telephone-fill"></i>
+            FLAGGED
 
-        {{ h.importer_phone or "—" }}
+          </span>
 
-      </div>
-
-    </div>
+          {% endif %}
 
 
-    <!-- CARD BODY -->
+          <!-- IMPORTER NAME -->
+          <p class="name {{ 'flagged-name' if importer and importer.is_red_flagged }}">
 
-    <div class="fp-body">
+            {{ h.importer_name }}
 
-
-      <div class="fp-row">
-
-        <span class="fp-label">
-          አድራሻ
-        </span>
-
-        <span class="fp-value">
-          {{ h.location or "—" }}
-        </span>
-
-      </div>
+          </p>
 
 
-      <div class="fp-row">
+          <div class="phone">
 
-        <span class="fp-label">
-          ዋና ክፍያ
-        </span>
+            <i class="bi bi-telephone-fill"></i>
 
-        <span class="fp-value">
+            {{ h.importer_phone or "—" }}
 
-          {{ "%.2f"|format(h.original_wage) }} ETB
-
-        </span>
-
-      </div>
-
-
-      <div class="fp-row">
-
-        <span class="fp-label">
-          በኋላ የተከፈለ
-        </span>
-
-        <span class="fp-value">
-
-          {{
-            "%.2f"|format(r.actual_wage_paid)
-            if r.actual_wage_paid is not none
-            else "—"
-          }}
-
-          ETB
-
-        </span>
-
-      </div>
-
-
-      <div class="fp-row">
-
-        <span class="fp-label">
-          ተጨማሪ ደመወዝ
-        </span>
-
-        <span class="fp-value">
-
-          {{
-            "%.2f"|format(r.additional_wage)
-            if r.additional_wage is not none
-            else "—"
-          }}
-
-          ETB
-
-        </span>
-
-      </div>
-
-
-      <!-- PRODUCTS -->
-
-      <div class="fp-products">
-
-        {% for ri in r.items %}
-
-        <div class="fp-product-item">
-
-          <div class="pname">
-            {{ ri.post_history_item.product_name }}
           </div>
 
+          <!-- COLLECTOR NAME -->
+          <div class="phone">
 
-          <div class="pgrid">
+            <i class="bi bi-person-fill"></i>
 
-            <span>
-
-              የተላከው:
-
-              {{
-                ri.post_history_item.expected_quantity|int
-                if ri.post_history_item.expected_quantity ==
-                ri.post_history_item.expected_quantity|int
-                else
-                ri.post_history_item.expected_quantity
-              }}
-
-            </span>
-
-
-            <span>
-
-              የተቀበለው:
-
-              {{
-                ri.received_quantity
-                if ri.received_quantity is not none
-                else "—"
-              }}
-
-            </span>
-
-
-            <span>
-
-              የጠፋው:
-
-              {{ ri.lost_quantity }}
-
-            </span>
-
-
-            <span>
-
-              ታክስ ብዛት:
-
-              {{
-                ri.taxed_quantity
-                if ri.taxed_quantity is not none
-                else "—"
-              }}
-
-            </span>
+            {{ r.collector_name or "—" }}(ተቀባይ)
 
           </div>
 
         </div>
 
-        {% endfor %}
 
-      </div>
+        <!-- CARD BODY -->
+
+        <div class="fp-body">
 
 
-      <!-- TOTAL TAX -->
+          <div class="fp-row">
 
-      <div class="fp-tax-total">
+            <span class="fp-label">
+              አድራሻ
+            </span>
 
-        ጠቅላላ ታክስ:
+            <span class="fp-value">
+              {{ h.location or "—" }}
+            </span>
 
-        {{ "%.2f"|format(r.total_tax_amount) }}
+          </div>
 
-        ETB
+
+          <div class="fp-row">
+
+            <span class="fp-label">
+              ዋና ክፍያ
+            </span>
+
+            <span class="fp-value">
+
+              {{ "%.2f"|format(h.original_wage) }} ETB
+
+            </span>
+
+          </div>
+
+
+          <div class="fp-row">
+
+            <span class="fp-label">
+              በኋላ የተከፈለ
+            </span>
+
+            <span class="fp-value">
+
+              {{
+                "%.2f"|format(r.actual_wage_paid)
+                if r.actual_wage_paid is not none
+                else "—"
+              }}
+
+              ETB
+
+            </span>
+
+          </div>
+
+
+          <div class="fp-row">
+
+            <span class="fp-label">
+              ተጨማሪ ደመወዝ
+            </span>
+
+            <span class="fp-value">
+
+              {{
+                "%.2f"|format(r.additional_wage)
+                if r.additional_wage is not none
+                else "—"
+              }}
+
+              ETB
+
+            </span>
+
+          </div>
+
+
+          <!-- PRODUCTS -->
+
+          <div class="fp-products">
+
+            {% for ri in r.items %}
+
+            <div class="fp-product-item">
+
+              <div class="pname">
+                {{ ri.post_history_item.product_name }}
+              </div>
+
+
+              <div class="pgrid">
+
+                <span>
+
+                  የተላከው:
+
+                  {{
+                    ri.post_history_item.expected_quantity|int
+                    if ri.post_history_item.expected_quantity ==
+                    ri.post_history_item.expected_quantity|int
+                    else ri.post_history_item.expected_quantity
+                  }}
+
+                </span>
+
+
+                <span>
+
+                  የተቀበለው:
+
+                  {{
+                    ri.received_quantity
+                    if ri.received_quantity is not none
+                    else "—"
+                  }}
+
+                </span>
+
+
+                <span>
+
+                  የጠፋው:
+
+                  {{ ri.lost_quantity }}
+
+                </span>
+
+
+                <span>
+
+                  ታክስ ብዛት:
+
+                  {{
+                    ri.taxed_quantity
+                    if ri.taxed_quantity is not none
+                    else "—"
+                  }}
+
+                </span>
+
+              </div>
+
+            </div>
+
+            {% endfor %}
+
+          </div>
+
+
+          <!-- TOTAL LOST -->
+
+          <div class="fp-tax-total">
+
+            ጠቅላላ የጠፋ:
+
+            {{
+              r.items
+              |map(attribute='lost_quantity')
+              |map('default', 0, true)
+              |sum
+            }}
+
+          </div>
+
+
+          <!-- TOTAL TAX -->
+
+          <div class="fp-tax-total">
+
+            ጠቅላላ ታክስ:
+
+            {{ "%.2f"|format(r.total_tax_amount) }}
+
+            ETB
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+             ================================================= -->
+
+        <div class="fp-actions">
+
+
+          <!-- EDIT -->
+
+          <a
+            href="{{ url_for('edit_final_post', final_post_id=fp.id) }}"
+            class="btn-fp btn-fp-edit"
+          >
+
+            <i class="bi bi-pencil-square"></i>
+
+            EDIT
+
+          </a>
+
+
+          <!-- RED FLAG -->
+
+          {% if importer %}
+
+          <form
+            method="POST"
+            action="{{ url_for('toggle_red_flag_importer', import_id=importer.id) }}"
+            onsubmit="return confirm(
+              {% if importer.is_red_flagged %}
+              'Remove red flag from {{ h.importer_name }}?'
+              {% else %}
+              'are you sure wanna do it ?'
+              {% endif %}
+            );"
+          >
+
+            <button
+              type="submit"
+              class="btn-fp btn-fp-flag {{ 'is-flagged' if importer.is_red_flagged }}"
+            >
+
+              <i class="bi bi-flag-fill"></i>
+
+              {{
+                "FLAGGED"
+                if importer.is_red_flagged
+                else "FLAG"
+              }}
+
+            </button>
+
+          </form>
+
+          {% else %}
+
+          <button
+            type="button"
+            class="btn-fp btn-fp-flag"
+            onclick="alert('Importer not found');"
+          >
+
+            <i class="bi bi-flag-fill"></i>
+
+            FLAG
+
+          </button>
+
+          {% endif %}
+
+
+          <!-- RESET -->
+
+          <form
+            method="POST"
+            action="{{ url_for('reset_final_post', final_post_id=fp.id) }}"
+            onsubmit="
+              {% if not importer %}
+                alert('Importer not found');
+                return false;
+              {% else %}
+                return confirm('Move this post to final detail history? It will be hidden from this page.');
+              {% endif %}
+            "
+          >
+
+            <button
+              type="submit"
+              class="btn-fp btn-fp-reset"
+            >
+
+              <i class="bi bi-eye-slash"></i> RESET
+
+            </button>
+
+          </form>
+
+
+        </div>
 
       </div>
 
     </div>
 
-
-    <!-- =================================================
-         ACTIONS
-         ================================================= -->
-
-    <div class="fp-actions">
-
-
-      <!-- EDIT -->
-
-      <a
-        href="{{ url_for('edit_final_post', final_post_id=fp.id) }}"
-        class="btn-fp btn-fp-edit"
-      >
-
-        <i class="bi bi-pencil-square"></i>
-
-        EDIT
-
-      </a>
-
-
-      <!-- RED FLAG -->
-
-      {% if importer %}
-
-      <form
-        method="POST"
-        action="{{ url_for('toggle_red_flag_importer', import_id=importer.id) }}"
-        onsubmit="return confirm(
-          {% if importer.is_red_flagged %}
-          'Remove red flag from {{ h.importer_name }}?'
-          {% else %}
-          'are you sure wanna do it ?'
-          {% endif %}
-        );"
-      >
-
-        <button
-          type="submit"
-          class="btn-fp btn-fp-flag {{ 'is-flagged' if importer.is_red_flagged }}"
-        >
-
-          <i class="bi bi-flag-fill"></i>
-
-          {{
-            "FLAGGED"
-            if importer.is_red_flagged
-            else "FLAG"
-          }}
-
-        </button>
-
-      </form>
-
-      {% else %}
-
-      <button
-        type="button"
-        class="btn-fp btn-fp-flag"
-        onclick="alert('Importer not found');"
-      >
-
-        <i class="bi bi-flag-fill"></i>
-
-        FLAG
-
-      </button>
-
-      {% endif %}
-
-
-      <!-- RESET -->
-
-      <form
-        method="POST"
-        action="{{ url_for('reset_final_post', final_post_id=fp.id) }}"
-        onsubmit="
-          {% if not importer %}
-            alert('Importer not found');
-            return false;
-          {% else %}
-            return confirm('Move this post to final detail history? It will be hidden from this page.');
-          {% endif %}
-        "
-      >
-
-        <button
-          type="submit"
-          class="btn-fp btn-fp-reset"
-        >
-
-          <i class="bi bi-eye-slash"></i> RESET
-
-        </button>
-
-      </form>
-
-
-    </div>
-
-  </div>
-
-</div>
-
-{% endfor %}
-```
+    {% endfor %}
 
   </div>
 
@@ -1070,16 +1086,15 @@ body{
 
   <div class="empty-state">
 
-```
-<i class="bi bi-inbox"></i>
+    <i class="bi bi-inbox"></i>
 
-<h5>
-  No final posts yet
-</h5>
+    <h5>
+      No final posts yet
+    </h5>
 
-<p>
-  Posts marked as received will appear here once submitted.
-</p>
+    <p>
+      Posts marked as received will appear here once submitted.
+    </p>
 
 
   </div>

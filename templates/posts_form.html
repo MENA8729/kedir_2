@@ -308,10 +308,10 @@ body{
       <!-- Photo -->
       <div class="mb-3">
         <label class="section-label"><i class="bi bi-camera-fill"></i>የምርቱ ፎቶ</label>
-        <div class="upload-dropzone file-upload-area">
+        <div class="upload-dropzone file-upload-area mb-2">
           <div class="upload-prompt">
             <i class="bi bi-cloud-arrow-up fs-2 text-muted"></i>
-            <p class="mb-0 text-muted small mt-1">ፎቶ ለመምረጥ እዚህ ይጫኑ</p>
+            <p class="mb-0 text-muted small mt-1">ፎቶ ለመምረጥ እዚህ ይጫኑ ወይም ይጎትቱ</p>
           </div>
           <input type="file" name="posts-__INDEX__-img" class="form-control d-none file-input" accept="image/*" required>
           <div class="preview-container d-none mt-2 text-center">
@@ -319,6 +319,16 @@ body{
             <p class="file-name text-muted small mt-1 mb-0"></p>
             <button type="button" class="btn btn-sm btn-link text-danger remove-file-btn p-0 mt-1">ፎቶውን ቀይር/አጥፋ</button>
           </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm flex-fill gallery-btn">
+            <i class="bi bi-image me-1"></i>ጋለሪ ይምረጡ
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm flex-fill camera-btn">
+            <i class="bi bi-camera-fill me-1"></i>ካሜራ ክፈት
+          </button>
+          <input type="file" class="d-none gallery-input" accept="image/*">
+          <input type="file" class="d-none camera-input" accept="image/*" capture="environment">
         </div>
         <div class="invalid-feedback">እባክዎ የምርት ፎቶ ይምረጡ።</div>
       </div>
@@ -566,48 +576,77 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // =========================================================
-    // FILE UPLOAD PREVIEW
+    // FILE UPLOAD PREVIEW & DUAL GALLERY/CAMERA
     // =========================================================
     const dropzone = postEl.querySelector('.file-upload-area');
     const fileInput = postEl.querySelector('.file-input');
+    const galleryBtn = postEl.querySelector('.gallery-btn');
+    const cameraBtn = postEl.querySelector('.camera-btn');
+    const galleryInput = postEl.querySelector('.gallery-input');
+    const cameraInput = postEl.querySelector('.camera-input');
     const promptEl = postEl.querySelector('.upload-prompt');
     const previewContainer = postEl.querySelector('.preview-container');
     const previewImg = postEl.querySelector('.preview-img');
     const fileNameEl = postEl.querySelector('.file-name');
     const removeFileBtn = postEl.querySelector('.remove-file-btn');
 
+    function handleFileSelection(file) {
+      if (!file) return;
+
+      // Transfer file to the main form input so it gets submitted to the backend
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        fileNameEl.textContent = file.name;
+        promptEl.classList.add('d-none');
+        previewContainer.classList.remove('d-none');
+      };
+      reader.readAsDataURL(file);
+    }
+
     dropzone.addEventListener('click', () => {
-      fileInput.click();
+      galleryInput.click();
+    });
+
+    galleryBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      galleryInput.click();
+    });
+
+    cameraBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cameraInput.click();
+    });
+
+    galleryInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        handleFileSelection(this.files[0]);
+      }
+    });
+
+    cameraInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        handleFileSelection(this.files[0]);
+      }
     });
 
     fileInput.addEventListener('change', function() {
-
       if (this.files && this.files[0]) {
-
-        const file = this.files[0];
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-
-          previewImg.src = e.target.result;
-          fileNameEl.textContent = file.name;
-
-          promptEl.classList.add('d-none');
-          previewContainer.classList.remove('d-none');
-        };
-
-        reader.readAsDataURL(file);
+        handleFileSelection(this.files[0]);
       }
     });
 
     removeFileBtn.addEventListener('click', function(e) {
-
       e.stopPropagation();
-
       fileInput.value = '';
+      galleryInput.value = '';
+      cameraInput.value = '';
       previewImg.src = '';
       fileNameEl.textContent = '';
-
       previewContainer.classList.add('d-none');
       promptEl.classList.remove('d-none');
     });
@@ -942,120 +981,57 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenAmountInput.value =
           this.value;
 
+        const isSelected =
+          item.classList.contains('selected');
 
-        // Save the latest quantity
         saveProductMemory(
           productId,
-          item.classList.contains('selected'),
+          isSelected,
           this.value
         );
-
 
         updateSummary();
       });
 
-
-      // Prevent clicking the quantity input
-      // from selecting/unselecting the product
-      amountInput.addEventListener('click', function(e) {
-        e.stopPropagation();
-      });
-
-
-      // Restore summary
-      updateSummary();
     });
 
 
-    // =========================================================
-    // PRODUCT SUMMARY
-    // =========================================================
     function updateSummary() {
-
-      const selectedItems =
-        postEl.querySelectorAll(
-          '.product-item.selected'
-        );
-
-
+      const selectedItems = postEl.querySelectorAll('.product-item.selected');
       if (selectedItems.length === 0) {
-
-        summaryContainer.textContent =
-          "ምንም ምርት አልተመረጠም።";
-
+        summaryContainer.textContent = "ምንም ምርት አልተመረጠም።";
+        summaryContainer.classList.add('fst-italic', 'text-muted');
+        summaryContainer.classList.remove('fw-medium');
         return;
       }
 
-
-      const parts = [];
-
-
+      let summaryText = [];
       selectedItems.forEach(item => {
-
-        const name =
-          item.getAttribute(
-            'data-product-name'
-          );
-
-        const qty =
-          item.querySelector(
-            '.product-amount-input'
-          ).value || 1;
-
-
-        parts.push(
-          `${name} × ${qty}`
-        );
+        const name = item.getAttribute('data-product-name');
+        const qty = item.querySelector('.product-amount-input').value || '1';
+        summaryText.push(`${name} (${qty})`);
       });
 
-
-      summaryContainer.textContent =
-        "Selected: " + parts.join(" • ");
+      summaryContainer.textContent = "የተመረጡ: " + summaryText.join(', ');
+      summaryContainer.classList.remove('fst-italic', 'text-muted');
+      summaryContainer.classList.add('fw-medium');
     }
   }
 
-
   // =========================================================
-  // VALIDATION + SUBMIT LOADING STATE
+  // MAIN FORM SUBMISSION & BOOTSTRAP VALIDATION
   // =========================================================
   mainForm.addEventListener('submit', function(event) {
-
     if (!mainForm.checkValidity()) {
-
       event.preventDefault();
       event.stopPropagation();
-
-      const firstInvalid =
-        mainForm.querySelector(':invalid');
-
-      if (firstInvalid) {
-
-        firstInvalid
-          .closest('.post-card')
-          ?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-      }
-
     } else {
-
       submitBtn.disabled = true;
-
-      submitBtn
-        .querySelector('.submit-label')
-        .classList.add('d-none');
-
-      submitBtn
-        .querySelector('.submit-loading')
-        .classList.remove('d-none');
+      submitBtn.querySelector('.submit-label').classList.add('d-none');
+      submitBtn.querySelector('.submit-loading').classList.remove('d-none');
     }
-
-
     mainForm.classList.add('was-validated');
-
   }, false);
-
 });
 </script>
 </body>

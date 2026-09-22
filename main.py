@@ -279,6 +279,7 @@ class PostHistory(db.Model):
     original_post_group_id = db.Column(db.Integer, nullable=True)
     importer_id = db.Column(db.Integer, nullable=True)
     importer_name = db.Column(db.String(200), nullable=False)
+    package_code = db.Column(db.String(50), unique=True, nullable=True)
     importer_phone = db.Column(db.String(20), nullable=True)
     location = db.Column(db.String(200), nullable=True)
     img = db.Column(db.String(300), nullable=True)
@@ -569,7 +570,8 @@ def dashboard():
         total_importers=total_importers,
         total_final_posts=total_final_posts,
         total_flagged=total_flagged,
-        total_pending_receiving=total_pending_receiving
+        total_pending_receiving=total_pending_receiving,
+        total_received_products=FinalPost.query.count()
     )
 
 
@@ -968,9 +970,62 @@ def posts():
         .all()
     )
 
+    # ---------------------------------------------------------------
+    # RANGE REPORT (optional — only runs if range_from/range_to given)
+    # Normal /posts behavior is completely unchanged when absent.
+    # ---------------------------------------------------------------
+    range_from_raw = request.args.get("range_from", "").strip()
+    range_to_raw = request.args.get("range_to", "").strip()
+
+    range_generated = False
+    range_error = None
+    range_results = []
+    range_from_value = ""
+    range_to_value = ""
+    total_not_received = 0
+
+    if range_from_raw or range_to_raw:
+        range_generated = True
+        range_from_value = range_from_raw
+        range_to_value = range_to_raw
+
+        try:
+            range_from_num = int(range_from_raw)
+            range_to_num = int(range_to_raw)
+
+            if range_from_num < 0 or range_to_num < 0:
+                raise ValueError("negative package number")
+
+            # Handle reversed range gracefully by swapping
+            if range_from_num > range_to_num:
+                range_from_num, range_to_num = range_to_num, range_from_num
+
+            matched = []
+            for pg in post_groups:
+                if not pg.package_code:
+                    continue
+                displayed_number = int(pg.package_code) - 3
+                if displayed_number < 0:
+                    continue
+                if range_from_num <= displayed_number <= range_to_num:
+                    matched.append((displayed_number, pg))
+
+            matched.sort(key=lambda pair: pair[0])
+            range_results = [pg for _, pg in matched]
+            total_not_received = len(range_results)
+
+        except (ValueError, TypeError):
+            range_error = "Please enter valid package numbers."
+
     return render_template(
         "posts.html",
-        post_groups=post_groups
+        post_groups=post_groups,
+        range_generated=range_generated,
+        range_error=range_error,
+        range_results=range_results,
+        range_from_value=range_from_value,
+        range_to_value=range_to_value,
+        total_not_received=total_not_received
     )
 
 
@@ -987,22 +1042,39 @@ def edit_post(post_group_id):
         phone = form.phone.data.strip()
 
         # -------------------------
-        # Update the shared Importer record (see flag above)
+        # Resolve the importer for this post WITHOUT mutating the shared row.
+        # Find-or-create by phone, same as the registration flow.
         # -------------------------
-        importer = post_group.importer
-        importer.name = name
-        importer.phone = phone
+        current_importer = post_group.importer
+
+        if current_importer and current_importer.phone == phone:
+            # Same person — reuse the existing row as-is.
+            target_importer = current_importer
+        else:
+            # Phone changed: look for an existing importer with the new phone.
+            target_importer = Importer.query.filter(
+                Importer.phone == phone
+            ).first()
+
+            if not target_importer:
+                target_importer = Importer(name=name, phone=phone)
+                db.session.add(target_importer)
+                db.session.flush()  # assign an id before we reference it below
 
         # -------------------------
-        # Re-verify red-flag status server-side
+        # Re-verify red-flag status BEFORE changing anything
         # -------------------------
-        if importer.is_red_flagged:
+        if target_importer.is_red_flagged:
+            db.session.rollback()
             flash(
-                f"This importer is red-flagged. Reason: {importer.flag_reason or 'N/A'}. "
+                f"This importer is red-flagged. Reason: {target_importer.flag_reason or 'N/A'}. "
                 f"Save blocked — resolve the flag before editing.",
                 "danger"
             )
             return redirect(url_for("edit_post", post_group_id=post_group.id))
+
+        # Repoint only THIS post at the resolved importer.
+        post_group.importer_id = target_importer.id
 
         # -------------------------
         # Update PostGroup fields
@@ -1099,11 +1171,6 @@ def edit_post(post_group_id):
         selected_map=selected_map
     )
 
-
-
-
-
-
 @app.route("/post/receive/<int:post_group_id>", methods=["POST"])
 @login_required
 @motorist
@@ -1120,6 +1187,7 @@ def receive_post(post_group_id):
             img=post_group.img,
             date=post_group.date,
             time=post_group.time,
+            package_code=post_group.package_code,
             original_wage=post_group.wage,
             original_total_amount=post_group.total_amount
         )
@@ -1279,6 +1347,26 @@ def final_detail():
         importer_map=importer_map
     )
 
+
+@app.route("/final-detail/<int:post_id>")
+@login_required
+@admin_only
+def final_detail_single(post_id):
+    post = FinalPost.query.get_or_404(post_id)
+
+    r = post.receiver
+    h = r.post_history if r else None
+
+    importer_map = {}
+
+    if h and h.importer_id:
+        importer_map[h.id] = db.session.get(Importer, h.importer_id)
+
+    return render_template(
+        "final_detail.html",
+        final_posts=[post],
+        importer_map=importer_map
+    )
 
 
 @app.route("/final-post/<int:final_post_id>/red-flag", methods=["POST"])
@@ -1550,6 +1638,229 @@ def delete_importer(importer_id):
 
     return redirect(url_for("registration"))
 
+
+
+
+# ============================================================
+# PACKAGE RANGE REPORT
+# Add this route wherever final_posts / final_detail are defined.
+# ============================================================
+
+from collections import defaultdict
+
+@app.route("/final-posts/report")
+@login_required
+@motorist
+def final_posts_report():
+    from_raw = (request.args.get("from_id") or "").strip()
+    to_raw = (request.args.get("to_id") or "").strip()
+
+    range_error = None
+    from_id = to_id = None
+
+    if not from_raw and not to_raw:
+        return render_template("final_posts_report.html", show_form_only=True)
+
+    if not from_raw or not to_raw:
+        range_error = "Please enter both a From and To package number."
+    else:
+        try:
+            from_id = int(from_raw)
+            to_id = int(to_raw)
+        except ValueError:
+            range_error = "Package range must be numeric values."
+
+    if not range_error:
+        if from_id < 0 or to_id < 0:
+            range_error = "Package numbers cannot be negative."
+        elif from_id > to_id:
+            range_error = "'From' package number cannot be greater than 'To'."
+
+    if range_error:
+        return render_template(
+            "final_posts_report.html",
+            show_form_only=True,
+            range_error=range_error,
+            from_id=from_raw,
+            to_id=to_raw,
+        )
+
+    posts = (
+        FinalPost.query
+        .filter(FinalPost.id >= from_id, FinalPost.id <= to_id)
+        .order_by(FinalPost.id.asc())
+        .all()
+    )
+
+    importer_map = {}
+    for fp in posts:
+        r = fp.receiver
+        h = r.post_history if r else None
+        if h and h.importer_id:
+            importer_map[h.id] = db.session.get(Importer, h.importer_id)
+
+    total_requested = to_id - from_id + 1
+    found_ids = {fp.id for fp in posts}
+    missing_ids = sorted(set(range(from_id, to_id + 1)) - found_ids)
+
+    receiver_groups = defaultdict(list)
+    lost_products = defaultdict(lambda: {"total": 0, "posts": []})
+    importer_groups = defaultdict(lambda: {"posts": [], "phone": None, "tax": 0, "flagged": False})
+    tax_packages = []
+    flagged_packages = []
+    all_rows = []
+
+    total_products_received = 0
+    total_lost = 0
+    total_tax = 0
+    taxed_count = 0
+    flagged_count = 0
+
+    for fp in posts:
+        r = fp.receiver
+        h = r.post_history if r else None
+        importer = importer_map.get(h.id) if h else None
+        is_flagged = bool(importer and importer.is_red_flagged)
+        flag_reason = importer.flag_reason if importer else None
+
+        collector = (r.collector_name or "").strip() if r else ""
+        receiver_key = collector if collector else "Receiver Not Entered"
+
+        importer_name = (h.importer_name or "").strip() if h else ""
+        importer_key = importer_name if importer_name else "Importer Not Entered"
+        importer_phone = h.importer_phone if h else None
+
+        post_lost = 0
+        post_received = 0
+        post_tax = (r.total_tax_amount or 0) if r else 0
+
+        products_summary = []
+
+        if r:
+            for item in r.items:
+                phi = item.post_history_item
+                pname = phi.product_name if phi else "Unknown Product"
+                expected = phi.expected_quantity if phi else None
+                received = item.received_quantity
+                lost = item.lost_quantity
+                taxed_qty = item.taxed_quantity
+                tax_amt = item.tax_amount or 0
+
+                post_received += received or 0
+                post_lost += lost or 0
+
+                products_summary.append({
+                    "name": pname,
+                    "expected": expected,
+                    "received": received,
+                    "lost": lost,
+                    "taxed_quantity": taxed_qty,
+                    "tax_amount": tax_amt,
+                })
+
+                if lost and lost > 0:
+                    lost_products[pname]["total"] += lost
+                    lost_products[pname]["posts"].append({
+                        "post_id": fp.id,
+                        "importer": importer_key,
+                        "phone": importer_phone,
+                        "receiver": receiver_key,
+                        "product": pname,
+                        "received": received,
+                        "lost": lost,
+                    })
+
+        total_products_received += post_received
+        total_lost += post_lost
+        total_tax += post_tax
+
+        is_taxed = post_tax > 0
+        if is_taxed:
+            taxed_count += 1
+            tax_packages.append({
+                "post_id": fp.id,
+                "importer": importer_key,
+                "phone": importer_phone,
+                "receiver": receiver_key,
+                "tax": post_tax,
+                "products": products_summary,
+            })
+
+        if is_flagged:
+            flagged_count += 1
+            flagged_packages.append({
+                "post_id": fp.id,
+                "importer": importer_key,
+                "phone": importer_phone,
+                "receiver": receiver_key,
+                "flag_reason": flag_reason,
+            })
+
+        row = {
+            "post_id": fp.id,
+            "importer": importer_key,
+            "phone": importer_phone,
+            "receiver": receiver_key,
+            "products": products_summary,
+            "received_total": post_received,
+            "lost_total": post_lost,
+            "tax_total": post_tax,
+            "is_flagged": is_flagged,
+            "flag_reason": flag_reason,
+            "location": h.location if h else None,
+            "date": h.date if h else None,
+            "wage_original": r.original_wage if r else None,
+            "wage_actual": r.actual_wage_paid if r else None,
+            "collector": receiver_key,
+        }
+        all_rows.append(row)
+
+        receiver_groups[receiver_key].append(row)
+
+        importer_groups[importer_key]["posts"].append(row)
+        importer_groups[importer_key]["phone"] = importer_phone
+        importer_groups[importer_key]["tax"] += post_tax
+        if is_flagged:
+            importer_groups[importer_key]["flagged"] = True
+
+    receiver_summary = sorted(
+        [{"name": k, "count": len(v), "posts": v} for k, v in receiver_groups.items()],
+        key=lambda x: -x["count"]
+    )
+    lost_summary = sorted(
+        [{"name": k, "total": v["total"], "posts": v["posts"]} for k, v in lost_products.items()],
+        key=lambda x: -x["total"]
+    )
+    importer_summary = sorted(
+        [{"name": k, "count": len(v["posts"]), "phone": v["phone"], "tax": v["tax"],
+          "flagged": v["flagged"], "posts": v["posts"]} for k, v in importer_groups.items()],
+        key=lambda x: -x["count"]
+    )
+
+    total_receivers = len(receiver_groups)
+
+    return render_template(
+        "final_posts_report.html",
+        show_form_only=False,
+        from_id=from_id,
+        to_id=to_id,
+        total_requested=total_requested,
+        posts_found=len(posts),
+        missing_ids=missing_ids,
+        total_receivers=total_receivers,
+        total_products_received=total_products_received,
+        total_lost=total_lost,
+        total_tax=total_tax,
+        taxed_count=taxed_count,
+        flagged_count=flagged_count,
+        receiver_summary=receiver_summary,
+        lost_summary=lost_summary,
+        tax_packages=tax_packages,
+        flagged_packages=flagged_packages,
+        importer_summary=importer_summary,
+        all_rows=all_rows,
+        generated_at=datetime.utcnow(),
+    )
 
 
 

@@ -32,10 +32,17 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
 
 .page-container{max-width:1300px;margin:0 auto;padding:0 1rem 3rem;}
 
-.search-wrap{margin:1.5rem 0;}
+.search-wrap{margin:1.5rem 0;display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;}
 .search-box .input-group-text{background:#fff;border-right:none;border-radius:12px 0 0 12px;border:1.5px solid var(--border);}
 .search-box .form-control{border-left:none;border-radius:0 12px 12px 0;border:1.5px solid var(--border);padding:.7rem .9rem;}
 .search-box .form-control:focus{box-shadow:0 0 0 .18rem rgba(37,99,235,.13);border-color:var(--blue);}
+
+.status-filter-group{display:flex;gap:.5rem;}
+.btn-status-filter{border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:600;font-size:.82rem;padding:.55rem 1.1rem;border-radius:10px;transition:all .15s ease;}
+.btn-status-filter i{margin-right:.35rem;}
+.btn-status-filter:hover{background:var(--bg);color:var(--navy);}
+.btn-status-filter.active-pending{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.btn-status-filter.active-completed{background:var(--green-soft);border-color:var(--green);color:var(--green);}
 
 .hist-card{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(15,23,42,.06);overflow:hidden;height:100%;display:flex;flex-direction:column;}
 .hist-header{padding:.9rem 1rem;background:var(--navy);color:#fff;position:relative;}
@@ -104,7 +111,18 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
   <div class="search-wrap">
     <div class="search-box input-group" style="max-width:360px;">
       <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
-      <input type="text" class="form-control" id="histSearchInput" placeholder="Search by name or phone...">
+      <input type="text" class="form-control" id="histSearchInput" placeholder="Search by name, phone or package code...">
+    </div>
+    <div class="status-filter-group">
+      <button type="button" class="btn btn-status-filter" id="btnFilterAll" data-filter="all">
+        <i class="bi bi-grid-3x3-gap-fill"></i>All
+      </button>
+      <button type="button" class="btn btn-status-filter" id="btnFilterPending" data-filter="pending">
+        <i class="bi bi-hourglass-split"></i>Pending
+      </button>
+      <button type="button" class="btn btn-status-filter" id="btnFilterCompleted" data-filter="completed">
+        <i class="bi bi-check-circle-fill"></i>Completed
+      </button>
     </div>
   </div>
 
@@ -114,7 +132,9 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
     {% set is_completed = h.receiver is not none %}
     <div class="col-6 col-md-4 col-lg-3 hist-grid-item"
          data-name="{{ h.importer_name|lower }}"
-         data-phone="{{ h.importer_phone|lower if h.importer_phone else '' }}">
+         data-phone="{{ h.importer_phone|lower if h.importer_phone else '' }}"
+         data-package="{{ "%03d"|format(h.package_code|int - 3) if h.package_code|int > 1 else "" }}"
+         data-status="{{ 'completed' if is_completed else 'pending' }}">
       <div class="hist-card">
         <div class="hist-header">
           <span class="status-pill {{ 'status-completed' if is_completed else 'status-pending' }}">
@@ -122,12 +142,15 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
           </span>
           <p class="name">{{ h.importer_name }}</p>
           <div class="phone"><i class="bi bi-telephone-fill"></i>{{ h.importer_phone or "—" }}</div>
+
         </div>
         <div class="hist-body">
+            <div class="hist-row"><span class="hist-label">Package ቁጥር</span><span class="hist-value">{{ "%03d"|format(h.package_code|int - 3) if h.package_code|int > 1 else "" }}</span></div>
           <div class="hist-row"><span class="hist-label">አድራሻ</span><span class="hist-value">{{ h.location or "—" }}</span></div>
           <div class="hist-row"><span class="hist-label">ዋና ደመወዝ</span><span class="hist-value">{{ "%.2f"|format(h.original_wage) }} ETB</span></div>
           <div class="hist-row"><span class="hist-label">የመድረሻ ቀን</span><span class="hist-value">{{ h.date.strftime('%b %d, %Y') }}</span></div>
           <div class="hist-row"><span class="hist-label">የተመዘገበበት</span><span class="hist-value">{{ h.archived_at.strftime('%b %d, %Y') }}</span></div>
+
 
           <div class="hist-products">
             {% for item in h.items %}
@@ -147,12 +170,7 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
           <a href="{{ url_for('post2', post_history_id=h.id) }}" class="btn btn-resume">
             <i class="bi bi-arrow-repeat me-1"></i>Resume Receiving
           </a>
-          <form method="POST" action="{{ url_for('delete_post_history', post_history_id=h.id) }}"
-                onsubmit="return confirm('Are you sure you want to delete this history record? This cannot be undone.');">
-            <button type="submit" class="btn btn-delete-hist" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </form>
+
           {% endif %}
         </div>
       </div>
@@ -174,16 +192,51 @@ body{background:var(--bg);font-family:'Inter',system-ui,-apple-system,"Segoe UI"
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('histSearchInput');
   const gridItems = document.querySelectorAll('.hist-grid-item');
-  if (searchInput) {
-    searchInput.addEventListener('input', function() {
-      const query = this.value.toLowerCase().trim();
-      gridItems.forEach(item => {
-        const name = item.dataset.name || '';
-        const phone = item.dataset.phone || '';
-        item.style.display = (name.includes(query) || phone.includes(query)) ? '' : 'none';
-      });
+  const filterButtons = document.querySelectorAll('.btn-status-filter');
+
+  let currentFilter = 'all'; // 'all' | 'pending' | 'completed'
+
+  function setActiveButton(filter) {
+    filterButtons.forEach(btn => {
+      btn.classList.remove('active-pending', 'active-completed');
+      if (btn.dataset.filter === filter) {
+        if (filter === 'pending') btn.classList.add('active-pending');
+        else if (filter === 'completed') btn.classList.add('active-completed');
+        else btn.classList.add('active-completed'); // reuse style for "All" too, optional
+      }
     });
   }
+
+  function applyFilters() {
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    gridItems.forEach(item => {
+      const name = item.dataset.name || '';
+      const phone = item.dataset.phone || '';
+      const pkg = item.dataset.package || '';
+      const status = item.dataset.status || '';
+
+      const matchesSearch = !query || name.includes(query) || phone.includes(query) || pkg.includes(query);
+      const matchesStatus = currentFilter === 'all' || status === currentFilter;
+
+      item.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      currentFilter = this.dataset.filter;
+      setActiveButton(currentFilter);
+      applyFilters();
+    });
+  });
+
+  // Default view on page load: show everything, like before.
+  setActiveButton('all');
+  applyFilters();
 });
 </script>
 

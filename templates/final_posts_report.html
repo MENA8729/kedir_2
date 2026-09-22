@@ -1,0 +1,393 @@
+<!-- templates/final_posts_report.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Package Range Report</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#0f172a; --navy-light:#1e293b; --red:#dc2626; --red-soft:#fef2f2;
+  --amber:#d97706; --amber-soft:#fffbeb; --border:#e2e8f0; --muted:#64748b; --bg:#f4f6f9;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg); font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#1e293b;}
+
+.dashboard-header{
+  position:relative; width:100%; min-height:180px;
+  background:linear-gradient(135deg, rgba(15,23,42,.94), rgba(15,23,42,.72)),
+    url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1800&q=85") center/cover no-repeat;
+  box-shadow:0 8px 25px rgba(15,23,42,.18);
+}
+.header-overlay{min-height:180px; display:flex; align-items:center;}
+.header-content{width:100%; max-width:1300px; margin:0 auto; padding:1.5rem 1rem;}
+.back-dashboard{
+  display:inline-flex; align-items:center; gap:.5rem; color:rgba(255,255,255,.88); text-decoration:none;
+  font-size:.85rem; font-weight:700; padding:.55rem .9rem; border:1px solid rgba(255,255,255,.22);
+  border-radius:10px; background:rgba(255,255,255,.09); backdrop-filter:blur(8px); transition:all .2s ease; margin-bottom:1rem;
+}
+.back-dashboard:hover{color:#fff; background:rgba(255,255,255,.17); transform:translateX(-2px);}
+.header-title{display:flex; align-items:center; gap:1rem; color:#fff;}
+.header-icon{
+  width:52px; height:52px; flex-shrink:0; border-radius:15px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); backdrop-filter:blur(8px); font-size:1.4rem;
+}
+.header-title h1{margin:0; font-size:1.7rem; font-weight:800; letter-spacing:-.03em;}
+.header-title p{margin:.3rem 0 0; color:rgba(255,255,255,.7); font-size:.85rem;}
+
+.page-container{max-width:1300px; margin:0 auto; padding:2rem 1rem 3rem;}
+
+.range-card{
+  background:#fff; border:1px solid var(--border); border-radius:16px; padding:1.5rem;
+  box-shadow:0 4px 14px rgba(15,23,42,.06); margin-bottom:1.5rem;
+}
+.range-card form{display:flex; gap:1rem; align-items:end; flex-wrap:wrap;}
+.range-card label{font-size:.8rem; font-weight:700; color:var(--muted); margin-bottom:.3rem; display:block;}
+.range-card input[type="number"]{
+  border:1.5px solid var(--border); border-radius:10px; padding:.55rem .8rem; font-weight:600; width:150px;
+}
+.btn-generate{
+  background:var(--navy); color:#fff; border:none; border-radius:10px; font-weight:700;
+  padding:.6rem 1.4rem; font-size:.9rem;
+}
+.btn-generate:hover{background:var(--navy-light); color:#fff;}
+
+.section-card{
+  background:#fff; border:1px solid var(--border); border-radius:16px; padding:1.5rem;
+  box-shadow:0 4px 14px rgba(15,23,42,.06); margin-bottom:1.5rem;
+}
+.section-title{
+  font-weight:800; color:var(--navy); font-size:1rem; margin-bottom:1rem;
+  text-transform:uppercase; letter-spacing:.03em; border-bottom:2px solid var(--border); padding-bottom:.6rem;
+}
+
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.75rem;}
+.stat-box{background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:.9rem 1rem; text-align:center;}
+.stat-box .num{font-size:1.4rem; font-weight:800; color:var(--navy);}
+.stat-box .lbl{font-size:.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.02em;}
+.stat-box.flagged .num{color:var(--red);}
+.stat-box.tax .num{color:var(--amber);}
+
+details.drill{border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; overflow:hidden;}
+details.drill summary{
+  padding:.7rem 1rem; cursor:pointer; font-weight:700; color:var(--navy); background:var(--bg);
+  display:flex; justify-content:space-between; align-items:center; list-style:none;
+}
+details.drill summary::-webkit-details-marker{display:none;}
+details.drill summary .count{color:var(--muted); font-weight:600; font-size:.85rem;}
+details.drill .drill-body{padding:.9rem 1rem; border-top:1px solid var(--border);}
+
+.record-card{background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:.8rem 1rem; margin-bottom:.6rem;}
+.record-card:last-child{margin-bottom:0;}
+.record-card .row-line{display:flex; justify-content:space-between; font-size:.85rem; padding:.15rem 0;}
+.record-card .row-line .lbl{color:var(--muted); font-weight:600;}
+.record-card .row-line .val{font-weight:700; text-align:right;}
+.record-card .view-btn{
+  display:inline-block; margin-top:.5rem; font-size:.75rem; font-weight:700; color:var(--navy);
+  border:1.5px solid var(--border); border-radius:8px; padding:.3rem .7rem; text-decoration:none;
+}
+.record-card .view-btn:hover{background:#fff; color:var(--navy);}
+.record-card.flagged-record{border-color:var(--red); background:var(--red-soft);}
+
+.table-wrap{overflow-x:auto;}
+table.pkg-table{width:100%; border-collapse:collapse; font-size:.82rem;}
+table.pkg-table th{
+  background:var(--navy); color:#fff; padding:.6rem .7rem; text-align:left; font-weight:700; white-space:nowrap;
+}
+table.pkg-table td{padding:.55rem .7rem; border-bottom:1px solid var(--border); white-space:nowrap;}
+table.pkg-table tr.flag-row{background:var(--red-soft);}
+table.pkg-table a.pkg-link{color:var(--navy); font-weight:700; text-decoration:none;}
+table.pkg-table a.pkg-link:hover{text-decoration:underline;}
+
+.badge-yes{background:var(--red); color:#fff; padding:.15rem .5rem; border-radius:50px; font-size:.7rem; font-weight:700;}
+.badge-no{background:var(--border); color:var(--muted); padding:.15rem .5rem; border-radius:50px; font-size:.7rem; font-weight:700;}
+
+.empty-note{color:var(--muted); font-size:.85rem; padding:.5rem 0;}
+
+@media print{
+  .no-print{display:none !important;}
+  .dashboard-header{min-height:auto; box-shadow:none;}
+  .section-card, .range-card{box-shadow:none; border:1px solid #ccc;}
+  details.drill{page-break-inside:avoid;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<header class="dashboard-header no-print">
+  <div class="header-overlay">
+    <div class="header-content">
+      <a href="{{ url_for('final_posts') }}" class="back-dashboard">
+        <i class="bi bi-arrow-left"></i> Final Posts
+      </a>
+      <div class="header-title">
+        <div class="header-icon"><i class="bi bi-bar-chart-line"></i></div>
+        <div>
+          <h1>Package Range Report</h1>
+          <p>CargoTrack — analyze Final Posts within a selected Post ID range.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page-container">
+
+  <div class="range-card no-print">
+    <form method="GET" action="{{ url_for('final_posts_report') }}">
+      <div>
+        <label>From id</label>
+        <input type="number" name="from_id" value="{{ from_id if from_id is not none else '' }}" min="0">
+      </div>
+      <div>
+        <label>To id</label>
+        <input type="number" name="to_id" value="{{ to_id if to_id is not none else '' }}" min="0">
+      </div>
+      <button type="submit" class="btn-generate"><i class="bi bi-search me-1"></i> Generate</button>
+      {% if not show_form_only %}
+      <button type="button" class="btn-generate" style="background:#fff;color:var(--navy);border:1.5px solid var(--border);" onclick="window.print()">
+        <i class="bi bi-printer me-1"></i> Print
+      </button>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if range_error %}
+    <div class="alert alert-danger">{{ range_error }}</div>
+  {% endif %}
+
+  {% if show_form_only %}
+    <div class="section-card">
+      <p class="mb-1" style="font-weight:700;color:var(--navy);">
+        Please enter a package range to generate the report.
+      </p>
+      <p class="empty-note mb-0">Example: 1 to 100</p>
+    </div>
+  {% else %}
+
+    <div style="color:var(--muted); font-size:.8rem; margin-bottom:1rem;">
+      CARGOTRACK — PACKAGE RANGE REPORT &nbsp;|&nbsp;
+      Package Range: #{{ from_id }} – #{{ to_id }} &nbsp;|&nbsp;
+      Generated: {{ generated_at.strftime('%Y-%m-%d %H:%M UTC') }}
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section-card">
+      <div class="section-title">Overview</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="num">{{ total_requested }}</div><div class="lbl">Requested Range</div></div>
+        <div class="stat-box"><div class="num">{{ posts_found }}</div><div class="lbl">Posts Found</div></div>
+        <div class="stat-box"><div class="num">{{ missing_ids|length }}</div><div class="lbl">Missing IDs</div></div>
+        <div class="stat-box"><div class="num">{{ total_receivers }}</div><div class="lbl">Total Receivers</div></div>
+        <div class="stat-box"><div class="num">{{ total_products_received|round(2) }}</div><div class="lbl">Total Products Received</div></div>
+        <div class="stat-box flagged"><div class="num">{{ total_lost|round(2) }}</div><div class="lbl">Total Lost Products</div></div>
+        <div class="stat-box tax"><div class="num">{{ taxed_count }}</div><div class="lbl">Taxed Packages</div></div>
+        <div class="stat-box flagged"><div class="num">{{ flagged_count }}</div><div class="lbl">Flagged Packages</div></div>
+        <div class="stat-box tax"><div class="num">{{ "%.2f"|format(total_tax) }} ETB</div><div class="lbl">Total Tax</div></div>
+      </div>
+
+      {% if missing_ids %}
+      <details class="drill" style="margin-top:1rem;">
+        <summary>Missing Package IDs <span class="count">{{ missing_ids|length }} &raquo;</span></summary>
+        <div class="drill-body">
+          {% for mid in missing_ids %}
+            <span class="badge-no" style="margin:.15rem;">#{{ mid }}</span>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+    </div>
+
+    <!-- RECEIVERS -->
+    <div class="section-card">
+      <div class="section-title">Receivers</div>
+      {% if receiver_summary %}
+        {% for grp in receiver_summary %}
+        <details class="drill">
+          <summary>{{ grp.name }} <span class="count">{{ grp.count }} Packages &raquo;</span></summary>
+          <div class="drill-body">
+            {% for row in grp.posts %}
+            <div class="record-card {{ 'flagged-record' if row.is_flagged }}">
+              <div class="row-line"><span class="lbl">Package</span><span class="val">#{{ row.post_id }}</span></div>
+              <div class="row-line"><span class="lbl">Importer</span><span class="val">{{ row.importer }}</span></div>
+              <div class="row-line"><span class="lbl">Phone</span><span class="val">{{ row.phone or "—" }}</span></div>
+              <div class="row-line"><span class="lbl">Lost</span><span class="val">{{ row.lost_total|round(2) }}</span></div>
+              <div class="row-line"><span class="lbl">Tax</span><span class="val">{{ "%.2f"|format(row.tax_total) }} ETB</span></div>
+              <div class="row-line"><span class="lbl">Flag</span><span class="val">{{ "Yes" if row.is_flagged else "No" }}</span></div>
+              <a class="view-btn" href="{{ url_for('final_detail_single', post_id=row.post_id) }}">View Final Post</a>
+            </div>
+            {% endfor %}
+          </div>
+        </details>
+        {% endfor %}
+      {% else %}
+        <p class="empty-note">No receiver data in this range.</p>
+      {% endif %}
+    </div>
+
+    <!-- LOST PRODUCTS -->
+    <div class="section-card">
+      <div class="section-title">Lost Products</div>
+      {% if lost_summary %}
+        {% for lp in lost_summary %}
+        <details class="drill">
+          <summary>{{ lp.name }} <span class="count">Lost: {{ lp.total|round(2) }} &raquo;</span></summary>
+          <div class="drill-body">
+            {% for p in lp.posts %}
+            <div class="record-card">
+              <div class="row-line"><span class="lbl">Package</span><span class="val">#{{ p.post_id }}</span></div>
+              <div class="row-line"><span class="lbl">Importer</span><span class="val">{{ p.importer }}</span></div>
+              <div class="row-line"><span class="lbl">Phone</span><span class="val">{{ p.phone or "—" }}</span></div>
+              <div class="row-line"><span class="lbl">Receiver</span><span class="val">{{ p.receiver }}</span></div>
+              <div class="row-line"><span class="lbl">Received</span><span class="val">{{ p.received }}</span></div>
+              <div class="row-line"><span class="lbl">Lost</span><span class="val">{{ p.lost|round(2) }}</span></div>
+              <a class="view-btn" href="{{ url_for('final_detail_single', post_id=p.post_id) }}">View Final Post</a>
+            </div>
+            {% endfor %}
+          </div>
+        </details>
+        {% endfor %}
+        <div class="stat-box" style="margin-top:.75rem; max-width:220px;">
+          <div class="num">{{ total_lost|round(2) }}</div><div class="lbl">Total Lost</div>
+        </div>
+      {% else %}
+        <p class="empty-note">No lost products recorded in this range.</p>
+      {% endif %}
+    </div>
+
+    <!-- TAX -->
+    <div class="section-card">
+      <div class="section-title">Tax Summary</div>
+      <div class="stat-grid" style="margin-bottom:1rem;">
+        <div class="stat-box tax"><div class="num">{{ taxed_count }}</div><div class="lbl">Taxed Packages</div></div>
+        <div class="stat-box tax"><div class="num">{{ "%.2f"|format(total_tax) }} ETB</div><div class="lbl">Total Tax</div></div>
+      </div>
+      {% if tax_packages %}
+      <details class="drill">
+        <summary>View Tax Details <span class="count">{{ tax_packages|length }} &raquo;</span></summary>
+        <div class="drill-body">
+          {% for tp in tax_packages %}
+          <div class="record-card">
+            <div class="row-line"><span class="lbl">Package</span><span class="val">#{{ tp.post_id }}</span></div>
+            <div class="row-line"><span class="lbl">Importer</span><span class="val">{{ tp.importer }}</span></div>
+            <div class="row-line"><span class="lbl">Phone</span><span class="val">{{ tp.phone or "—" }}</span></div>
+            <div class="row-line"><span class="lbl">Receiver</span><span class="val">{{ tp.receiver }}</span></div>
+            <div class="row-line"><span class="lbl">Tax</span><span class="val">{{ "%.2f"|format(tp.tax) }} ETB</span></div>
+            <a class="view-btn" href="{{ url_for('final_detail_single', post_id=tp.post_id) }}">View Final Post</a>
+          </div>
+          {% endfor %}
+          <div class="row-line" style="font-weight:800; border-top:2px solid var(--border); padding-top:.6rem;">
+            <span>TOTAL TAX</span><span>{{ "%.2f"|format(total_tax) }} ETB</span>
+          </div>
+        </div>
+      </details>
+      {% else %}
+        <p class="empty-note">No taxed packages in this range.</p>
+      {% endif %}
+    </div>
+
+    <!-- FLAGGED -->
+    <div class="section-card">
+      <div class="section-title">Flagged Packages</div>
+      <div class="stat-box flagged" style="max-width:220px; margin-bottom:1rem;">
+        <div class="num">{{ flagged_count }}</div><div class="lbl">Flagged Packages</div>
+      </div>
+      {% if flagged_packages %}
+      <details class="drill">
+        <summary>View Flagged Packages <span class="count">{{ flagged_packages|length }} &raquo;</span></summary>
+        <div class="drill-body">
+          {% for fp in flagged_packages %}
+          <div class="record-card flagged-record">
+            <div class="row-line"><span class="lbl">Package</span><span class="val">#{{ fp.post_id }}</span></div>
+            <div class="row-line"><span class="lbl">Importer</span><span class="val">{{ fp.importer }}</span></div>
+            <div class="row-line"><span class="lbl">Phone</span><span class="val">{{ fp.phone or "—" }}</span></div>
+            <div class="row-line"><span class="lbl">Receiver</span><span class="val">{{ fp.receiver }}</span></div>
+            <div class="row-line"><span class="lbl">Flag Reason</span><span class="val">{{ fp.flag_reason or "—" }}</span></div>
+            <a class="view-btn" href="{{ url_for('final_detail_single', post_id=fp.post_id) }}">View Final Post</a>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+      {% else %}
+        <p class="empty-note">No flagged packages in this range.</p>
+      {% endif %}
+    </div>
+
+    <!-- IMPORTERS -->
+    <div class="section-card">
+      <div class="section-title">Importers</div>
+      {% if importer_summary %}
+        {% for imp in importer_summary %}
+        <details class="drill">
+          <summary>
+            {{ imp.name }} {% if imp.flagged %}<span class="badge-yes">FLAGGED</span>{% endif %}
+            <span class="count">{{ imp.count }} Packages | {{ "%.2f"|format(imp.tax) }} ETB &raquo;</span>
+          </summary>
+          <div class="drill-body">
+            {% for row in imp.posts %}
+            <div class="record-card {{ 'flagged-record' if row.is_flagged }}">
+              <div class="row-line"><span class="lbl">Package</span><span class="val">#{{ row.post_id }}</span></div>
+              <div class="row-line"><span class="lbl">Phone</span><span class="val">{{ row.phone or "—" }}</span></div>
+              <div class="row-line"><span class="lbl">Receiver</span><span class="val">{{ row.receiver }}</span></div>
+              <div class="row-line"><span class="lbl">Lost</span><span class="val">{{ row.lost_total|round(2) }}</span></div>
+              <div class="row-line"><span class="lbl">Tax</span><span class="val">{{ "%.2f"|format(row.tax_total) }} ETB</span></div>
+              <a class="view-btn" href="{{ url_for('final_detail_single', post_id=row.post_id) }}">View Final Post</a>
+            </div>
+            {% endfor %}
+          </div>
+        </details>
+        {% endfor %}
+      {% else %}
+        <p class="empty-note">No importer data in this range.</p>
+      {% endif %}
+    </div>
+
+    <!-- ALL PACKAGES -->
+    <div class="section-card">
+      <div class="section-title">All Packages</div>
+      {% if all_rows %}
+      <div class="table-wrap">
+        <table class="pkg-table">
+          <thead>
+            <tr>
+              <th>Package</th><th>Importer</th><th>Phone</th><th>Receiver</th>
+              <th>Received</th><th>Lost</th><th>Tax</th><th>Flag</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in all_rows %}
+            <tr class="{{ 'flag-row' if row.is_flagged }}">
+              <td>
+                <a class="pkg-link" href="{{ url_for('final_detail_single', post_id=row.post_id) }}">#{{ row.post_id }}</a>
+              </td>
+              <td>{{ row.importer }}</td>
+              <td>{{ row.phone or "—" }}</td>
+              <td>{{ row.receiver }}</td>
+              <td>{{ row.received_total|round(2) }}</td>
+              <td>{{ row.lost_total|round(2) }}</td>
+              <td>{{ "%.2f"|format(row.tax_total) }} ETB</td>
+              <td>
+                {% if row.is_flagged %}<span class="badge-yes">YES</span>{% else %}<span class="badge-no">NO</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="empty-note">No packages found in this range.</p>
+      {% endif %}
+    </div>
+
+  {% endif %}
+</div>
+
+</body>
+</html>

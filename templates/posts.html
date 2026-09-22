@@ -1,50 +1,27 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
-{% for category, message in messages %} <div class="alert alert-{{ category if category in ['success', 'danger', 'warning', 'info'] else 'success' }} alert-dismissible fade show flash-message" role="alert">
-{{ message }}
-
-```
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
-        </div>
-    {% endfor %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category if category in ['success', 'danger', 'warning', 'info'] else 'success' }} alert-dismissible fade show flash-message" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
 {% endif %}
-```
-
 {% endwith %}
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Posts</title>
 
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
->
-
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    rel="stylesheet"
->
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
 :root{
     --navy:#0f172a;
     --navy-light:#1e293b;
@@ -57,9 +34,7 @@
     --bg:#f4f6f9;
 }
 
-*{
-    box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 body{
     background:var(--bg);
@@ -68,7 +43,6 @@ body{
 }
 
 /* ===== FLASH MESSAGE ===== */
-
 .flash-message{
     font-family:'Inter','Segoe UI',sans-serif;
     font-size:13px;
@@ -81,7 +55,6 @@ body{
 }
 
 /* ===== HEADER ===== */
-
 .app-header{
     background:#fff;
     border-bottom:1px solid var(--border);
@@ -125,14 +98,8 @@ body{
 }
 
 /* ===== HERO ===== */
-
 .hero-section{
-    background:linear-gradient(
-        135deg,
-        var(--navy) 0%,
-        var(--navy-light) 100%
-    );
-
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
     padding:1.75rem 0;
     border-radius:0 0 20px 20px;
 }
@@ -157,9 +124,8 @@ body{
 }
 
 /* ===== SEARCH ===== */
-
 .search-wrap{
-    margin:1.5rem 0;
+    margin:1.5rem 0 1rem;
     display:flex;
     flex-wrap:wrap;
     gap:.75rem;
@@ -184,17 +150,143 @@ body{
     border-color:var(--blue);
 }
 
-/* ===== POST CARD ===== */
+/* ===== RANGE REPORT BAR (compact, always horizontal, even on phone) ===== */
+.range-report-wrap{
+    margin:0 0 1.5rem 0;
+}
 
+.range-report-bar{
+    display:flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    gap:.4rem;
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    padding:.55rem .65rem;
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+.range-report-bar .range-label{
+    font-size:.76rem;
+    font-weight:700;
+    color:var(--muted);
+    white-space:nowrap;
+    flex:0 0 auto;
+}
+
+.range-report-bar .range-input{
+    width:58px;
+    flex:0 0 auto;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    padding:.4rem .35rem;
+    font-size:.85rem;
+    text-align:center;
+    -moz-appearance:textfield;
+}
+
+.range-report-bar .range-input:focus{
+    outline:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 .15rem rgba(37,99,235,.13);
+}
+
+.btn-generate-range{
+    flex:0 0 auto;
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:.42rem .85rem;
+    font-size:.78rem;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.btn-generate-range:hover{
+    background:#1d4ed8;
+    color:#fff;
+}
+
+.btn-clear-range{
+    flex:0 0 auto;
+    color:var(--muted);
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.82rem;
+}
+
+.btn-clear-range:hover{
+    background:#e2e8f0;
+    color:var(--navy);
+}
+
+@media (max-width:576px){
+    .range-report-bar{
+        padding:.45rem .55rem;
+        gap:.3rem;
+    }
+    .range-report-bar .range-input{
+        width:48px;
+        font-size:.8rem;
+    }
+    .btn-generate-range{
+        padding:.4rem .6rem;
+        font-size:.72rem;
+    }
+}
+
+/* ===== RANGE REPORT RESULTS ===== */
+.range-report-summary{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    background:var(--navy);
+    color:#fff;
+    font-weight:700;
+    font-size:.9rem;
+    padding:.75rem 1rem;
+    border-radius:12px;
+    margin-bottom:1rem;
+}
+
+.range-report-summary i{
+    font-size:1.1rem;
+}
+
+.range-report-summary span{
+    font-size:1.05rem;
+    font-weight:800;
+}
+
+.range-report-error{
+    background:#fef3c7;
+    color:#92400e;
+    border:1px solid #fde68a;
+    padding:.75rem 1rem;
+    border-radius:12px;
+    font-size:.88rem;
+    font-weight:600;
+    margin-bottom:1rem;
+}
+
+/* ===== POST CARD ===== */
 .post-card{
     background:#fff;
     border-radius:16px;
     overflow:hidden;
     border:1px solid var(--border);
     box-shadow:0 4px 14px rgba(15,23,42,.06);
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
+    transition:transform .2s ease, box-shadow .2s ease;
     display:flex;
     flex-direction:column;
     height:100%;
@@ -211,6 +303,7 @@ body{
     padding-top:115%;
     overflow:hidden;
     background:#e2e8f0;
+    cursor:zoom-in;
 }
 
 .post-image-wrap img{
@@ -236,17 +329,12 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
-    background:linear-gradient(
-        135deg,
-        #e2e8f0,
-        #cbd5e1
-    );
+    background:linear-gradient(135deg, #e2e8f0, #cbd5e1);
     color:#94a3b8;
     font-size:2.4rem;
 }
 
 /* ===== INFO PANEL ===== */
-
 .post-info{
     background:var(--navy);
     color:#fff;
@@ -280,7 +368,6 @@ body{
 }
 
 /* ===== PRODUCTS ===== */
-
 .products-block{
     border-top:1px solid rgba(255,255,255,.12);
     border-bottom:1px solid rgba(255,255,255,.12);
@@ -303,20 +390,10 @@ body{
     padding-right:.25rem;
 }
 
-.products-scroll::-webkit-scrollbar{
-    width:4px;
-}
+.products-scroll::-webkit-scrollbar{ width:4px; }
+.products-scroll::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.25); border-radius:4px; }
 
-.products-scroll::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,.25);
-    border-radius:4px;
-}
-
-.products-scroll ul{
-    list-style:none;
-    padding:0;
-    margin:0;
-}
+.products-scroll ul{ list-style:none; padding:0; margin:0; }
 
 .products-scroll li{
     display:flex;
@@ -340,7 +417,6 @@ body{
 }
 
 /* ===== ACTIONS ===== */
-
 .post-actions{
     display:flex;
     gap:.5rem;
@@ -382,7 +458,6 @@ body{
 }
 
 /* ===== EMPTY STATE ===== */
-
 .empty-state{
     text-align:center;
     padding:4rem 1rem;
@@ -410,562 +485,373 @@ body{
     margin-bottom:1.25rem;
 }
 
-@media (max-width:576px){
-
-    .hero-section{
-        padding:1.4rem 0;
-        border-radius:0 0 16px 16px;
-    }
-
-    .post-image-wrap{
-        padding-top:105%;
-    }
-
+/* ===== IMAGE LIGHTBOX ===== */
+.image-lightbox-overlay{
+    position:fixed; inset:0; background:rgba(15,23,42,.92);
+    display:none; align-items:center; justify-content:center;
+    z-index:2000; padding:20px;
 }
+.image-lightbox-overlay.show{ display:flex; }
+.image-lightbox-overlay img{
+    max-width:100%; max-height:90vh; border-radius:12px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.image-lightbox-close{
+    position:absolute; top:18px; right:20px;
+    background:rgba(255,255,255,.15); border:none; color:#fff;
+    width:40px; height:40px; border-radius:50%; font-size:1.2rem;
+}
+.image-lightbox-close:hover{ background:rgba(255,255,255,.28); }
 
+/* ===== PHONE ACTION MENU ===== */
+.phone-trigger{ cursor:pointer; text-decoration:underline dotted; }
+.phone-trigger:hover{ color:#93c5fd; }
+
+.phone-menu-overlay{
+    position:fixed; inset:0; z-index:1900; display:none;
+}
+.phone-menu-overlay.show{ display:block; }
+
+.phone-menu{
+    position:fixed; z-index:1901;
+    background:#fff; border-radius:14px;
+    box-shadow:0 14px 34px rgba(15,23,42,.18);
+    min-width:200px; overflow:hidden;
+    border:1px solid var(--border);
+    display:none;
+}
+.phone-menu button{
+    width:100%; text-align:left; background:none; border:none;
+    padding:.75rem 1rem; font-size:.9rem; font-weight:600;
+    color:var(--navy); display:flex; align-items:center; gap:.6rem;
+}
+.phone-menu button:hover{ background:var(--bg); }
+.phone-menu button:not(:last-child){ border-bottom:1px solid var(--border); }
+
+@media (max-width:576px){
+    .hero-section{ padding:1.4rem 0; border-radius:0 0 16px 16px; }
+    .post-image-wrap{ padding-top:105%; }
+}
 </style>
-
 </head>
-
 <body>
 
 <!-- ===== HEADER ===== -->
-
 <header class="app-header sticky-top">
+    <nav class="navbar navbar-expand-lg py-2">
+        <div class="container-fluid page-container">
 
-```
-<nav class="navbar navbar-expand-lg py-2">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <span class="app-logo"><i class="bi bi-boxes"></i></span>
+                <span class="app-brand">CargoTrack</span>
+            </a>
 
-    <div class="container-fluid page-container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
 
-        <a class="navbar-brand d-flex align-items-center gap-2"
-            href="#"
-        >
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-app" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>
+                            Dashboard
+                        </a>
+                    </li>
 
-            <span class="app-logo">
-                <i class="bi bi-boxes"></i>
-            </span>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-app active" href="#">
+                            <i class="bi bi-file-earmark-text me-1"></i>
+                            Posts
+                        </a>
+                    </li>
 
-            <span class="app-brand">
-                CargoTrack
-            </span>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-app" href="{{ url_for('new_post') }}">
+                            <i class="bi bi-box-seam me-1"></i>
+                            new post
+                        </a>
+                    </li>
 
-        </a>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-app" href="{{ url_for('registration') }}">
+                            <i class="bi bi-people me-1"></i>
+                            Importers
+                        </a>
+                    </li>
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainNav"
-        >
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-app" href="{{ url_for('registration') }}">
+                            <i class="bi bi-clipboard-plus me-1"></i>
+                            Registration
+                        </a>
+                    </li>
 
-            <span class="navbar-toggler-icon"></span>
-
-        </button>
-
-        <div
-            class="collapse navbar-collapse"
-            id="mainNav"
-        >
-
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
-
-                <li class="nav-item">
-
-                    <a class="nav-link nav-link-app"
-                        href="{{ url_for('dashboard') }}"
-                    >
-
-                        <i class="bi bi-speedometer2 me-1"></i>
-                        Dashboard
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link nav-link-app active"
-                        href="#"
-                    >
-
-                        <i class="bi bi-file-earmark-text me-1"></i>
-                        Posts
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link nav-link-app"
-                        href="{{ url_for('new_post') }}"
-                    >
-
-                        <i class="bi bi-box-seam me-1"></i>
-                        new post
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link nav-link-app"
-                        href="{{ url_for('registration') }}"
-                    >
-
-                        <i class="bi bi-people me-1"></i>
-                        Importers
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link nav-link-app"
-                        href="{{ url_for('registration') }}"
-                    >
-
-                        <i class="bi bi-clipboard-plus me-1"></i>
-                        Registration
-
-                    </a>
-
-                </li>
-
-            </ul>
+                </ul>
+            </div>
 
         </div>
-
-    </div>
-
-</nav>
-```
-
+    </nav>
 </header>
 
 <!-- ===== HERO ===== -->
-
 <section class="hero-section">
-
-```
-<div class="page-container">
-
-    <h1 class="hero-heading mb-0">
-        Posts
-    </h1>
-
-    <p class="hero-subtitle">
-        Manage arrivals, products, importers, and post information from one organized workspace.
-    </p>
-
-</div>
-```
-
+    <div class="page-container">
+        <h1 class="hero-heading mb-0">Posts</h1>
+        <p class="hero-subtitle">Manage arrivals, products, importers, and post information from one organized workspace.</p>
+    </div>
 </section>
 
-<div class="page-container">
+<!-- ===== CARD MACRO (used by BOTH the main grid and the range report) ===== -->
+{% macro post_card_inner(pg) %}
+<div class="post-card">
 
-```
-<!-- ===== SEARCH ===== -->
-
-<div class="search-wrap">
-
-    <div
-        class="search-box input-group"
-        style="max-width:360px;"
-    >
-
-        <span class="input-group-text">
-
-            <i class="bi bi-search text-muted"></i>
-
-        </span>
-
-        <input
-            type="text"
-            class="form-control"
-            id="postSearchInput"
-            placeholder="Search posts..."
-        >
-
+    <!-- ===== PHOTO ===== -->
+    <div class="post-image-wrap"
+         {% if pg.img %}onclick="openImageLightbox('{{ url_for('static', filename='uploads/' ~ pg.img) }}')"{% endif %}>
+        {% if pg.img %}
+        <img src="{{ url_for('static', filename='uploads/' ~ pg.img) }}" alt="Post image">
+        {% else %}
+        <div class="post-image-placeholder">
+            <i class="bi bi-image"></i>
+        </div>
+        {% endif %}
     </div>
 
-    <div
-        class="search-box input-group"
-        style="max-width:220px;"
-    >
+    <!-- ===== INFO PANEL ===== -->
+    <div class="post-info">
 
-        <span class="input-group-text">
+        <div class="info-row">
+            <span class="label">አምጭ</span>
+            <span class="value">{{ pg.importer.name }}</span>
+        </div>
 
-            <i class="bi bi-geo-alt text-muted"></i>
-
-        </span>
-
-        <input
-            type="text"
-            class="form-control"
-            id="locationSearchInput"
-            placeholder="የመድረሻ ቦታ"
-        >
-
-    </div>
-
-</div>
-
-
-{% if post_groups %}
-
-<!-- ===== POST GRID ===== -->
-
-<div
-    class="row g-3"
-    id="postGrid"
->
-
-    {% for pg in post_groups %}
-
-    <div
-        class="col-6 col-md-4 col-lg-3 post-grid-item"
-
-        data-importer="{{ pg.importer.name|lower }}"
-
-        data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
-
-        data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
-
-        data-location="{{ pg.location|lower if pg.location else '' }}"
-    >
-
-        <div class="post-card">
-
-
-            <!-- ===== PHOTO ===== -->
-
-            <div class="post-image-wrap">
-
-                {% if pg.img %}
-
-                <img
-                    src="{{ url_for('static', filename='uploads/' ~ pg.img) }}"
-                    alt="Post image"
-                >
-
+        <div class="info-row">
+            <span class="label">ስልክ</span>
+            <span class="value">
+                {% if pg.importer.phone %}
+                <span class="phone-trigger"
+                      onclick="openPhoneMenu(event, '{{ pg.importer.phone }}', '{{ url_for('static', filename='uploads/' ~ pg.img) if pg.img else '' }}')">
+                    {{ pg.importer.phone }}
+                </span>
                 {% else %}
-
-                <div class="post-image-placeholder">
-
-                    <i class="bi bi-image"></i>
-
-                </div>
-
+                —
                 {% endif %}
+            </span>
+        </div>
 
+        <!-- ===== PERMANENT PACKAGE CODE ===== -->
+        <div class="info-row">
+            <span class="label">Package ቁጥር</span>
+            <span class="value">{{ "%03d"|format(pg.package_code|int - 3) }}</span>
+        </div>
+
+        <!-- ===== PRODUCTS ===== -->
+        <div class="products-block">
+            <div class="products-title">ምርቶች</div>
+            {% if pg.items %}
+            <div class="products-scroll">
+                <ul>
+                    {% for item in pg.items %}
+                    <li>
+                        <span>{{ item.product.name if item.product else "Unnamed product" }}</span>
+                        <span>× {{ item.total_amount|int if item.total_amount == item.total_amount|int else item.total_amount }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
-
-
-            <!-- ===== INFO PANEL ===== -->
-
-            <div class="post-info">
-
-
-                <div class="info-row">
-
-                    <span class="label">
-                        አምጭ
-                    </span>
-
-                    <span class="value">
-                        {{ pg.importer.name }}
-                    </span>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <span class="label">
-                        ስልክ
-                    </span>
-
-                    <span class="value">
-                        {{ pg.importer.phone or "—" }}
-                    </span>
-
-                </div>
-
-
-                <!-- ===== PERMANENT PACKAGE CODE ===== -->
-
-                <div class="info-row">
-
-                    <span class="label">
-                        Package ቁጥር
-                    </span>
-
-                    <span class="value">
-                        {{ "%03d"|format(pg.package_code|int - 3) }}
-                    </span>
-
-                </div>
-
-
-                <!-- ===== PRODUCTS ===== -->
-
-                <div class="products-block">
-
-                    <div class="products-title">
-                        ምርቶች
-                    </div>
-
-                    {% if pg.items %}
-
-                    <div class="products-scroll">
-
-                        <ul>
-
-                            {% for item in pg.items %}
-
-                            <li>
-
-                                <span>
-                                    {{ item.product.name if item.product else "Unnamed product" }}
-                                </span>
-
-                                <span>
-                                    ×
-                                    {{
-                                        item.total_amount|int
-                                        if item.total_amount == item.total_amount|int
-                                        else item.total_amount
-                                    }}
-                                </span>
-
-                            </li>
-
-                            {% endfor %}
-
-                        </ul>
-
-                    </div>
-
-                    {% else %}
-
-                    <span class="no-products-text">
-                        ምንም ምርት የለም
-                    </span>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- ===== DATE ===== -->
-
-                <div class="info-row">
-
-                    <span class="label">
-                        የመድረሻ ቀን
-                    </span>
-
-                    <span class="value">
-                        {{ pg.date.strftime('%b %d, %Y') }}
-                    </span>
-
-                </div>
-
-
-                <!-- ===== TIME ===== -->
-
-                {% if pg.time %}
-
-                <div class="info-row">
-
-                    <span class="label">
-                        የመድረሻ ሰዓት
-                    </span>
-
-                    <span class="value">
-                        {{ pg.time.strftime('%I:%M %p') }}
-                    </span>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- ===== LOCATION ===== -->
-
-                {% if pg.location %}
-
-                <div class="info-row">
-
-                    <span class="label">
-                        የመድረሻ ቦታ
-                    </span>
-
-                    <span class="value">
-                        {{ pg.location }}
-                    </span>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- ===== WAGE ===== -->
-
-                <div class="info-row">
-
-                    <span class="label">
-                        wage
-                    </span>
-
-                    <span class="value">
-                        {{ "%.2f"|format(pg.wage) }} ETB
-                    </span>
-
-                </div>
-
-
-                <!-- ===== TOTAL PRODUCT ===== -->
-
-                {% if pg.total_amount %}
-
-                <div class="info-row">
-
-                    <span class="label">
-                        total product
-                    </span>
-
-                    <span class="value">
-                        {{ "%.2f"|format(pg.total_amount) }}
-                    </span>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- ===== ACTIONS ===== -->
-
-                <div class="post-actions">
-
-
-                    <a href="{{ url_for('edit_post', post_group_id=pg.id) }}"
-                        class="btn btn-edit-post"
-                    >
-                        ✏️ EDIT
-                    </a>
-
-
-                    <form
-                        method="POST"
-                        action="{{ url_for('receive_post', post_group_id=pg.id) }}"
-                        style="flex:1;"
-                        onsubmit="return confirm('Are you sure you want to mark this post as received? This will archive it and open the receiving form.');"
-                    >
-
-                        <button
-                            type="submit"
-                            class="btn btn-received w-100"
-                        >
-                            ✓ RECEIVED
-                        </button>
-
-                    </form>
-
-                </div>
-
-
-            </div>
-
+            {% else %}
+            <span class="no-products-text">ምንም ምርት የለም</span>
+            {% endif %}
+        </div>
+
+        <!-- ===== DATE ===== -->
+        <div class="info-row">
+            <span class="label">የመድረሻ ቀን</span>
+            <span class="value">{{ pg.date.strftime('%b %d, %Y') }}</span>
+        </div>
+
+        <!-- ===== TIME ===== -->
+        {% if pg.time %}
+        <div class="info-row">
+            <span class="label">የመድረሻ ሰዓት</span>
+            <span class="value">{{ pg.time.strftime('%I:%M %p') }}</span>
+        </div>
+        {% endif %}
+
+        <!-- ===== LOCATION ===== -->
+        {% if pg.location %}
+        <div class="info-row">
+            <span class="label">የመድረሻ ቦታ</span>
+            <span class="value">{{ pg.location }}</span>
+        </div>
+        {% endif %}
+
+        <!-- ===== WAGE ===== -->
+        <div class="info-row">
+            <span class="label">wage</span>
+            <span class="value">{{ "%.2f"|format(pg.wage) }} ETB</span>
+        </div>
+
+        <!-- ===== TOTAL PRODUCT ===== -->
+        {% if pg.total_amount %}
+        <div class="info-row">
+            <span class="label">total product</span>
+            <span class="value">{{ "%.2f"|format(pg.total_amount) }}</span>
+        </div>
+        {% endif %}
+
+        <!-- ===== ACTIONS ===== -->
+        <div class="post-actions">
+            <a href="{{ url_for('edit_post', post_group_id=pg.id) }}" class="btn btn-edit-post">
+                ✏️ EDIT
+            </a>
+
+            <form method="POST"
+                  action="{{ url_for('receive_post', post_group_id=pg.id) }}"
+                  style="flex:1;"
+                  onsubmit="return confirm('Are you sure you want to mark this post as received? This will archive it and open the receiving form.');">
+                <button type="submit" class="btn btn-received w-100">
+                    ✓ RECEIVED
+                </button>
+            </form>
         </div>
 
     </div>
+</div>
+{% endmacro %}
 
-    {% endfor %}
+<div class="page-container">
 
+    <!-- ===== SEARCH ===== -->
+    <div class="search-wrap">
+        <div class="search-box input-group" style="max-width:360px;">
+            <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control" id="postSearchInput" placeholder="Search posts...">
+        </div>
+
+        <div class="search-box input-group" style="max-width:220px;">
+            <span class="input-group-text"><i class="bi bi-geo-alt text-muted"></i></span>
+            <input type="text" class="form-control" id="locationSearchInput" placeholder="የመድረሻ ቦታ">
+        </div>
+    </div>
+
+    <!-- ===== GENERATE RANGE REPORT BAR ===== -->
+    <div class="range-report-wrap">
+        <form method="GET" action="{{ url_for('posts') }}" class="range-report-bar">
+            <span class="range-label">From</span>
+            <input type="number" min="0" name="range_from" class="range-input" placeholder="001" value="{{ range_from_value }}">
+            <span class="range-label">To</span>
+            <input type="number" min="0" name="range_to" class="range-input" placeholder="020" value="{{ range_to_value }}">
+            <button type="submit" class="btn-generate-range">GENERATE</button>
+            {% if range_generated %}
+            <a href="{{ url_for('posts') }}" class="btn-clear-range" title="Clear report">
+                <i class="bi bi-x-lg"></i>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- ===== RANGE REPORT RESULTS ===== -->
+    {% if range_generated %}
+    <div class="range-report-results">
+        {% if range_error %}
+        <div class="range-report-error">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            {{ range_error }}
+        </div>
+        {% else %}
+        <div class="range-report-summary">
+            <i class="bi bi-clipboard-x"></i>
+            TOTAL NOT RECEIVED: <span>{{ total_not_received }}</span>
+        </div>
+
+        {% if range_results %}
+        <div class="row g-3" id="rangeGrid">
+            {% for pg in range_results %}
+            <div class="col-6 col-md-4 col-lg-3 range-grid-item"
+                 data-importer="{{ pg.importer.name|lower }}"
+                 data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
+                 data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
+                 data-location="{{ pg.location|lower if pg.location else '' }}">
+                {{ post_card_inner(pg) }}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-check2-circle"></i>
+            <h5>No packages found</h5>
+            <p>All packages in this range have been received.</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {% else %}
+
+    {% if post_groups %}
+    <!-- ===== POST GRID ===== -->
+    <div class="row g-3" id="postGrid">
+        {% for pg in post_groups %}
+        <div class="col-6 col-md-4 col-lg-3 post-grid-item"
+             data-importer="{{ pg.importer.name|lower }}"
+             data-phone="{{ pg.importer.phone|lower if pg.importer.phone else '' }}"
+             data-package="{{ '%03d'|format(pg.package_code|int - 3) if pg.package_code else ('%03d' % pg.id) }}"
+             data-location="{{ pg.location|lower if pg.location else '' }}">
+            {{ post_card_inner(pg) }}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- ===== EMPTY STATE ===== -->
+    <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <h5>No posts yet</h5>
+        <p>Posts you create will appear here.</p>
+        <a href="{{ url_for('new_post') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>
+            Create Post
+        </a>
+    </div>
+    {% endif %}
+
+    {% endif %}
 </div>
 
-
-{% else %}
-
-
-<!-- ===== EMPTY STATE ===== -->
-
-<div class="empty-state">
-
-    <i class="bi bi-inbox"></i>
-
-    <h5>
-        No posts yet
-    </h5>
-
-    <p>
-        Posts you create will appear here.
-    </p>
-
-
-    <a href="{{ url_for('new_post') }}"
-        class="btn btn-primary"
-    >
-
-        <i class="bi bi-plus-lg me-1"></i>
-        Create Post
-
-    </a>
-
+<!-- IMAGE LIGHTBOX -->
+<div class="image-lightbox-overlay" id="imageLightbox" onclick="closeImageLightbox(event)">
+    <button class="image-lightbox-close" onclick="closeImageLightbox(event)">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <img id="imageLightboxImg" src="" alt="Full image">
 </div>
 
-
-{% endif %}
-```
-
-</div>
+<!-- PHONE ACTION MENU -->
+<div class="phone-menu-overlay" id="phoneMenuOverlay" onclick="closePhoneMenu()"></div>
+<div class="phone-menu" id="phoneMenu"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
 
-    const searchInput =
-        document.getElementById('postSearchInput');
-
-    const locationInput =
-        document.getElementById('locationSearchInput');
-
-    const gridItems =
-        document.querySelectorAll('.post-grid-item');
-
+    const searchInput = document.getElementById('postSearchInput');
+    const locationInput = document.getElementById('locationSearchInput');
+    const gridItems = document.querySelectorAll('.post-grid-item, .range-grid-item');
 
     function applyFilters() {
 
-        const query =
-            (searchInput ? searchInput.value : '').toLowerCase().trim();
-
-        const locationQuery =
-            (locationInput ? locationInput.value : '').toLowerCase().trim();
-
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const locationQuery = (locationInput ? locationInput.value : '').toLowerCase().trim();
 
         gridItems.forEach(item => {
 
-            const importer =
-                item.dataset.importer || '';
-
-            const phone =
-                item.dataset.phone || '';
-
-            const packageCode =
-                item.dataset.package || '';
-
-            const location =
-                item.dataset.location || '';
-
+            const importer = item.dataset.importer || '';
+            const phone = item.dataset.phone || '';
+            const packageCode = item.dataset.package || '';
+            const location = item.dataset.location || '';
 
             const matchesText =
                 query === '' ||
@@ -973,35 +859,109 @@ document.addEventListener('DOMContentLoaded', function() {
                 phone.includes(query) ||
                 packageCode.includes(query);
 
-
             const matchesLocation =
                 locationQuery === '' ||
                 location.includes(locationQuery);
 
-
-            item.style.display =
-                (matchesText && matchesLocation) ? '' : 'none';
+            item.style.display = (matchesText && matchesLocation) ? '' : 'none';
 
         });
 
     }
 
-
     if (searchInput) {
-
         searchInput.addEventListener('input', applyFilters);
-
     }
 
-
     if (locationInput) {
-
         locationInput.addEventListener('input', applyFilters);
-
     }
 
 });
 
+/* ===== IMAGE LIGHTBOX ===== */
+function openImageLightbox(src){
+    if(!src) return;
+    document.getElementById('imageLightboxImg').src = src;
+    document.getElementById('imageLightbox').classList.add('show');
+}
+function closeImageLightbox(e){
+    if(e) e.stopPropagation();
+    document.getElementById('imageLightbox').classList.remove('show');
+}
+
+/* ===== PHONE ACTION MENU ===== */
+function openPhoneMenu(event, phone, imageUrl){
+    event.stopPropagation();
+
+    const digits = phone.replace(/[^\d+]/g, '');
+    const waNumber = digits.replace(/^\+/, '');
+
+    const menu = document.getElementById('phoneMenu');
+    const overlay = document.getElementById('phoneMenuOverlay');
+
+    menu.innerHTML = `
+        <button onclick="window.location.href='tel:${digits}'; closePhoneMenu();">
+            📞 Call
+        </button>
+        <button onclick="shareImageTo('whatsapp', '${imageUrl}', '${waNumber}')">
+            🟢 WhatsApp
+        </button>
+        <button onclick="shareImageTo('telegram', '${imageUrl}', '${waNumber}')">
+            ✈️ Telegram
+        </button>
+    `;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    menu.style.top = (rect.bottom + 6) + 'px';
+    let left = rect.left;
+    const menuWidth = 200;
+    if(left + menuWidth > window.innerWidth - 10){
+        left = window.innerWidth - menuWidth - 10;
+    }
+    menu.style.left = left + 'px';
+
+    menu.style.display = 'block';
+    overlay.classList.add('show');
+
+}
+
+function closePhoneMenu(){
+    document.getElementById('phoneMenu').style.display = 'none';
+    document.getElementById('phoneMenuOverlay').classList.remove('show');
+}
+
+async function shareImageTo(target, imageUrl, waNumber){
+    closePhoneMenu();
+
+    if(!imageUrl){
+        alert('No image available to share for this post.');
+        return;
+    }
+
+    if(navigator.canShare){
+        try{
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const fileName = imageUrl.split('/').pop() || 'post-image.jpg';
+            const file = new File([blob], fileName, { type: blob.type });
+
+            if(navigator.canShare({ files: [file] })){
+                await navigator.share({ files: [file] });
+                return;
+            }
+        }catch(err){
+            // fall through to link-based fallback below
+        }
+    }
+
+    if(target === 'whatsapp'){
+        window.open(`https://wa.me/${waNumber}`, '_blank');
+    } else if(target === 'telegram'){
+        window.open(`https://t.me/+${waNumber}`, '_blank');
+    }
+
+}
 </script>
 
 </body>

@@ -207,6 +207,7 @@ body{
 .stat-icon.navy{background:#eef1f6;color:var(--navy);}
 .stat-icon.red{background:var(--red-soft);color:var(--red);}
 .stat-icon.amber{background:var(--amber-soft);color:var(--amber);}
+.stat-icon.teal{background:var(--teal-soft);color:var(--teal);}
 .stat-text{min-width:0;}
 .stat-number{font-weight:800;font-size:clamp(1.35rem,3vw,1.65rem);color:var(--navy);line-height:1.1;}
 .stat-label{color:var(--muted);font-size:.78rem;font-weight:600;margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -371,6 +372,12 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offs
         <div class="stat-text"><div class="stat-number">{{ total_flagged }}</div><div class="stat-label">Flagged Importers</div></div>
       </div>
     </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-icon teal"><i class="bi bi-box-seam"></i></div>
+        <div class="stat-text"><div class="stat-number">{{ total_received_products }}</div><div class="stat-label">ጠቅላላ የተቀበሉት ዕቃዎች</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== QUICK LINKS ===== -->
@@ -396,7 +403,7 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offs
     <div class="col-6 col-md-4 col-lg-3">
       <a href="{{ url_for('post_history_list') }}" class="quick-link-card qc-green">
         <div class="ql-icon c-green"><i class="bi bi-clock-history"></i></div>
-        <div class="ql-title">የተቀበሉት ዕቃዎች</div>
+        <div class="ql-title"> መቀበል ላይ and የተቀበሉት ዕቃዎች</div>
         <p class="ql-desc">ቀደም ሲል የተቀበሉትን ዕቃዎች እና የመቀበያ መረጃዎችን ይመልከቱ።</p>
         <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
       </a>
@@ -430,6 +437,16 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offs
         <div class="ql-icon c-navy"><i class="bi bi-file-earmark-text-fill"></i></div>
         <div class="ql-title">ተጠቃሚዎች</div>
         <p class="ql-desc">የስርዓቱን ተጠቃሚዎች ያስተዳድሩ።</p>
+        <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+
+    <!-- TODO: replace href="#" with url_for('YOUR_REPORT_ROUTE_NAME') once you give me the route -->
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{{ url_for('final_posts_report') }}" class="quick-link-card qc-amber">
+        <div class="ql-icon c-amber"><i class="bi bi-search"></i></div>
+        <div class="ql-title">Get Report by ID</div>
+        <p class="ql-desc">በፓኬጅ መለያ ቁጥር ፍለጋ በማድረግ ሪፖርት ይመልከቱ።</p>
         <span class="ql-arrow"><span>Open</span> <i class="bi bi-arrow-right"></i></span>
       </a>
     </div>

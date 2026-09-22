@@ -176,6 +176,23 @@ body{
   color:#fff;
 }
 
+.is-invalid-custom{
+  border-color:#dc2626 !important;
+  box-shadow:0 0 0 .15rem rgba(220,38,38,.15) !important;
+}
+
+.field-error-text{
+  color:#dc2626;
+  font-size:.78rem;
+  font-weight:600;
+  margin-top:.3rem;
+  display:none;
+}
+
+.field-error-text.show{
+  display:block;
+}
+
 </style>
 </head>
 
@@ -203,13 +220,13 @@ body{
 
   <div class="ref-card">
 
-    {% if post_group %}
+    {% if history %}
 
     <div class="ref-row">
   <span class="ref-label">የፓኬጅ ቁጥር</span>
 
   <span class="ref-value package-code">
-    {{ post_group.package_code if post_group else "—" }}
+    {{ "%03d"|format(history.package_code|int - 3) if history and history.package_code|int > 1 else "—" }}
   </span>
 </div>
 
@@ -321,7 +338,7 @@ body{
   </div>
 
 
-  <form method="POST" id="post2Form">
+  <form method="POST" id="post2Form" novalidate>
 
     {{ form.hidden_tag() }}
 
@@ -334,7 +351,7 @@ body{
         for="collectorName"
         class="form-label fw-semibold"
       >
-        የተቀባዩ ስም
+        የተቀባዩ ስም <span class="text-danger">*</span>
       </label>
 
       <input
@@ -343,7 +360,12 @@ body{
         id="collectorName"
         name="collector_name"
         placeholder="የተቀባዩን ስም ያስገቡ"
+        required
       >
+
+      <div class="field-error-text" id="collectorNameError">
+        እባክዎ የተቀባዩን ስም ያስገቡ
+      </div>
 
     </div>
 
@@ -359,6 +381,8 @@ body{
 
 
     {% for item in history.items %}
+
+    {% set expected_val = item.expected_quantity|int if item.expected_quantity == item.expected_quantity|int else item.expected_quantity %}
 
     <div
       class="product-recv-card"
@@ -377,9 +401,7 @@ body{
 
           የሚጠበቅ:
 
-          {{ item.expected_quantity|int
-             if item.expected_quantity == item.expected_quantity|int
-             else item.expected_quantity }}
+          {{ expected_val }}
 
         </span>
 
@@ -403,6 +425,9 @@ body{
             class="form-control recv-received"
             name="item-{{ item.id }}-received"
             data-item-id="{{ item.id }}"
+            max="{{ item.expected_quantity or 0 }}"
+            min="0"
+            value="{{ expected_val }}"
           >
 
         </div>
@@ -422,6 +447,8 @@ body{
             class="form-control recv-taxed"
             name="item-{{ item.id }}-taxed"
             data-item-id="{{ item.id }}"
+            max="{{ item.expected_quantity or 0 }}"
+            min="0"
           >
 
         </div>
@@ -627,6 +654,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const wageInput =
     document.getElementById('actualWageInput');
 
+  const collectorNameInput =
+    document.getElementById('collectorName');
+
+  const collectorNameError =
+    document.getElementById('collectorNameError');
+
+  const post2Form =
+    document.getElementById('post2Form');
+
+
+  // ===== CAP AN INPUT SO IT NEVER EXCEEDS THE EXPECTED QUANTITY =====
+  function capToExpected(input) {
+
+    const card = input.closest('.product-recv-card');
+    const expected = parseFloat(card.dataset.expected) || 0;
+    const val = parseFloat(input.value);
+
+    if (!isNaN(val) && val > expected) {
+      input.value = expected;
+    }
+
+    if (!isNaN(val) && val < 0) {
+      input.value = 0;
+    }
+
+  }
+
 
   function recalc() {
 
@@ -716,9 +770,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   [
     ...receivedInputs,
-    ...taxedInputs,
-    ...taxInputs
+    ...taxedInputs
   ].forEach(input => {
+
+    input.addEventListener('input', function() {
+      capToExpected(input);
+      recalc();
+    });
+
+  });
+
+
+  taxInputs.forEach(input => {
 
     input.addEventListener('input', recalc);
 
@@ -726,6 +789,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   wageInput.addEventListener('input', recalc);
+
+
+  // ===== COLLECTOR NAME REQUIRED VALIDATION =====
+  if (collectorNameInput) {
+
+    collectorNameInput.addEventListener('input', function() {
+
+      if (collectorNameInput.value.trim() !== '') {
+        collectorNameInput.classList.remove('is-invalid-custom');
+        collectorNameError.classList.remove('show');
+      }
+
+    });
+
+  }
+
+
+  if (post2Form) {
+
+    post2Form.addEventListener('submit', function(e) {
+
+      let hasError = false;
+
+      if (!collectorNameInput || collectorNameInput.value.trim() === '') {
+
+        hasError = true;
+
+        collectorNameInput.classList.add('is-invalid-custom');
+        collectorNameError.classList.add('show');
+
+      }
+
+      if (hasError) {
+
+        e.preventDefault();
+
+        collectorNameInput.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+        collectorNameInput.focus();
+
+      }
+
+    });
+
+  }
 
 
   recalc();

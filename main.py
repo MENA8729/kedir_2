@@ -1,5 +1,6 @@
 from flask import jsonify, request
 import os
+from dotenv import load_dotenv
 import re
 import uuid
 from werkzeug.utils import secure_filename
@@ -32,6 +33,7 @@ from flask import abort
 from sqlalchemy.exc import IntegrityError
 from flask_wtf import FlaskForm
 from flask import flash
+import os
 from itsdangerous import URLSafeTimedSerializer
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length
@@ -58,20 +60,26 @@ from datetime import date, timedelta, datetime
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','REMOVED_SECRET_KEYb')
+
+
+load_dotenv()
+app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+my_email = os.environ["my_email"]
+his_email = os.environ["his_email"]
+his2_email = os.environ["his2_email"]
+
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=365)
 app.config['REMEMBER_COOKIE_HTTPONLY'] = True
 app.config['REMEMBER_COOKIE_SECURE'] = True
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+
 login_manager=LoginManager()
 login_manager.init_app(app)
 login_manager.remember_cookie_duration = timedelta(days=365)
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL',
-    'sqlite:///merkato.db'
-)
+
+app.config['SQLALCHEMY_DATABASE_URI'] =os.environ['DATABASE_URL']
 
 
 UPLOAD_FOLDER = os.path.join(app.root_path, "static", "uploads")
@@ -87,7 +95,7 @@ db.init_app(app)
 @login_manager.user_loader
 @login_manager.user_loader
 def load_user(user_id):
-    if user_id == 'None' or user_id is None:  # ✅ handle bad cookie!
+    if user_id == 'None' or user_id is None:
         return None
     return User.query.get(int(user_id))
 
@@ -154,7 +162,7 @@ def dubai(fun):
         # Check logged in first
         if not current_user.is_authenticated:
             return abort(403)
-        # Check email verification
+
         if not current_user.is_verified:
             return abort(403)
         # Check admin or employee
@@ -196,10 +204,9 @@ class Admin(db.Model):
     def __repr__(self):
         return f"<Admin {self.email}>"
 
-# ============================================================
-# EXISTING TABLES — UNCHANGED (shown here only for reference,
-# do not re-run these definitions if they already exist)
-# ============================================================
+
+
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -229,7 +236,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False, unique=True)
 
-# ============================================================
+
 # ============================================================
 
 class PostGroup(db.Model):
@@ -253,7 +260,7 @@ class PostGroup(db.Model):
         return sum(item.total_amount or 0 for item in self.items)
 
 
-# ============================================================
+
 # ============================================================
 
 class PostItem(db.Model):
@@ -373,51 +380,11 @@ class FinalPost(db.Model):
 
 
 with app.app_context():
+
     db.create_all()
 
-# with app.app_context():
-#     user=User(name="mena",email="meanghh@gmail.com",password=123456)
-#     db.session.add(user)
-#     db.session.commit()
 
-@app.route('/confirm/<token>')
-def confirm_email(token):
-    try:
-        email = s.loads(
-            token,
-            salt='email-confirm',
-            max_age=60 * 60 * 24   # 24 hours
-        )
-    except Exception:
-        flash(
-            "The verification link is invalid or has expired. "
-            "Please request a new verification email.",
-            "danger"
-        )
-        return redirect(url_for('resend_verification'))
 
-    user = User.query.filter_by(email=email).first()
-
-    if user is None:
-        flash('User not found.', 'danger')
-        return redirect(url_for('register'))
-
-    if user.is_verified:
-        flash(
-            'Your account has already been verified. Please login.',
-            'info'
-        )
-        return redirect(url_for('login'))
-
-    user.is_verified = True
-    db.session.commit()
-
-    flash(
-        'Email confirmed successfully! You can now login.',
-        'success'
-    )
-
-    return redirect(url_for('login'))
 
 
 
@@ -432,9 +399,8 @@ def register():
         name = form.username.data
         email = form.email.data.strip().lower()
 
-        # -----------------------------------------
         # CHECK IF USER ALREADY EXISTS
-        # -----------------------------------------
+
 
         existing_user = db.session.execute(
             db.select(User).where(User.email == email)
@@ -449,9 +415,9 @@ def register():
 
             return redirect(url_for('login'))
 
-        # -----------------------------------------
+
         # CREATE NEW USER
-        # -----------------------------------------
+
 
         hashed_password = generate_password_hash(
             form.password.data
@@ -467,9 +433,9 @@ def register():
         db.session.add(data)
         db.session.commit()
 
-        # -----------------------------------------
+
         # REGISTRATION SUCCESS
-        # -----------------------------------------
+
 
         flash(
             "Registration successful! Please login.",
@@ -486,22 +452,11 @@ def register():
 
 
 
-# =========================================================
-# RESEND VERIFICATION
-# =========================================================
-
-@app.route('/resend-verification', methods=['GET', 'POST'])
-def resend_verification():
-    return redirect(url_for('login'))
-
-
-
-
-
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -538,6 +493,7 @@ def logout():
 
 
 
+
 @app.route("/")
 def dashboard():
     if not current_user.is_authenticated:
@@ -550,17 +506,17 @@ def dashboard():
     total_pending_receiving = PostHistory.query.filter(
         ~PostHistory.receiver.has()
     ).count()
-    User.query.filter_by(email='menayimge87@gmail.com').update({User.is_verified: True})
-    User.query.filter_by(email='kedirmuhammed323@gmail.com').update({User.is_verified: True})
+    User.query.filter_by(email=my_email).update({User.is_verified: True})
+    User.query.filter_by(email=his_email).update({User.is_verified: True})
     db.session.commit()
-    kid1 = db.session.execute(db.select(Admin).where(Admin.email == 'menayimge87@gmail.com')).scalar()
-    kid3 = db.session.execute(db.select(Admin).where(Admin.email == 'kedirmuhammed323@gmail.com')).scalar()
+    kid1 = db.session.execute(db.select(Admin).where(Admin.email == my_email)).scalar()
+    kid3 = db.session.execute(db.select(Admin).where(Admin.email == his_email)).scalar()
     if not kid1:
-        new_ = Admin(email='menayimge87@gmail.com')
+        new_ = Admin(email=my_email)
         db.session.add(new_)
         db.session.commit()
     if not kid3:
-        new_ = Admin(email='kedirmuhammed323@gmail.com')
+        new_ = Admin(email=his_email)
         db.session.add(new_)
         db.session.commit()
     return render_template(
@@ -611,7 +567,7 @@ def new_post():
 
             # -------------------------
             # Save uploaded image
-            # -------------------------
+
             img_file = post_form.form.img.data
             img_filename = None
 
@@ -632,8 +588,8 @@ def new_post():
             # -------------------------
             # Find or create importer
             # By phone only
-            # Existing name is NOT overwritten
-            # -------------------------
+
+
             importer = Importer.query.filter(
                 Importer.phone == phone
             ).first()
@@ -663,9 +619,9 @@ def new_post():
 
                 continue
 
-            # -------------------------
+
             # Get selected products
-            # -------------------------
+
             selected_products = []
 
             id_pattern = re.compile(
@@ -703,7 +659,7 @@ def new_post():
 
             # -------------------------
             # Validate products
-            # -------------------------
+
             valid_products = {}
 
             if selected_products:
@@ -726,16 +682,16 @@ def new_post():
                 if pid in valid_products
             ]
 
-            # -------------------------
+
             # Get next permanent code
-            # -------------------------
+
             counter.last_code += 1
 
             package_code = f"{counter.last_code:03d}"
 
-            # -------------------------
+
             # Create PostGroup
-            # -------------------------
+
             post_group = PostGroup(
                 importer_id=importer.id,
                 location=location,
@@ -749,9 +705,9 @@ def new_post():
             db.session.add(post_group)
             db.session.flush()  # <-- FIX: assigns post_group.id before it's used below
 
-            # -------------------------
+
             # Create PostItems
-            # -------------------------
+
             if valid_selected:
 
                 for product_id, amount in valid_selected:
@@ -955,10 +911,6 @@ def edit_product(product_id):
 
 
 
-
-
-
-
 @app.route("/posts")
 @login_required
 @dubai
@@ -970,10 +922,10 @@ def posts():
         .all()
     )
 
-    # ---------------------------------------------------------------
+
     # RANGE REPORT (optional — only runs if range_from/range_to given)
     # Normal /posts behavior is completely unchanged when absent.
-    # ---------------------------------------------------------------
+
     range_from_raw = request.args.get("range_from", "").strip()
     range_to_raw = request.args.get("range_to", "").strip()
 
@@ -1041,10 +993,10 @@ def edit_post(post_group_id):
         name = form.name.data.strip()
         phone = form.phone.data.strip()
 
-        # -------------------------
+
         # Resolve the importer for this post WITHOUT mutating the shared row.
-        # Find-or-create by phone, same as the registration flow.
-        # -------------------------
+
+
         current_importer = post_group.importer
 
         if current_importer and current_importer.phone == phone:
@@ -1061,9 +1013,7 @@ def edit_post(post_group_id):
                 db.session.add(target_importer)
                 db.session.flush()  # assign an id before we reference it below
 
-        # -------------------------
-        # Re-verify red-flag status BEFORE changing anything
-        # -------------------------
+        #
         if target_importer.is_red_flagged:
             db.session.rollback()
             flash(
@@ -1076,7 +1026,7 @@ def edit_post(post_group_id):
         # Repoint only THIS post at the resolved importer.
         post_group.importer_id = target_importer.id
 
-        # -------------------------
+
         # Update PostGroup fields
         # -------------------------
         post_group.location = form.location.data
@@ -1086,7 +1036,7 @@ def edit_post(post_group_id):
 
         # -------------------------
         # Replace image only if a new one was uploaded
-        # -------------------------
+
         img_file = form.img.data
         if img_file and getattr(img_file, "filename", ""):
             safe_name = secure_filename(img_file.filename)
@@ -1096,8 +1046,8 @@ def edit_post(post_group_id):
 
         # -------------------------
         # Parse edited product amounts from request.form
-        # Pattern: products-<product_id>-id / products-<product_id>-amount
-        # -------------------------
+
+
         selected_products = []
         id_pattern = re.compile(r"^products-(\d+)-id$")
 
@@ -1513,7 +1463,7 @@ def delete_user(user_id):
 
 
 
-PROTECTED_EMAILS = {"menayimge87@gmail.com", "kedirmuhammed323@gmail.com"}
+PROTECTED_EMAILS = {my_email, his_email}
 
 
 @app.route("/users")
@@ -1540,7 +1490,7 @@ def user_management():
 @admin_only
 def toggle_verify_user(user_id):
     user = User.query.get_or_404(user_id)
-    if user.email=="kedirbubu@icloud.com":
+    if user.email==his2_email:
         if user.is_verified==True:
             flash("admin user", "success")
             return redirect(url_for("user_management"))
@@ -1567,7 +1517,7 @@ def toggle_admin_user(user_id):
         return redirect(url_for("user_management"))
 
     existing = Admin.query.filter_by(email=user.email).first()
-    if user.email=="kedirbubu@icloud.com":
+    if user.email==his2_email:
         if existing:
             flash("admin user", "success")
             return redirect(url_for("user_management"))
@@ -1641,10 +1591,10 @@ def delete_importer(importer_id):
 
 
 
-# ============================================================
+
 # PACKAGE RANGE REPORT
 # Add this route wherever final_posts / final_detail are defined.
-# ============================================================
+
 
 from collections import defaultdict
 
@@ -1867,6 +1817,6 @@ def final_posts_report():
 
 
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    # app.run(debug=True, port=5005)
+if __name__ == "__main__":
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(host="127.0.0.1", port=5000, debug=debug)

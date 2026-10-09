@@ -60,10 +60,10 @@ CargoTrack is a cargo operations and record-tracking system. It does not provide
 |---|---|
 | Language | Python |
 | Backend | Flask |
-| Database | [PostgreSQL / SQLite / MySQL: write the one you use] |
-| Frontend | [HTML, CSS, Bootstrap, JavaScript: keep what you use] |
-| Server | [Linux, Gunicorn: keep what you use] |
-| Hosting | [DigitalOcean or other: write where it runs] |
+| Database | PostgreSQL / SQLite / MySQL |
+| Frontend | HTML, CSS, Bootstrap, JavaScript |
+| Server | Linux, Gunicorn |
+| Hosting | DigitalOcean  |
 
 ---
 
